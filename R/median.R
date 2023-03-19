@@ -91,10 +91,3 @@ decide_median_or_na <- function(x) {
   }
 }
 
-# Test with:
-x1 <- c(0, 1, 1, 1, NA)
-x2 <- c(1, 1, NA)
-x3 <- c(0, 0, NA, 0, 0)
-x4 <- c(1, 1, 1, 1, NA, NA)
-
-
