@@ -89,7 +89,7 @@ decide_median_or_na <- function(x) {
   if (!isTRUE(all(x[half] == x[half - nna]))) {
     return(x[NA_integer_])
   } else if (length(half) == 2L) {
-    return(mean(x[half]))
+    return(sum(x[half]) / 2)
   } else {
     return(x[half])
   }
