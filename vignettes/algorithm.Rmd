@@ -1,0 +1,57 @@
+---
+title: "Implementing the algorithm"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Implementing the algorithm}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Follow these steps to implement naidem's median algorithm in another language. It is tailored to numeric distributions in which some values are missing.
+
+This vignette presents two distinct algorithms for distributions of odd and even length (i.e., number of values). The R implementation is condensed into one because vectorization in R deemphasizes the difference in length. Other languages may need more explicit distinctions.
+
+Below, $x$ is the input distribution. $length(d)$ is the number of values in a distribution $d$. The combination of division and flooring in step 1 is equivalent to integer division.
+
+## Odd-length distributions
+
+1.  $i_{half} \gets \lfloor{\frac{length(x) + 1}{2}}\rfloor$ // Determine the central index of $x$.
+
+2.  $n_{NA} \gets length(x[missing])$ // Count the missing values in $x$.
+
+3.  $x \gets sort(x{[!missing]})$ // Remove all missing values from $x$ and sort it.
+
+4.  if $x[i_{half}] = x[i_{half} - n_{NA}]$: // Check values at two specific indices for equality.
+
+    return $x[i_{half}]$ // If equal, return the $x$ value at the central index.
+
+    else:
+
+    return $NA$ // If not equal, return a missing value.
+
+## Even-length distributions
+
+1.  $i_{half1} \gets \lfloor{\frac{length(x) + 1}{2}}\rfloor$ // Determine the lower central index of $x$.
+
+2.  $i_{half2} \gets i_{half1} + 1$ // Determine the upper central index.
+
+3.  $n_{NA} \gets length(x[missing])$ // Count the missing values in $x$.
+
+4.  $x \gets sort(x{[!missing]})$ // Remove all missing values from $x$ and sort it.
+
+5.  if $x[i_{half1}] = x[i_{half1} - n_{NA}] \land x[i_{half2}] = x[i_{half2} - n_{NA}]$: // Check if both pairs are equal.
+
+    return $\frac{x[i_{half1}] + x[i_{half2}]}{2}$ // If both are equal, return the mean of the central values.
+
+    else:
+
+    return $NA$ // If one or both are not equal, return a missing value.
+
+## Explanation
