@@ -18,7 +18,7 @@ Follow these steps to implement naidem's median algorithm in another language. I
 
 This vignette presents two distinct algorithms for distributions of odd and even length (i.e., number of values). The R implementation is condensed into one because vectorization in R deemphasizes the difference in length. Other languages may need more explicit distinctions.
 
-Below, $x$ is the input distribution. $length(d)$ is the number of values in a distribution $d$. The combination of division and flooring in step 1 is equivalent to integer division.
+Below, $x$ is the input distribution. $length(d)$ is the number of values in a distribution $d$. Note that the combination of division and flooring in step 1 of the odd-length algorithm is equivalent to integer division.
 
 ## Odd-length distributions
 
@@ -26,7 +26,7 @@ Below, $x$ is the input distribution. $length(d)$ is the number of values in a d
 
 2.  $n_{NA} \gets length(x[missing])$ // Count the missing values in $x$.
 
-3.  $x \gets sort(x{[!missing]})$ // Remove all missing values from $x$ and sort it.
+3.  $x \gets sort(x{[!missing]})$ // Remove all missing values from $x$, then sort $x$.
 
 4.  if $x[i_{half}] = x[i_{half} - n_{NA}]$: // Check values at two specific indices for equality.
 
@@ -38,13 +38,13 @@ Below, $x$ is the input distribution. $length(d)$ is the number of values in a d
 
 ## Even-length distributions
 
-1.  $i_{half1} \gets \lfloor{\frac{length(x) + 1}{2}}\rfloor$ // Determine the lower central index of $x$.
+1.  $i_{half1} \gets \frac{length(x)}{2}$ // Determine the lower central index of $x$.
 
 2.  $i_{half2} \gets i_{half1} + 1$ // Determine the upper central index.
 
 3.  $n_{NA} \gets length(x[missing])$ // Count the missing values in $x$.
 
-4.  $x \gets sort(x{[!missing]})$ // Remove all missing values from $x$ and sort it.
+4.  $x \gets sort(x{[!missing]})$ // Remove all missing values from $x$, then sort $x$.
 
 5.  if $x[i_{half1}] = x[i_{half1} - n_{NA}] \land x[i_{half2}] = x[i_{half2} - n_{NA}]$: // Check if both pairs are equal.
 
@@ -55,3 +55,9 @@ Below, $x$ is the input distribution. $length(d)$ is the number of values in a d
     return $NA$ // If one or both are not equal, return a missing value.
 
 ## Explanation
+
+Missing values may or may not make it impossible to determine the median. Implementations of the median should check whether they do for any given distribution, instead of simply assuming that they do every time.
+
+The algorithms check whether the putative median can be changed by a shift due to missing values. If so, the median depends on the position of the missing values in the sorted distribution --- and thus, on their values. Since these are unknown, the median cannot be determined. However, if the median remains the same after the shift, it is indifferent to the missing values: the median is identical for all possible true values behind the missing ones.
+
+It is generally easier to determine the median for distributions of an odd length. The same is true when missing values are present. The even-length algorithm operates with two central indices instead of one because even-length distributions don't have a single central value. The algorithm needs to compare $x$ at each of these indices with the respective index offset by the number of missing values. In this way, it effectively checks whether the pair of $x$ values that forms the central indices in the offset case is equal to the pair without the offset. The odd-length algorithm just checks two single values for equality.
