@@ -86,7 +86,7 @@ decide_median_or_na <- function(x) {
   # if (!isTRUE(all(c(x, xna)[half] == c(xna, x)[half]))) {
   # # Experimental replacement for the condition right above (using `nna`,
   # # the number of missings; instead of `xna`, the missings themselves):
-  if (!isTRUE(all(x[half] == x[half - nna]))) {
+  if (any(half - nna < 1L) || !isTRUE(all(x[half] == x[half - nna]))) {
     return(x[NA_integer_])
   } else if (length(half) == 2L) {
     return(sum(x[half]) / 2)
