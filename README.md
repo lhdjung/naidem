@@ -8,7 +8,7 @@
 
 The goal of naidem is to compute the median in a way that handles
 missing values properly: return `NA` if and only if the median can’t be
-determined from the data.
+determined from the data. Its source code has no dependencies.
 
 Use `median_na()` as a drop-in replacement for `median()`. Its default
 method is the same as in `median()` except for handling missing values.
