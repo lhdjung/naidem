@@ -13,6 +13,11 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r include=FALSE}
+# Dev only: Load naidem from within naidem
+devtools::load_all(".")
+```
+
 # Median with missing values analysis
 
 <!-- badges: start -->
@@ -20,6 +25,8 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 The goal of naidem is to compute the median in a way that handles missing values properly: return `NA` if and only if the median can't be determined from the data.
+
+Use `median_na()` as a drop-in replacement for `median()`. Its default method is the same as in `median()` except for handling missing values.
 
 ## Installation
 
@@ -29,6 +36,45 @@ You can install the development version of naidem like so:
 # FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
 ```
 
-## Package name
+# Get started
 
-"naidem" is the reverse of "median", but it also expresses the goal to treat `NA` in the same (*idem*) way as R language primitives do when computing the median.
+```{r}
+library(naidem)
+```
+
+Why and how to use naidem:
+
+## The problem
+
+The standard `median()` function returns `NA` whenever the input vector contains one or more `NA`s. In many cases, missing values do make it impossible to compute the median. Yet some distributions have a clear median even so:
+
+```{r}
+median(c(6, 7, 7, 7, NA))
+```
+
+The actual median is 7, irrespective of the true value behind `NA`. Yet `median()` returns `NA`.
+
+## The solution
+
+Use naidem's `median_na()` instead. This function will return the median whenever it can be determined:
+
+```{r}
+median_na(c(6, 7, 7, 7, NA))
+```
+
+If the median really is unclear, both functions return `NA`:
+
+```{r}
+median(c(5, 3, 4, NA, NA))
+median_na(c(5, 3, 4, NA, NA))
+```
+
+Compare this to `NA ^ 0`, which returns `1` even though `NA ^ 2` returns `NA`. If the exponent is 0, the result is the same for all possible bases. The same is sometimes true for the median. Therefore, implementations should check for this case and return the median if and only if it can be determined. This also makes `NA` more meaningful when it is returned: users can be sure that the median really is unknown.
+
+See `vignette("algorithm")` for more information on naidem's solution.
+
+# About this package
+
+"naidem" is "median" backwards, but it also expresses the goal of treating `NA` in the same (*idem*) conceptual way as R language primitives like `^` do. Note that naidem is not about imputation at all, but simply about determining the median.
+
+The [moder](https://github.com/lhdjung/moder) package serves a similar purpose, but for the mode instead of the median. Working on moder provided the impetus behind naidem.
