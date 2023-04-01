@@ -30,6 +30,18 @@
 #' @export
 #'
 #' @examples
+#' # All possible values,
+#' # plus the range:
+#' x1 <- c(7, 7, 7, 8, 9, 9, NA, NA)
+#' median_possible_values(x1)
+#' median_range(x1)
+#'
+#' # The output of both functions
+#' # is often the same:
+#' x2 <- c(7, 7, 7, 8, NA, NA)
+#' median_possible_values(x2)
+#' median_range(x2)
+
 
 median_possible_values <- function(x) {
   UseMethod("median_possible_values")
@@ -59,8 +71,18 @@ median_possible_values.default <- function(x) {
     return(sort(unique(x[!is.na(x)])))
   }
   x <- sort(x[!is.na(x)])
-  # Could there be a "missing middle" here?:
-  sort(unique(c(x[half], x[half - nna])))
+  half_span <- c(half - nna)[1L]:half[length(half)]
+  if (length(half) == 2L) {
+    out <- integer(length(half_span))
+    for (i in seq_along(half_span)) {
+      out[i] <- sum(x[half_span[i:(i + 1L)]]) / 2
+    }
+    half_span_last <- half_span[length(half_span)]
+    out[length(out)] <- sum(x[half_span_last], x[half_span_last + 1L]) / 2
+    unique(out[!is.na(out)])
+  } else {
+    unique(x[c(half - nna)[1L]:half[length(half)]])
+  }
 }
 
 #' @name median-possible
@@ -70,5 +92,4 @@ median_range.default <- function(x) {
   x <- median_possible_values(x)
   c(x[[1L]], x[[length(x)]])
 }
-
 

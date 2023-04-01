@@ -11,7 +11,13 @@ x8  <- iris$Sepal.Length
 x9  <- c(5.6, 5.7, 5.9, 6, 6.1, 6.3, 6.4, 6.6, 6.7, NA)
 x10 <- c(6.1, 6.3, 5.9, 6, 6.1, 6.3, 6.4, 6.6, 6.7, NA, NA, NA, NA)
 x11 <- c(7, 7, 7, 8, NA, NA)
+x12 <- c(7, 7, 7, 8, 9, 9, NA, NA)
+x13 <- c(7, 7, 7, 8, NA, NA)
+x14 <- c(7, 7, 8, 9, NA)
+x15 <- c(6, 7, 9, 9, NA)
 
+
+# Actual medians (i.e., the main function) --------------------------------
 
 test_that("the default method returns non-`NA` values when it should", {
   x1 |> median_na() |> expect_equal(1)
@@ -29,3 +35,28 @@ test_that("the default method returns `NA` when it should", {
   x10 |> median_na() |> expect_equal(NA_real_)
   x11 |> median_na() |> expect_equal(NA_real_)
 })
+
+
+# Possible medians --------------------------------------------------------
+
+test_that("`median_possible_values()` works correctly with even lengths", {
+  x12 |> median_possible_values() |> expect_equal(c(7, 7.5, 8.5, 9))
+  x13 |> median_possible_values() |> expect_equal(c(7, 7.5))
+})
+
+test_that("`median_possible_values()` works correctly with odd lengths", {
+  x14 |> median_possible_values() |> expect_equal(c(7, 8))
+  x15 |> median_possible_values() |> expect_equal(c(7, 9))
+})
+
+test_that("`median_range()` works correctly with even lengths", {
+  x12 |> median_range() |> expect_equal(c(7, 9))
+  x13 |> median_range() |> expect_equal(c(7, 7.5))
+})
+
+test_that("`median_range()` works correctly with odd lengths", {
+  x14 |> median_range() |> expect_equal(c(7, 8))
+  x15 |> median_range() |> expect_equal(c(7, 9))
+})
+
+

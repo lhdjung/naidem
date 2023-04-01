@@ -40,3 +40,16 @@ Like \code{median_na()}, these functions are generic, so methods can be
 defined for other classes. This documentation describes the default
 methods.
 }
+\examples{
+# All possible values,
+# plus the range:
+x1 <- c(7, 7, 7, 8, 9, 9, NA, NA)
+median_possible_values(x1)
+median_range(x1)
+
+# The output of both functions
+# is often the same:
+x2 <- c(7, 7, 7, 8, NA, NA)
+median_possible_values(x2)
+median_range(x2)
+}
