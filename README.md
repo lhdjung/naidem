@@ -37,7 +37,8 @@ impossible to compute the median. Yet some distributions have a clear
 median even so:
 
 ``` r
-median(c(6, 7, 7, 7, NA))
+x1 <- c(6, 7, 7, 7, NA)
+median(x1)
 #> [1] NA
 ```
 
@@ -50,16 +51,17 @@ Use naidem’s `median_na()` instead. This function will return the median
 whenever it can be determined:
 
 ``` r
-median_na(c(6, 7, 7, 7, NA))
+median_na(x1)
 #> [1] 7
 ```
 
 If the median really is unclear, both functions return `NA`:
 
 ``` r
-median(c(5, 3, 4, NA, NA))
+x2 <- c(3, 4, 4, 5, NA, NA)
+median(x2)
 #> [1] NA
-median_na(c(5, 3, 4, NA, NA))
+median_na(x2)
 #> [1] NA
 ```
 
@@ -71,6 +73,19 @@ only if it can be determined. This also makes `NA` more meaningful when
 it is returned: users can be sure that the median really is unknown.
 
 See `vignette("algorithm")` for more information on naidem’s solution.
+
+### Possible medians
+
+What to do if the median really is unknown, like above? These two
+functions can narrow it down to its possible values, or the range of
+such values:
+
+``` r
+median_possible_values(x2)
+#> [1] 3.5 4.0 4.5
+median_range(x2)
+#> [1] 3.5 4.5
+```
 
 # About this package
 
