@@ -26,6 +26,9 @@ size. It always has length 2 when calling \code{median_range()}.
 If the median can be determined (i.e., \code{median_na()} would return a
 non-\code{NA} value), \code{median_possible_values()} returns just one value, and
 \code{median_range()} returns two identical values.
+
+If there are missing values at the median position, the set of possible
+medians cannot be determined. The functions will then return \code{NA} or \code{c(NA, NA)}, respectively.
 }
 \description{
 These functions are helpful if \code{median_na()} returns \code{NA}:
@@ -52,4 +55,11 @@ median_range(x1)
 x2 <- c(7, 7, 7, 8, NA, NA)
 median_possible_values(x2)
 median_range(x2)
+
+# If there are missing values at
+# the median, even these functions
+# return `NA`:
+x3 <- c(1, 1, 2, NA, NA, NA)
+median_possible_values(x3)
+median_range(x3)
 }

@@ -15,6 +15,8 @@ x12 <- c(7, 7, 7, 8, 9, 9, NA, NA)
 x13 <- c(7, 7, 7, 8, NA, NA)
 x14 <- c(7, 7, 8, 9, NA)
 x15 <- c(6, 7, 9, 9, NA)
+x16 <- c(1, 2, 3, 3, 5, 9)
+x17 <- c(1, 1, 2, NA, NA, NA)
 
 
 # Actual medians (i.e., the main function) --------------------------------
@@ -59,4 +61,10 @@ test_that("`median_range()` works correctly with odd lengths", {
   x15 |> median_range() |> expect_equal(c(7, 9))
 })
 
+test_that("early returns are correct in both possible-medians functions", {
+  x16 |> median_possible_values() |> expect_equal(3)
+  x17 |> median_possible_values() |> expect_equal(NA_real_)
+  x16 |> median_range() |> expect_equal(c(3, 3))
+  x17 |> median_range() |> expect_equal(c(NA_real_, NA_real_))
+})
 

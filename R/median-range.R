@@ -25,6 +25,10 @@
 #'   non-`NA` value), `median_possible_values()` returns just one value, and
 #'   `median_range()` returns two identical values.
 #'
+#'   If there are missing values at the median position, the set of possible
+#'   medians cannot be determined. The functions will then return `NA` or `c(NA,
+#'   NA)`, respectively.
+#'
 #' @name median-possible
 #'
 #' @export
@@ -41,7 +45,13 @@
 #' x2 <- c(7, 7, 7, 8, NA, NA)
 #' median_possible_values(x2)
 #' median_range(x2)
-
+#'
+#' # If there are missing values at
+#' # the median, even these functions
+#' # return `NA`:
+#' x3 <- c(1, 1, 2, NA, NA, NA)
+#' median_possible_values(x3)
+#' median_range(x3)
 
 median_possible_values <- function(x) {
   UseMethod("median_possible_values")
@@ -68,7 +78,7 @@ median_possible_values.default <- function(x) {
     return(median_na(x))
     # This part might be correct, but I'm genuinely unsure:
   } else if (any(nna >= half)) {
-    return(sort(unique(x[!is.na(x)])))
+    return(x[NA_integer_])
   }
   x <- sort(x[!is.na(x)])
   half_span <- c(half - nna)[1L]:half[length(half)]

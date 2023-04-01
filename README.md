@@ -77,8 +77,8 @@ See `vignette("algorithm")` for more information on naidem’s solution.
 ### Possible medians
 
 What to do if the median really is unknown, like above? These two
-functions can narrow it down to its possible values, or the range of
-such values:
+functions will attempt to narrow it down to its possible values, or the
+range of such values:
 
 ``` r
 median_possible_values(x2)
