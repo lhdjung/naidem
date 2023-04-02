@@ -68,10 +68,12 @@ median_na.default <- function(x, na.rm = FALSE, ...) {
       (n + 1L:2L) %/% 2L
     }
     nna <- length(x[is.na(x)])
+    # Check for non-positive indices
     if (any(nna + 1L > half)) {
       return(x[NA_integer_])
     }
     x <- sort(x[!is.na(x)])
+    # Check for equality with offset value(s)
     if (!isTRUE(all(x[half] == x[half - nna]))) {
       return(x[NA_integer_])
     } else if (length(half) == 2L) {
