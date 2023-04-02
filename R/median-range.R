@@ -1,10 +1,3 @@
-
-# TO DO: THINK ABOUT NEW FUNCTION THAT COMPUTES THE RANGE OF THE MEDIAN. THIS
-# MAY BE USEFUL IN CASES LIKE `median_na(c(7, 7, 7, 8, NA, NA))` WHERE THE
-# MEDIAN IS EITHER `7` OR `7.5`. IT WOULD FIT WITHIN naidem BECAUSE IT ALSO
-# WRINGS KNOWLEDGE ABOUT THE MEDIAN FROM DATA WITH MISSING VALUES.
-
-
 #' Possible medians
 #'
 #' @description These functions are helpful if `median_na()` returns `NA`:
