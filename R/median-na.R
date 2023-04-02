@@ -75,7 +75,7 @@ median_na.default <- function(x, na.rm = FALSE, ...) {
     if (!isTRUE(all(x[half] == x[half - nna]))) {
       return(x[NA_integer_])
     } else if (length(half) == 2L) {
-      return(sum(x[half]) / 2)
+      return(mean(x[half]))
     } else {
       return(x[half])
     }
