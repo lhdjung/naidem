@@ -61,10 +61,11 @@ median_na.default <- function(x, na.rm = FALSE, ...) {
     x <- x[!is.na(x)]
   else if (any(is.na(x))) {
     ### START of new code
-    half <- if (length(x) %% 2L == 1L) {
-      (length(x) + 1L) %/% 2L
+    n <- length(x)
+    half <- if (n %% 2L == 1L) {
+      (n + 1L) %/% 2L
     } else {
-      (length(x) + 1L:2L) %/% 2L
+      (n + 1L:2L) %/% 2L
     }
     nna <- length(x[is.na(x)])
     if (any(nna + 1L > half)) {

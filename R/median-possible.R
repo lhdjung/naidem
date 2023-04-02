@@ -61,10 +61,11 @@ median_range <- function(x) {
 #' @export
 
 median_possible_values.default <- function(x) {
-  half <- if (length(x) %% 2L == 1L) {
-    (length(x) + 1L) %/% 2L
+  n <- length(x)
+  half <- if (n %% 2L == 1L) {
+    (n + 1L) %/% 2L
   } else {
-    (length(x) + 1L:2L) %/% 2L
+    (n + 1L:2L) %/% 2L
   }
   nna <- length(x[is.na(x)])
   if (nna == 0L) {
