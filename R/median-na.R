@@ -80,16 +80,11 @@ decide_median_or_na <- function(x) {
   } else {
     (length(x) + 1L:2L) %/% 2L
   }
-  # xna <- x[is.na(x)]
   nna <- length(x[is.na(x)])
-  # Used to be: any(half - nna < 1L)
   if (any(nna + 1L > half)) {
     return(x[NA_integer_])
   }
   x <- sort(x[!is.na(x)])
-  # if (!isTRUE(all(c(x, xna)[half] == c(xna, x)[half]))) {
-  # # Experimental replacement for the condition right above (using `nna`,
-  # # the number of missings; instead of `xna`, the missings themselves):
   if (!isTRUE(all(x[half] == x[half - nna]))) {
     return(x[NA_integer_])
   } else if (length(half) == 2L) {
