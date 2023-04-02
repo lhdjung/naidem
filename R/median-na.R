@@ -59,9 +59,26 @@ median_na.default <- function(x, na.rm = FALSE, ...) {
     names(x) <- NULL
   if (na.rm)
     x <- x[!is.na(x)]
-  else if (any(is.na(x)))
-  ### START of new code
-    return(decide_median_or_na(x)) # used to be: return(x[NA_integer_])
+  else if (any(is.na(x))) {
+    ### START of new code
+    half <- if (length(x) %% 2L == 1L) {
+      (length(x) + 1L) %/% 2L
+    } else {
+      (length(x) + 1L:2L) %/% 2L
+    }
+    nna <- length(x[is.na(x)])
+    if (any(nna + 1L > half)) {
+      return(x[NA_integer_])
+    }
+    x <- sort(x[!is.na(x)])
+    if (!isTRUE(all(x[half] == x[half - nna]))) {
+      return(x[NA_integer_])
+    } else if (length(half) == 2L) {
+      return(sum(x[half]) / 2)
+    } else {
+      return(x[half])
+    }
+  }
   ### END of new code
   n <- length(x)
   if (n == 0L)
@@ -70,27 +87,5 @@ median_na.default <- function(x, na.rm = FALSE, ...) {
   if (n%%2L == 1L)
     sort(x, partial = half)[half]
   else mean(sort(x, partial = half + 0L:1L)[half + 0L:1L])
-}
-
-
-# Internal helper function:
-decide_median_or_na <- function(x) {
-  half <- if (length(x) %% 2L == 1L) {
-    (length(x) + 1L) %/% 2L
-  } else {
-    (length(x) + 1L:2L) %/% 2L
-  }
-  nna <- length(x[is.na(x)])
-  if (any(nna + 1L > half)) {
-    return(x[NA_integer_])
-  }
-  x <- sort(x[!is.na(x)])
-  if (!isTRUE(all(x[half] == x[half - nna]))) {
-    return(x[NA_integer_])
-  } else if (length(half) == 2L) {
-    return(sum(x[half]) / 2)
-  } else {
-    return(x[half])
-  }
 }
 
