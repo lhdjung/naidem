@@ -83,7 +83,7 @@ median_possible_values.default <- function(x) {
   x <- sort(x[!is.na(x)])
   half_span <- c(half - nna)[1L]:half[length(half)]
   if (length(half) == 2L) {
-    out <- integer(length(half_span))
+    out <- numeric(length(half_span))
     for (i in seq_along(half_span)) {
       out[i] <- sum(x[half_span[i:(i + 1L)]]) / 2
     }
