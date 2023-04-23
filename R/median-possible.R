@@ -67,6 +67,7 @@ median_possible_values.default <- function(x) {
   } else {
     (n + 1L:2L) %/% 2L
   }
+  rm(n)
   nna <- length(x[is.na(x)])
   if (nna == 0L) {
     return(median_na(x))
@@ -79,10 +80,10 @@ median_possible_values.default <- function(x) {
   if (length(half) == 2L) {
     out <- numeric(length(half_span))
     for (i in seq_along(half_span)) {
-      out[i] <- sum(x[half_span[i:(i + 1L)]]) / 2
+      out[i] <- mean(x[half_span[i:(i + 1L)]])
     }
     half_span_last <- half_span[length(half_span)]
-    out[length(out)] <- sum(x[half_span_last], x[half_span_last + 1L]) / 2
+    out[length(out)] <- mean(c(x[half_span_last], x[half_span_last + 1L]))
     unique(out[!is.na(out)])
   } else {
     unique(x[c(half - nna)[1L]:half[length(half)]])
