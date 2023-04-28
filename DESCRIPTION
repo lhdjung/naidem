@@ -9,8 +9,7 @@ Authors@R:
 Description: Provide alternatives to `median()` methods
              to check if the median can be determined even
              if some values are missing.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: GPL (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
