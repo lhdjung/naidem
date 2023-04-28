@@ -33,7 +33,7 @@ Use `median_na()` as a drop-in replacement for `median()`. Its default method is
 You can install the development version of naidem like so:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+remotes::install_github("lhdjung/naidem")
 ```
 
 # Get started

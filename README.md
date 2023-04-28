@@ -18,7 +18,7 @@ method is the same as in `median()` except for handling missing values.
 You can install the development version of naidem like so:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+remotes::install_github("lhdjung/naidem")
 ```
 
 # Get started
