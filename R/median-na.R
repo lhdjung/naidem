@@ -43,11 +43,9 @@ median_na <- function(x, na.rm = FALSE, ...) {
 }
 
 
-# Most of this code is copied from `stats::median.default()`. The only
-# difference is in the line that says `return(decide_median_or_na(x))` instead
-# of `return(x[NA_integer_])`. This is the only way in which the default method
-# for `naidem::median_na()` should differ from `stats::median.default()`:
-# handling input vectors with one or more missing values.
+# Some of this code is copied from `stats::median.default()`. The default method
+# for `median_na()` is only different from that for `stats::median()` if one or
+# more values are missing from `x`.
 
 #' @name median_na
 #' @export
