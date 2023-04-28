@@ -62,6 +62,7 @@ median_range <- function(x) {
 
 median_possible_values.default <- function(x) {
   n <- length(x)
+  nna <- length(x[is.na(x)])
   half <- if (n %% 2L == 1L) {
     (n + 1L) %/% 2L
   } else {
@@ -86,7 +87,7 @@ median_possible_values.default <- function(x) {
     out[length(out)] <- mean(c(x[half_span_last], x[half_span_last + 1L]))
     unique(out[!is.na(out)])
   } else {
-    unique(x[c(half - nna)[1L]:half[length(half)]])
+    unique(x[half_span])
   }
 }
 
