@@ -4,6 +4,8 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Lukas", "Jung", , "jung-lukas@gmx.net", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
+    # TO DO: Find a way to credit the R Core Team here for the parts of the
+    # code that were copied from `stats::median.default()`
 Description: Provide alternatives to `median()` methods
              to check if the median can be determined even
              if some values are missing.
@@ -18,3 +20,5 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+URL: https://github.com/lhdjung/naidem
+BugReports: https://github.com/lhdjung/naidem/issues
