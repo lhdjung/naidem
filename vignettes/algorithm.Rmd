@@ -16,68 +16,83 @@ knitr::opts_chunk$set(
 
 Follow these steps to implement naidem's median algorithm in another language. It is tailored to numeric distributions in which some values are missing.
 
-This vignette presents two distinct algorithms for distributions of odd and even length (i.e., number of values). The R implementation is condensed into one because vectorization in R allows for code that deemphasizes the difference in length. Other languages may need more explicit distinctions. However, it is of course possible to combine the two algorithms into a single one that first checks whether the length is even or odd.
+This vignette uses pseudo-code to present two distinct algorithms for distributions of odd and even length (i.e., number of values). The R implementation, i.e., the default method for `median_na()`, condenses both into one. That is because vectorization in R allows for code that deemphasizes the difference in length. Other languages may need more explicit distinctions. However, it is of course possible to combine the two algorithms into a single one that first checks whether the length is even or odd.
 
-I have tested this algorithm with a good number of distributions, but I haven't been able to prove it. Help is very welcome.
+I have tested this algorithm with a good number of distributions, but I haven't been able to formally prove it. Help is very welcome.
 
-Below, $x$ is the input distribution. $length(d)$ computes the number of values in a distribution $d$, $sort(d)$ is a sorting algorithm, and $d[missing]$ indexes all missing values in $d$ (but no known values). $NA$ denotes a single missing value. Unlike R, these algorithms use zero-indexing. Note that the combination of division and flooring in step 1 of the odd-length algorithm is equivalent to integer division.
+Below, `x` is the input distribution. `length(d)` computes the number of values in a distribution `d`, `sort(d)` is a sorting algorithm, and `d[missing]` indexes all missing values in `d` (but no known values). `NA` denotes a single missing value. Unlike R, these algorithms use zero-indexing. Note that the combination of division and flooring in step 1 of the algorithm for odd lengths is equivalent to integer division.
 
-## Odd-length distributions
+## For odd-length distributions
 
-1.  $i_{half} := \lfloor{\frac{length(x)}{2}}\rfloor$ // Determine the central index of $x$.
+``` {eval="FALSE"}
+# 1. Determine the central index of `x`.
+i_half := floor(length(x) / 2)
 
-2.  $n_{NA} := length(x[missing])$ // Count the missing values in $x$.
+# 2. Count the missing values in `x`.
+n_na := length(x[missing])
 
-3.  if $n_{NA} > i_{half}$: // The offset index must not be negative.
+# 3. If the offset index is negative,
+# the median cannot be determined.
+if n_na > i_half:
+   return NA
 
-    return $NA$ // If it is, the median cannot be determined.
+# 4. Remove all missing values from `x`, then sort `x`.
+x := sort(x[!missing])
 
-4.  $x := sort(x{[!missing]})$ // Remove all missing values from $x$, then sort $x$.
+# 5. Check values at two specific indices for equality.
+# If they are equal, return the central `x` value, i.e.,
+# the median. If they are not equal, return a missing value.
+if x[i_half] == x[i_half - n_na]:
+   return x[i_half]
+else:
+   return NA
+```
 
-5.  if $x[i_{half}] = x[i_{half} - n_{NA}]$: // Check values at two specific indices for equality.
+## For even-length distributions
 
-    return $x[i_{half}]$ // If equal, return the central $x$ value, i.e., the median.
+``` {eval="FALSE"}
+# 1. Determine the upper central index of `x`.
+i_half_2 := length(x) / 2
 
-    else:
+# 2. Determine the lower central index.
+i_half_1 := i_half_2 - 1
 
-    return $NA$ // If not equal, return a missing value.
+# 3. Count the missing values in `x`.
+n_na := length(x[missing])
 
-## Even-length distributions
+# 4. Neither offset index can be negative.
+# If any is, the median cannot be determined.
+if n_na > i_half_1:
+   return NA
 
-1.  $i_{half2} := \frac{length(x)}{2}$ // Determine the upper central index of $x$.
+# 5. Remove all missing values from `x`, then sort `x`.
+x := sort(x[!missing])
 
-2.  $i_{half1} := i_{half2} - 1$ // Determine the lower central index.
-
-3.  $n_{NA} := length(x[missing])$ // Count the missing values in $x$.
-
-4.  if $n_{NA} > i_{half1}$: // Neither offset index can be negative.
-
-    return $NA$ // If any is, the median cannot be determined.
-
-5.  $x := sort(x{[!missing]})$ // Remove all missing values from $x$, then sort $x$.
-
-6.  if $x[i_{half1}] = x[i_{half1} - n_{NA}] \land x[i_{half2}] = x[i_{half2} - n_{NA}]$: // Check if both pairs are equal.
-
-    return $\frac{x[i_{half1}] + x[i_{half2}]}{2}$ // If both are equal, return the mean of the central values.
-
-    else:
-
-    return $NA$ // If one or both are not equal, return a missing value.
+# 6. Check whether both pairs are equal.
+# If they are, return the mean of the central values.
+# If one or both are not equal, return a missing value.
+if x[i_half_1] == x[i_half_1 - n_na] && x[i_half_2] == x[i_half_2 - n_na]:
+   return (x[i_half_1] + x[i_half_2]) / 2
+else:
+   return NA
+```
 
 ## Explanation
 
 Missing values may or may not make it impossible to determine the median. Implementations of the median should check whether they do for any given distribution, instead of simply assuming that they do every time.
 
-The algorithms check whether the putative median can be changed by a shift due to missing values. If so, the median depends on the position of the missing values in the sorted distribution --- and thus, on their values. Since these are unknown, the median cannot be determined. However, if the median remains the same after the shift, it is indifferent to the missing values: the median is identical for all possible true values behind the missing ones.
+The algorithms check whether the putative median can be changed by a shift due to missing values. If so, the median depends on the position of the missing values in the sorted distribution --- and thus, on their values. Since these are unknown, the median cannot be determined. However, if the median remains the same after the shift, it is indifferent to the missing values: the median is identical for all possible values behind the missing ones.
 
-It is generally easier to determine the median for distributions of an odd length. The same is true when missing values are present. The even-length algorithm operates with two central indices instead of one because even-length distributions don't have a single central value. The algorithm needs to compare $x$ at each of these indices with the respective index offset by the number of missing values. In this way, it effectively checks whether the pair of $x$ values that forms the central indices in the offset case is equal to the pair without the offset. The odd-length algorithm just checks two single values for equality.
+It is generally easier to determine the median for distributions of an odd length. The same is true when missing values are present. The even-length algorithm operates with two central indices instead of one because even-length distributions don't have a single central value. The algorithm needs to compare `x` at each of these indices with the respective index offset by the number of missing values. In this way, it effectively checks whether the pair of `x` values at the central indices in the offset case is equal to the pair without the offset. The odd-length algorithm just checks two single values for equality.
 
-The algorithms return $NA$ if any offset central index is negative, i.e., if $i_{half(1)} - n_{NA} < 0$. (This is step 3 for odd lengths and step 4 for even lengths. The pseudo-code in the algorithm is more efficient.) In the even-length case, only $i_{half1}$ needs to be tested because it is less then $i_{half2}$, so it is negative whenever $i_{half2}$ is. Why return $NA$ here? The median is never known in such cases, and indices must not be negative when testing for equality in the final condition. Negative indices are not well defined, and programming languages like R and Python would handle them in unintended ways.
+The algorithms return `NA` if any offset central index is negative, i.e., if `i_half(_1) - n_na < 0`. (This is step 3 for odd lengths and step 4 for even lengths. The pseudo-code in the algorithm is more efficient.) In the even-length case, only `i_half_1` needs to be tested because it is less then `i_half_2`, so it is negative whenever `i_half_2` is. Why return `NA` here? The median is never known in such cases, and indices must not be negative when testing for equality in the final condition. Negative indices are not well defined, and programming languages such as R and Python would handle them in unintended ways.
 
 ## R details
 
-The R implementation in naidem is more succinct than the above. This plays into the strengths of R, but it makes the code look a little different from the pseudo-code above. Again, note that the pseudo-code uses zero-indexing but R uses one-indexing. This is why `any(nna + 1L > half)` checks for non-positive indices, not just for negative ones.
+The R implementation in naidem is more succinct than the pseudo-code. This plays into the strengths of R, but it does make the code look a little different from the above. Again, note that the pseudo-code uses zero-indexing but R uses one-indexing. This is why `any(n_na + 1L > half)` checks for non-positive indices, not just for negative ones.
 
 The final condition checks whether the possible medians are *not* equal, and as a consequence, the function returns a missing value if the condition is `TRUE`. The reason is that the R code combines both algorithms into one, and if the negation returns `FALSE`, the median can be determined but the code still needs to check whether `x` was originally even or odd. To do so, it uses the `half` vector which has length 1 if `x` was odd and length 2 if `x` was even.
 
 Similarly, the condition is wrapped into `isTRUE(all())`, so that `all()` reduces two Boolean test results to one (in case of an even-length input). If this returns `NA`, the `isTRUE()` wrapping returns `FALSE`, so that the negation returns `TRUE` (and makes the function return `NA`) whenever any comparison between the possible median values returns either `NA` or `FALSE`.
+
+If this doesn't occur and `x` was originally even, the code  uses `mean()` instead of manually dividing the sum of the half-indexed `x` values by 2. That is because some classes may have specific `mean()` methods implemented. Compare this to the details section of `?stats::median()`.
