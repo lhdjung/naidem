@@ -4,11 +4,14 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Lukas", "Jung", , "jung-lukas@gmx.net", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
+    #person("R Core Team", comment = "(some code and documentation was copied)",
+    #role = "ctb")
     # TO DO: Find a way to credit the R Core Team here for the parts of the
     # code that were copied from `stats::median.default()`
-Description: Provide alternatives to `median()` methods
+Description: Provide alternatives to 'median()' methods
              to check if the median can be determined even
-             if some values are missing.
+             if some values are missing. See Franzese and Iuliano (2019)
+             <doi:10.1016/B978-0-12-809633-8.20354-3> for general information.
 License: GPL (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
