@@ -62,33 +62,32 @@ median_range <- function(x) {
 
 median_possible_values.default <- function(x) {
   n <- length(x)
-  nna <- length(x[is.na(x)])
+  x <- x[!is.na(x)]
+  nna <- n - length(x)
   half <- if (n %% 2L == 1L) {
     (n + 1L) %/% 2L
   } else {
     (n + 1L:2L) %/% 2L
   }
   rm(n)
-  nna <- length(x[is.na(x)])
   if (nna == 0L) {
     return(median_na(x))
     # This part might be correct, but I'm genuinely unsure:
   } else if (any(nna >= half)) {
     return(x[NA_integer_])
   }
-  x <- sort(x[!is.na(x)])
+  x <- sort(x)
   half_span <- c(half - nna)[1L]:half[length(half)]
-  if (length(half) == 2L) {
-    out <- vector(typeof(x), length(half_span))
-    for (i in seq_along(half_span)) {
-      out[i] <- mean(x[half_span[i:(i + 1L)]])
-    }
-    half_span_last <- half_span[length(half_span)]
-    out[length(out)] <- mean(c(x[half_span_last], x[half_span_last + 1L]))
-    unique(out[!is.na(out)])
-  } else {
-    unique(x[half_span])
+  if (length(half) == 1L) {
+    return(unique(x[half_span]))
   }
+  out <- vector(typeof(x), length(half_span))
+  for (i in seq_along(out)) {
+    out[i] <- mean(x[half_span[i:(i + 1L)]])
+  }
+  half_span_last <- half_span[length(half_span)]
+  out[length(out)] <- mean(c(x[half_span_last], x[half_span_last + 1L]))
+  unique(out[!is.na(out)])
 }
 
 #' @name median-possible
