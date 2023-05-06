@@ -19,5 +19,6 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-URL: https://github.com/lhdjung/naidem
+URL: https://github.com/lhdjung/naidem,
+    https://lhdjung.github.io/naidem/
 BugReports: https://github.com/lhdjung/naidem/issues
