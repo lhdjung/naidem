@@ -22,7 +22,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">naidem</a>
 
@@ -82,7 +82,7 @@ language. It is tailored to numeric distributions in which some values
 are missing.</p>
 <p>This vignette uses pseudo-code to present two distinct algorithms for
 distributions of odd and even length (i.e., number of values). The R
-implementation, i.e., the default method for <code><a href="../reference/median_na.html">median_na()</a></code>,
+implementation, i.e., the default method for <code>medianna()</code>,
 condenses both into one. That is because vectorization in R allows for
 code that deemphasizes the difference in length. Other languages may
 need more explicit distinctions. However, it is of course possible to
@@ -102,14 +102,14 @@ equivalent to integer division.</p>
 <h2 id="for-odd-length-distributions">For odd-length distributions<a class="anchor" aria-label="anchor" href="#for-odd-length-distributions"></a>
 </h2>
 <pre eval="FALSE"><code># 1. Determine the central index of `x`.
-i_half := floor(length(x) / 2)
+half := floor(length(x) / 2)
 
 # 2. Count the missing values in `x`.
-n_na := length(x[missing])
+nna := length(x[missing])
 
 # 3. If the offset index is negative,
 # the median cannot be determined.
-if n_na &gt; i_half:
+if nna &gt; half:
    return NA
 
 # 4. Remove all missing values from `x`, then sort `x`.
@@ -118,8 +118,8 @@ x := sort(x[!missing])
 # 5. Check values at two specific indices for equality.
 # If they are equal, return the central `x` value, i.e.,
 # the median. If they are not equal, return a missing value.
-if x[i_half] == x[i_half - n_na]:
-   return x[i_half]
+if x[half] == x[half - nna]:
+   return x[half]
 else:
    return NA</code></pre>
 </div>
@@ -127,17 +127,17 @@ else:
 <h2 id="for-even-length-distributions">For even-length distributions<a class="anchor" aria-label="anchor" href="#for-even-length-distributions"></a>
 </h2>
 <pre eval="FALSE"><code># 1. Determine the upper central index of `x`.
-i_half_2 := length(x) / 2
+half_2 := length(x) / 2
 
 # 2. Determine the lower central index.
-i_half_1 := i_half_2 - 1
+half_1 := half_2 - 1
 
 # 3. Count the missing values in `x`.
-n_na := length(x[missing])
+nna := length(x[missing])
 
 # 4. Neither offset index can be negative.
 # If any is, the median cannot be determined.
-if n_na &gt; i_half_1:
+if nna &gt; half_1:
    return NA
 
 # 5. Remove all missing values from `x`, then sort `x`.
@@ -146,8 +146,8 @@ x := sort(x[!missing])
 # 6. Check whether both pairs are equal.
 # If they are, return the mean of the central values.
 # If one or both are not equal, return a missing value.
-if x[i_half_1] == x[i_half_1 - n_na] &amp;&amp; x[i_half_2] == x[i_half_2 - n_na]:
-   return (x[i_half_1] + x[i_half_2]) / 2
+if x[half_1] == x[half_1 - nna] &amp;&amp; x[half_2] == x[half_2 - nna]:
+   return (x[half_1] + x[half_2]) / 2
 else:
    return NA</code></pre>
 </div>
@@ -176,12 +176,12 @@ the central indices in the offset case is equal to the pair without the
 offset. The odd-length algorithm just checks two single values for
 equality.</p>
 <p>The algorithms return <code>NA</code> if any offset central index is
-negative, i.e., if <code>i_half(_1) - n_na &lt; 0</code>. (This is step
-3 for odd lengths and step 4 for even lengths. The pseudo-code in the
+negative, i.e., if <code>half(_1) - nna &lt; 0</code>. (This is step 3
+for odd lengths and step 4 for even lengths. The pseudo-code in the
 algorithm is more efficient.) In the even-length case, only
-<code>i_half_1</code> needs to be tested because it is less then
-<code>i_half_2</code>, so it is negative whenever <code>i_half_2</code>
-is. Why return <code>NA</code> here? The median is never known in such
+<code>half_1</code> needs to be tested because it is less then
+<code>half_2</code>, so it is negative whenever <code>half_2</code> is.
+Why return <code>NA</code> here? The median is never known in such
 cases, and indices must not be negative when testing for equality in the
 final condition. Negative indices are not well defined, and programming
 languages such as R and Python would handle them in unintended ways.</p>
@@ -193,7 +193,7 @@ languages such as R and Python would handle them in unintended ways.</p>
 This plays into the strengths of R, but it does make the code look a
 little different from the above. Again, note that the pseudo-code uses
 zero-indexing but R uses one-indexing. This is why
-<code>any(n_na + 1L &gt; half)</code> checks for non-positive indices,
+<code>any(nna + 1L &gt; half)</code> checks for non-positive indices,
 not just for negative ones.</p>
 <p>The final condition checks whether the possible medians are
 <em>not</em> equal, and as a consequence, the function returns a missing
@@ -214,8 +214,8 @@ values returns either <code>NA</code> or <code>FALSE</code>.</p>
 code uses <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code> instead of manually dividing the sum of
 the half-indexed <code>x</code> values by 2. That is because some
 classes may have specific <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code> methods implemented.
-Compare this to the details section of
-<code>?stats::median()</code>.</p>
+Compare this to the details section of <code><a href="https://rdrr.io/r/stats/median.html" class="external-link">stats::median()</a></code>’s
+documentation.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
