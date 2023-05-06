@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 Follow these steps to implement naidem's median algorithm in another language. It is tailored to numeric distributions in which some values are missing.
 
-This vignette uses pseudo-code to present two distinct algorithms for distributions of odd and even length (i.e., number of values). The R implementation, i.e., the default method for `medianna()`, condenses both into one. That is because vectorization in R allows for code that deemphasizes the difference in length. Other languages may need more explicit distinctions. However, it is of course possible to combine the two algorithms into a single one that first checks whether the length is even or odd.
+This vignette uses pseudo-code to present two distinct algorithms for distributions of odd and even length (i.e., number of values). The R implementation, i.e., the default method for `median_na()`, condenses both into one. That is because vectorization in R allows for code that deemphasizes the difference in length. Other languages may need more explicit distinctions. However, it is of course possible to combine the two algorithms into a single one that first checks whether the length is even or odd.
 
 I have tested this algorithm with a good number of distributions, but I haven't been able to formally prove it. Help is very welcome.
 
