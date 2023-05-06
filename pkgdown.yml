@@ -3,7 +3,7 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   algorithm: algorithm.html
-last_built: 2023-05-06T10:59Z
+last_built: 2023-05-06T11:02Z
 urls:
   reference: https://lhdjung.github.io/naidem/reference
   article: https://lhdjung.github.io/naidem/articles
