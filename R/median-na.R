@@ -73,18 +73,21 @@ median_na.default <- function(x, na.rm = FALSE, ...) {
   ### START of new code
   else if (anyNA(x)) {
     n <- length(x)
+    # Central index or indices in `x`; length 1 if the length of `x` is odd,
+    # length 2 if it is even:
     half <- if (n %% 2L == 1L) {
       (n + 1L) %/% 2L
     } else {
       (n + 1L:2L) %/% 2L
     }
     nna <- length(x[is.na(x)])
-    # Check for non-positive indices
+    # Check for non-positive indices:
     if (any(nna + 1L > half)) {
       return(x[NA_integer_])
     }
     x <- sort(x[!is.na(x)])
-    # Check for equality with offset value(s)
+    # Check for equality with offset value(s); see `vignette("algorithm")` for
+    # details:
     if (!isTRUE(all(x[half] == x[half - nna]))) {
       return(x[NA_integer_])
     } else if (length(half) == 2L) {

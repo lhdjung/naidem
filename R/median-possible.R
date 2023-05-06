@@ -66,27 +66,39 @@ median_possible_values.default <- function(x) {
   n <- length(x)
   x <- x[!is.na(x)]
   nna <- n - length(x)
+  # Central index or indices in `x`; length 1 if the length of `x` is odd,
+  # length 2 if it is even:
   half <- if (n %% 2L == 1L) {
     (n + 1L) %/% 2L
   } else {
     (n + 1L:2L) %/% 2L
   }
   rm(n)
+  # Some special rules:
+  # -- If all values are known, the only possible value is the actual one as
+  # determined by `median_na()`.
+  # -- If any central value is missing, there is no way to determine the
+  # possible median values.
   if (nna == 0L) {
     return(median_na(x))
-    # This part might be correct, but I'm genuinely unsure:
   } else if (any(nna >= half)) {
     return(x[NA_integer_])
   }
+  # Order `x` values, then compute the range of possible median locations:
   x <- sort(x)
   half_span <- c(half - nna)[1L]:half[length(half)]
+  # For odd-length vectors only:
   if (length(half) == 1L) {
     return(unique(x[half_span]))
   }
+  # The rest is for even-length vectors only. Each possible value (except for
+  # the last) is computed by taking the mean of two consecutive values at the
+  # possible median positions (`half_span`):
   out <- vector(typeof(x), length(half_span))
   for (i in seq_along(out)) {
     out[i] <- mean(x[half_span[i:(i + 1L)]])
   }
+  # Compute the last possible value "manually":
   half_span_last <- half_span[length(half_span)]
   out[length(out)] <- mean(c(x[half_span_last], x[half_span_last + 1L]))
   unique(out[!is.na(out)])
