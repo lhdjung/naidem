@@ -26,6 +26,8 @@
 #'
 #' @export
 #'
+#' @author Lukas Jung, R Core Team
+#'
 #' @examples
 #' # All possible values,
 #' # plus the range:

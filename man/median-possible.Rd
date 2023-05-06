@@ -63,3 +63,6 @@ x3 <- c(1, 1, 2, NA, NA, NA)
 median_possible_values(x3)
 median_range(x3)
 }
+\author{
+Lukas Jung, R Core Team
+}
