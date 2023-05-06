@@ -19,10 +19,11 @@ computation proceeds. Default is \code{FALSE}.}
 method.}
 }
 \value{
-Length-1 vector of the same type as \code{x}. (The only exception: If \code{x}
-is logical or integer and has an even length, the result will be a double.)
+Length-1 vector of the same type as \code{x}. The only exception:
+If \code{x} is logical or integer and has an even length, the result will be a
+double.
 
-Returns \code{NA} of the same type as \code{x} if and only if the median can't be
+Returns \code{NA} (of the same type as \code{x}) if and only if the median can't be
 determined because of missing values, or if there are no values.
 }
 \description{

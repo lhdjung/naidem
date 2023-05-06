@@ -18,13 +18,16 @@
 #'
 #'   If a new method is necessary, please make sure it deals with missing values
 #'   like `median_na.default()` does.
+
+# # DON'T REFLOW THIS SECTION:
+
+#' @return Length-1 vector of the same type as `x`. The only exception:
+#'   If `x` is logical or integer and has an even length, the result will be a
+#'   double.
 #'
-#' @return Length-1 vector of the same type as `x`. (The only exception: If `x`
-#'   is logical or integer and has an even length, the result will be a double.)
-#'
-#'   Returns `NA` of the same type as `x` if and only if the median can't be
+#'   Returns `NA` (of the same type as `x`) if and only if the median can't be
 #'   determined because of missing values, or if there are no values.
-#'
+
 #' @export
 #'
 #' @author Lukas Jung, R Core Team
