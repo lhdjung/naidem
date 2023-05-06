@@ -115,7 +115,7 @@
 <span><span class="fu"><a href="reference/median_na.html">median_na</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] NA</span></span></code></pre></div>
 <p>Compare this to <code>NA ^ 0</code>, which returns <code>1</code> even though <code>NA ^ 2</code> returns <code>NA</code>. If the exponent is 0, the result is the same for all possible bases. The same is sometimes true for the median. Therefore, implementations should check for this case and return the median if and only if it can be determined. This also makes <code>NA</code> more meaningful when it is returned: users can be sure that the median really is unknown.</p>
-<p>See <code><a href="articles/algorithm.html">vignette("algorithm")</a></code> for more information on naidem’s solution.</p>
+<p>See <a href="https://lhdjung.github.io/naidem/articles/algorithm.html"><em>Implementing the algorithm</em></a> for more information on naidem’s solution.</p>
 <div class="section level3">
 <h3 id="possible-medians">Possible medians<a class="anchor" aria-label="anchor" href="#possible-medians"></a>
 </h3>

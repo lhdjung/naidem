@@ -89,13 +89,12 @@ method.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Length-1 vector of the same type as <code>x</code>. (The only exception: If <code>x</code></p>
+<p>Length-1 vector of the same type as <code>x</code>. The only exception:
+If <code>x</code> is logical or integer and has an even length, the result will be a
+double.</p>
 
 
-<p>is logical or integer and has an even length, the result will be a double.)</p>
-
-
-<p>Returns <code>NA</code> of the same type as <code>x</code> if and only if the median can't be
+<p>Returns <code>NA</code> (of the same type as <code>x</code>) if and only if the median can't be
 determined because of missing values, or if there are no values.</p>
     </div>
     <div class="section level2">
