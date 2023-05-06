@@ -1,9 +1,10 @@
 Package: naidem
-Title: Median with missing values analysis
+Title: Median with Missing Values Analysis
 Version: 0.0.0.9000
 Authors@R: c(
-    person("Lukas", "Jung", "jung-lukas@gmx.net", role = c("aut", "cre")),
-    person("R Core Team (some code and documentation was copied)"))
+    person("Lukas", "Jung", email = "jung-lukas@gmx.net", role = c("aut", "cre")),
+    person("R Core Team", comment = "some code and documentation was copied", role = "ctb")
+  )
 Description: Provide alternatives to 'median()' methods
              to check if the median can be determined even
              if some values are missing. See Franzese and Iuliano (2019)
