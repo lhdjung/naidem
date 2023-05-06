@@ -70,8 +70,8 @@ median_na.default <- function(x, na.rm = FALSE, ...) {
     names(x) <- NULL
   if (na.rm)
     x <- x[!is.na(x)]
-  else if (any(is.na(x))) {
-    ### START of new code
+  ### START of new code
+  else if (anyNA(x)) {
     n <- length(x)
     half <- if (n %% 2L == 1L) {
       (n + 1L) %/% 2L
