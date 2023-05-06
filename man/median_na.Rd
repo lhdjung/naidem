@@ -37,17 +37,28 @@ values are missing: \code{median()} always returns \code{NA} in this case, but
 for it. As with \code{\link[stats:median]{stats::median()}}, the default method should work for
 most classes for which a median is a reasonable concept (e.g., "\code{\link{Date}}").
 
-If a new method is necessary, please make sure it takes care with missing
-values like \code{median_na.default()} does.
+If a new method is necessary, please make sure it deals with missing values
+like \code{median_na.default()} does.
 }
 \examples{
 # If no values are missing,
 # it works like `median()`:
-median_na(1:4)                # = 2.5 [even number]
-median_na(c(1:3, 100, 1000))  # = 3 [odd, robust]
+median(1:4)
+median_na(1:4)
+median(c(1:3, 100, 1000))
+median_na(c(1:3, 100, 1000))
 
 # With some `NA`s, the median can
-# sometimes still be determined:
-median_na(c(0, 1, 1, 1, NA))          # = 1
-median_na(c(0, 0, NA, 0, 0, NA, NA))  # = 0
+# sometimes still be determined...
+median_na(c(0, 1, 1, 1, NA))
+median_na(c(0, 0, NA, 0, 0, NA, NA))
+
+# ...unless there are too many `NA`s...
+median_na(c(0, 1, 1, 1, NA, NA))
+
+# ...or too many unique values:
+median_na(c(0, 1, 2, 3, NA))
+}
+\author{
+Lukas Jung, R Core Team
 }

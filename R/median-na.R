@@ -16,8 +16,8 @@
 #'   for it. As with [`stats::median()`], the default method should work for
 #'   most classes for which a median is a reasonable concept (e.g., "[`Date`]").
 #'
-#'   If a new method is necessary, please make sure it takes care with missing
-#'   values like `median_na.default()` does.
+#'   If a new method is necessary, please make sure it deals with missing values
+#'   like `median_na.default()` does.
 #'
 #' @return Length-1 vector of the same type as `x`. (The only exception: If `x`
 #'   is logical or integer and has an even length, the result will be a double.)
@@ -27,16 +27,26 @@
 #'
 #' @export
 #'
+#' @author Lukas Jung, R Core Team
+#'
 #' @examples
 #' # If no values are missing,
 #' # it works like `median()`:
-#' median_na(1:4)                # = 2.5 [even number]
-#' median_na(c(1:3, 100, 1000))  # = 3 [odd, robust]
+#' median(1:4)
+#' median_na(1:4)
+#' median(c(1:3, 100, 1000))
+#' median_na(c(1:3, 100, 1000))
 #'
 #' # With some `NA`s, the median can
-#' # sometimes still be determined:
-#' median_na(c(0, 1, 1, 1, NA))          # = 1
-#' median_na(c(0, 0, NA, 0, 0, NA, NA))  # = 0
+#' # sometimes still be determined...
+#' median_na(c(0, 1, 1, 1, NA))
+#' median_na(c(0, 0, NA, 0, 0, NA, NA))
+#'
+#' # ...unless there are too many `NA`s...
+#' median_na(c(0, 1, 1, 1, NA, NA))
+#'
+#' # ...or too many unique values:
+#' median_na(c(0, 1, 2, 3, NA))
 
 median_na <- function(x, na.rm = FALSE, ...) {
   UseMethod("median_na")
