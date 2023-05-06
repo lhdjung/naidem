@@ -72,7 +72,9 @@ implementations should check for this case and return the median if and
 only if it can be determined. This also makes `NA` more meaningful when
 it is returned: users can be sure that the median really is unknown.
 
-See `vignette("algorithm")` for more information on naidem’s solution.
+See [*Implementing the
+algorithm*](https://lhdjung.github.io/naidem/articles/algorithm.html)
+for more information on naidem’s solution.
 
 ### Possible medians
 
