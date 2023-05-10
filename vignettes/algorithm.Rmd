@@ -20,13 +20,13 @@ This vignette uses pseudo-code to present two distinct algorithms for distributi
 
 I have tested this algorithm with a good number of distributions, but I haven't been able to formally prove it. Help is very welcome.
 
-Below, `x` is the input distribution. `length(d)` computes the number of values in a distribution `d`, `sort(d)` is a sorting algorithm, and `d[missing]` indexes all missing values in `d` (but no known values). `NA` denotes a single missing value. Unlike R, these algorithms use zero-indexing. Note that the combination of division and flooring in step 1 of the algorithm for odd lengths is equivalent to integer division.
+Below, `x` is the input distribution. `length(d)` computes the number of values in a distribution `d`, `sort(d)` is a sorting algorithm, and `d[missing]` indexes all missing values in `d` (but no known values). `NA` denotes a single missing value. Unlike R, these algorithms use zero-indexing. Note that step 1 of the algorithm for odd lengths is equivalent to integer division for such distributions.
 
 ## For odd-length distributions
 
 ``` {eval="FALSE"}
 # 1. Determine the central index of `x`.
-half := floor(length(x) / 2)
+half := length(x) / 2 - 0.5
 
 # 2. Count the missing values in `x`.
 nna := length(x[missing])
