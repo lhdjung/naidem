@@ -26,7 +26,7 @@ devtools::load_all(".")
 
 The goal of naidem is to compute the median in a way that handles missing values properly: return `NA` if and only if the median can't be determined from the data. Its source code has no dependencies.
 
-Use `median_na()` as a drop-in replacement for `median()`. Its default method is the same as in `median()` except for handling missing values.
+Use `median2()` as a drop-in replacement for `median()`. Its default method is the same as in `median()` except for handling missing values.
 
 ## Installation
 
@@ -57,10 +57,10 @@ The actual median is 7, irrespective of the true value behind `NA`. Yet `median(
 
 ## The solution
 
-Use naidem's `median_na()` instead. This function will return the median whenever it can be determined:
+Use naidem's `median2()` instead. This function will return the median whenever it can be determined:
 
 ```{r}
-median_na(x1)
+median2(x1)
 ```
 
 If the median really is unclear, both functions return `NA`:
@@ -68,7 +68,7 @@ If the median really is unclear, both functions return `NA`:
 ```{r}
 x2 <- c(3, 4, 4, 5, NA, NA)
 median(x2)
-median_na(x2)
+median2(x2)
 ```
 
 Compare this to `NA ^ 0`, which returns `1` even though `NA ^ 2` returns `NA`. If the exponent is 0, the result is the same for all possible bases. The same is sometimes true for the median. Therefore, implementations should check for this case and return the median if and only if it can be determined. This also makes `NA` more meaningful when it is returned: users can be sure that the median really is unknown.

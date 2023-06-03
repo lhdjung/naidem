@@ -10,7 +10,7 @@ The goal of naidem is to compute the median in a way that handles
 missing values properly: return `NA` if and only if the median can’t be
 determined from the data. Its source code has no dependencies.
 
-Use `median_na()` as a drop-in replacement for `median()`. Its default
+Use `median2()` as a drop-in replacement for `median()`. Its default
 method is the same as in `median()` except for handling missing values.
 
 ## Installation
@@ -47,11 +47,11 @@ The actual median is 7, irrespective of the true value behind `NA`. Yet
 
 ## The solution
 
-Use naidem’s `median_na()` instead. This function will return the median
+Use naidem’s `median2()` instead. This function will return the median
 whenever it can be determined:
 
 ``` r
-median_na(x1)
+median2(x1)
 #> [1] 7
 ```
 
@@ -61,7 +61,7 @@ If the median really is unclear, both functions return `NA`:
 x2 <- c(3, 4, 4, 5, NA, NA)
 median(x2)
 #> [1] NA
-median_na(x2)
+median2(x2)
 #> [1] NA
 ```
 

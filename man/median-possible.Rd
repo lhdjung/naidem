@@ -23,15 +23,15 @@ median_range(x)
 Vector of the same type as \code{x}. Its values are unique and sorted by
 size. It always has length 2 when calling \code{median_range()}.
 
-If the median can be determined (i.e., \code{median_na()} would return a
-non-\code{NA} value), \code{median_possible_values()} returns just one value, and
+If the median can be determined (i.e., \code{median2()} would return a non-\code{NA}
+value), \code{median_possible_values()} returns just one value, and
 \code{median_range()} returns two identical values.
 
 If there are missing values at the median position, the set of possible
 medians cannot be determined. The functions will then return \code{NA} or \code{c(NA, NA)}, respectively.
 }
 \description{
-These functions are helpful if \code{median_na()} returns \code{NA}:
+These functions are helpful if \code{median2()} returns \code{NA}:
 \itemize{
 \item \code{median_possible_values()} returns all values that might possibly be the
 median, given the number of missing values.
@@ -39,7 +39,7 @@ median, given the number of missing values.
 }
 }
 \details{
-Like \code{median_na()}, these functions are generic, so methods can be
+Like \code{median2()}, these functions are generic, so methods can be
 defined for other classes. This documentation describes the default
 methods.
 }

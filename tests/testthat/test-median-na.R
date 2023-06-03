@@ -14,19 +14,19 @@ x11 <- c(7, 7, 7, 8, NA, NA)
 
 
 test_that("the default method returns non-`NA` values when it should", {
-  expect_equal(median_na(x1), 1)
-  expect_equal(median_na(x2), 1)
-  expect_equal(median_na(x4), 0)
-  expect_equal(median_na(x5), 1)
-  expect_equal(median_na(x6), 1)
-  expect_equal(median_na(x8), 5.8)
+  expect_equal(median2(x1), 1)
+  expect_equal(median2(x2), 1)
+  expect_equal(median2(x4), 0)
+  expect_equal(median2(x5), 1)
+  expect_equal(median2(x6), 1)
+  expect_equal(median2(x8), 5.8)
 })
 
 test_that("the default method returns `NA` when it should", {
-  expect_equal(median_na(x3 ), NA_real_)
-  expect_equal(median_na(x7 ), NA_real_)
-  expect_equal(median_na(x9 ), NA_real_)
-  expect_equal(median_na(x10), NA_real_)
-  expect_equal(median_na(x11), NA_real_)
+  expect_equal(median2(x3 ), NA_real_)
+  expect_equal(median2(x7 ), NA_real_)
+  expect_equal(median2(x9 ), NA_real_)
+  expect_equal(median2(x10), NA_real_)
+  expect_equal(median2(x11), NA_real_)
 })
 

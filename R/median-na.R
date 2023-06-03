@@ -2,9 +2,9 @@
 #'
 #' @description Compute the sample median.
 #'
-#'   `median_na()` works like the standard [`median()`] unless one or more
-#'   values are missing: `median()` always returns `NA` in this case, but
-#'   `median_na()` checks if the median can be determined nevertheless.
+#'   `median2()` works like the standard [`median()`] unless one or more values
+#'   are missing: `median()` always returns `NA` in this case, but `median2()`
+#'   checks if the median can be determined nevertheless.
 #'
 #' @param x Numeric or similar. Vector to search for its median.
 #' @param na.rm Boolean. If set to `TRUE`, missing values are removed before
@@ -12,12 +12,12 @@
 #' @param ... Optional further arguments for methods. Not used in the default
 #'   method.
 #'
-#' @details `median_na()` is a generic function, so new methods can be defined
-#'   for it. As with [`stats::median()`], the default method should work for
-#'   most classes for which a median is a reasonable concept (e.g., "[`Date`]").
+#' @details `median2()` is a generic function, so new methods can be defined for
+#'   it. As with [`stats::median()`], the default method should work for most
+#'   classes for which a median is a reasonable concept (e.g., "[`Date`]").
 #'
 #'   If a new method is necessary, please make sure it deals with missing values
-#'   like `median_na.default()` does.
+#'   like `median2.default()` does.
 
 # # DON'T REFLOW THIS SECTION:
 
@@ -36,34 +36,34 @@
 #' # If no values are missing,
 #' # it works like `median()`:
 #' median(1:4)
-#' median_na(1:4)
+#' median2(1:4)
 #' median(c(1:3, 100, 1000))
-#' median_na(c(1:3, 100, 1000))
+#' median2(c(1:3, 100, 1000))
 #'
 #' # With some `NA`s, the median can
 #' # sometimes still be determined...
-#' median_na(c(0, 1, 1, 1, NA))
-#' median_na(c(0, 0, NA, 0, 0, NA, NA))
+#' median2(c(0, 1, 1, 1, NA))
+#' median2(c(0, 0, NA, 0, 0, NA, NA))
 #'
 #' # ...unless there are too many `NA`s...
-#' median_na(c(0, 1, 1, 1, NA, NA))
+#' median2(c(0, 1, 1, 1, NA, NA))
 #'
 #' # ...or too many unique values:
-#' median_na(c(0, 1, 2, 3, NA))
+#' median2(c(0, 1, 2, 3, NA))
 
-median_na <- function(x, na.rm = FALSE, ...) {
-  UseMethod("median_na")
+median2 <- function(x, na.rm = FALSE, ...) {
+  UseMethod("median2")
 }
 
 
 # Some of this code is copied from `stats::median.default()`. The default method
-# for `median_na()` is only different from that for `stats::median()` if one or
+# for `median2()` is only different from that for `stats::median()` if one or
 # more values are missing from `x`.
 
-#' @name median_na
+#' @name median2
 #' @export
 
-median_na.default <- function(x, na.rm = FALSE, ...) {
+median2.default <- function(x, na.rm = FALSE, ...) {
   if (is.factor(x) || is.data.frame(x))
     stop("need numeric data")
   if (length(names(x)))

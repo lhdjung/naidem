@@ -1,21 +1,21 @@
 #' Possible medians
 #'
-#' @description These functions are helpful if `median_na()` returns `NA`:
+#' @description These functions are helpful if `median2()` returns `NA`:
 #' - `median_possible_values()` returns all values that might possibly be the
 #'   median, given the number of missing values.
 #' - `median_range()` returns the minimal and maximal possible median values.
 #'
 #' @param x Numeric or similar. Vector to search for its possible medians.
 #'
-#' @details Like `median_na()`, these functions are generic, so methods can be
+#' @details Like `median2()`, these functions are generic, so methods can be
 #'   defined for other classes. This documentation describes the default
 #'   methods.
 #'
 #' @return Vector of the same type as `x`. Its values are unique and sorted by
 #'   size. It always has length 2 when calling `median_range()`.
 #'
-#'   If the median can be determined (i.e., `median_na()` would return a
-#'   non-`NA` value), `median_possible_values()` returns just one value, and
+#'   If the median can be determined (i.e., `median2()` would return a non-`NA`
+#'   value), `median_possible_values()` returns just one value, and
 #'   `median_range()` returns two identical values.
 #'
 #'   If there are missing values at the median position, the set of possible
@@ -76,11 +76,11 @@ median_possible_values.default <- function(x) {
   rm(n)
   # Some special rules:
   # -- If all values are known, the only possible value is the actual one as
-  # determined by `median_na()`.
+  # determined by `median2()`.
   # -- If any central value is missing, there is no way to determine the
   # possible median values.
   if (nna == 0L) {
-    return(median_na(x))
+    return(median2(x))
   } else if (any(nna >= half)) {
     return(x[NA_integer_])
   }

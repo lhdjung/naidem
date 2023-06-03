@@ -10,7 +10,7 @@ template:
 reference:
 - title: Actual median
 - contents:
-  - median_na
+  - median2
 - title: Possible medians
 - contents:
   - median_possible_values
