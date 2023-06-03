@@ -95,4 +95,4 @@ The final condition checks whether the possible medians are *not* equal, and as 
 
 Similarly, the condition is wrapped into `isTRUE(all())`, so that `all()` reduces two Boolean test results to one (in case of an even-length input). If this returns `NA`, the `isTRUE()` wrapping returns `FALSE`, so that the negation returns `TRUE` (and makes the function return `NA`) whenever any comparison between the possible median values returns either `NA` or `FALSE`.
 
-If this doesn't occur and `x` was originally even, the code  uses `mean()` instead of manually dividing the sum of the half-indexed `x` values by 2. That is because some classes may have specific `mean()` methods implemented. Compare this to the details section of `stats::median()`'s documentation.
+If this doesn't occur and `x` was originally even, the code uses `mean()` instead of manually dividing the sum of the half-indexed `x` values by 2. That is because some classes may have specific `mean()` methods implemented. Compare this to the details section of `stats::median()`'s documentation.
