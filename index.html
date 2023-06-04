@@ -75,7 +75,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 <p>The goal of naidem is to compute the median in a way that handles missing values properly: return <code>NA</code> if and only if the median can’t be determined from the data. Its source code has no dependencies.</p>
-<p>Use <code><a href="reference/median_na.html">median_na()</a></code> as a drop-in replacement for <code><a href="https://rdrr.io/r/stats/median.html" class="external-link">median()</a></code>. Its default method is the same as in <code><a href="https://rdrr.io/r/stats/median.html" class="external-link">median()</a></code> except for handling missing values.</p>
+<p>Use <code><a href="reference/median2.html">median2()</a></code> as a drop-in replacement for <code><a href="https://rdrr.io/r/stats/median.html" class="external-link">median()</a></code>. Its default method is the same as in <code><a href="https://rdrr.io/r/stats/median.html" class="external-link">median()</a></code> except for handling missing values.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -103,16 +103,16 @@
 <div class="section level2">
 <h2 id="the-solution">The solution<a class="anchor" aria-label="anchor" href="#the-solution"></a>
 </h2>
-<p>Use naidem’s <code><a href="reference/median_na.html">median_na()</a></code> instead. This function will return the median whenever it can be determined:</p>
+<p>Use naidem’s <code><a href="reference/median2.html">median2()</a></code> instead. This function will return the median whenever it can be determined:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/median_na.html">median_na</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/median2.html">median2</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 7</span></span></code></pre></div>
 <p>If the median really is unclear, both functions return <code>NA</code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] NA</span></span>
-<span><span class="fu"><a href="reference/median_na.html">median_na</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/median2.html">median2</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] NA</span></span></code></pre></div>
 <p>Compare this to <code>NA ^ 0</code>, which returns <code>1</code> even though <code>NA ^ 2</code> returns <code>NA</code>. If the exponent is 0, the result is the same for all possible bases. The same is sometimes true for the median. Therefore, implementations should check for this case and return the median if and only if it can be determined. This also makes <code>NA</code> more meaningful when it is returned: users can be sure that the median really is unknown.</p>
 <p>See <a href="https://lhdjung.github.io/naidem/articles/algorithm.html"><em>Implementing the algorithm</em></a> for more information on naidem’s solution.</p>

@@ -82,7 +82,7 @@ language. It is tailored to numeric distributions in which some values
 are missing.</p>
 <p>This vignette uses pseudo-code to present two distinct algorithms for
 distributions of odd and even length (i.e., number of values). The R
-implementation, i.e., the default method for <code><a href="../reference/median_na.html">median_na()</a></code>,
+implementation, i.e., the default method for <code><a href="../reference/median2.html">median2()</a></code>,
 condenses both into one. That is because vectorization in R allows for
 code that deemphasizes the difference in length. Other languages may
 need more explicit distinctions. However, it is of course possible to
@@ -95,14 +95,14 @@ I haven’t been able to formally prove it. Help is very welcome.</p>
 <code>d</code>, <code>sort(d)</code> is a sorting algorithm, and
 <code>d[missing]</code> indexes all missing values in <code>d</code>
 (but no known values). <code>NA</code> denotes a single missing value.
-Unlike R, these algorithms use zero-indexing. Note that the combination
-of division and flooring in step 1 of the algorithm for odd lengths is
-equivalent to integer division.</p>
+Unlike R, these algorithms use zero-indexing. Note that step 1 of the
+algorithm for odd lengths is equivalent to integer division for such
+distributions.</p>
 <div class="section level2">
 <h2 id="for-odd-length-distributions">For odd-length distributions<a class="anchor" aria-label="anchor" href="#for-odd-length-distributions"></a>
 </h2>
 <pre eval="FALSE"><code># 1. Determine the central index of `x`.
-half := floor(length(x) / 2)
+half := length(x) / 2 - 0.5
 
 # 2. Count the missing values in `x`.
 nna := length(x[missing])
@@ -179,7 +179,7 @@ equality.</p>
 negative, i.e., if <code>half(_1) - nna &lt; 0</code>. (This is step 3
 for odd lengths and step 4 for even lengths. The pseudo-code in the
 algorithm is more efficient.) In the even-length case, only
-<code>half_1</code> needs to be tested because it is less then
+<code>half_1</code> needs to be tested because it is less than
 <code>half_2</code>, so it is negative whenever <code>half_2</code> is.
 Why return <code>NA</code> here? The median is never known in such
 cases, and indices must not be negative when testing for equality in the
