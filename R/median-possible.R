@@ -11,8 +11,8 @@
 #'   defined for other classes. This documentation describes the default
 #'   methods.
 #'
-#' @return Vector of the same type as `x`. Its values are unique and sorted by
-#'   size. It always has length 2 when calling `median_range()`.
+#' @return Vector of the same type as `x`. Its values are unique and sorted. It
+#'   always has length 2 when calling `median_range()`.
 #'
 #'   If the median can be determined (i.e., `median2()` would return a non-`NA`
 #'   value), `median_possible_values()` returns just one value, and

@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 This proof begins with the algorithm for odd lengths and then extends it to the one for even lenghts.
 
-Each algorithm only contains two steps that need to be proven; all other steps are merely definitional. See `vignette("algorithm")`, which also contains all definitions used here except for `is_missing(a)`. This predicate tests whether the scalar (length 1) value `a` is missing.
+Each partial algorithm only contains two steps that need to be proven; all other steps are merely definitional. See [*Implementing the algorithm*](https://lhdjung.github.io/naidem/articles/algorithm.html), which also contains all definitions used here except for `is_missing(a)`. This predicate tests whether the scalar (length 1) value `a` is missing.
 
 ## Proof for odd lengths
 
@@ -85,9 +85,9 @@ Thus, if they are equal, they are also equal to the median. If the bounds are no
 ``` {eval=FALSE}
 if sorted_known[half - nna] == sorted_known[half]:
     sorted_known[half] == x[half]
-    set_possible_medians == { sorted_known[half] }
+    possible_medians == { sorted_known[half] }
   else:
-    set_possible_medians == { sorted_known[half - nna]; ...; sorted_known[half] }
+    possible_medians == { sorted_known[half - nna]; ...; sorted_known[half] }
 ```
 
 ## Proof for even lengths
@@ -154,10 +154,11 @@ Both pairs of extremes need to be equal, or else there are at least two possible
 if sorted_known[half_1 - nna] == sorted_known[half_1] &&
    sorted_known[half_2 - nna] == sorted_known[half_2]:
       (sorted_known[half_1] + sorted_known[half_2]) / 2 == (x[half_1] + x[half_2]) / 2
-      set_possible_medians == { (sorted_known[half_1] + sorted_known[half_2]) / 2 }
+      possible_medians == { (sorted_known[half_1] + sorted_known[half_2]) / 2 }
    else:
-      set_possible_medians == { 
-        (sorted_known[half_1 - nna] + sorted_known[half_1]) / 2; ...;
-        (sorted_known[half_2 - nna] + sorted_known[half_2]) / 2
+      possible_medians == { 
+        (sorted_known[half_1 - nna] + sorted_known[half_2 - nna]) / 2;
+        ...;
+        (sorted_known[half_1] + sorted_known[half_2]) / 2
       }
 ```

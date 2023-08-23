@@ -7,8 +7,8 @@
 <!-- badges: end -->
 
 The goal of naidem is to compute the median in a way that handles
-missing values properly: return `NA` if and only if the median can’t be
-determined from the data. Its source code has no dependencies.
+missing values properly: returning `NA` if and only if the median can’t
+be determined from the data. Its source code has no dependencies.
 
 Use `median2()` as a drop-in replacement for `median()`. Its default
 method is the same as in `median()` except for handling missing values.
@@ -21,7 +21,7 @@ You can install the development version of naidem like so:
 remotes::install_github("lhdjung/naidem")
 ```
 
-# Get started
+## Get started
 
 ``` r
 library(naidem)
@@ -29,9 +29,9 @@ library(naidem)
 
 Why and how to use naidem:
 
-## The problem
+### The problem
 
-The standard `median()` function returns `NA` whenever the input vector
+Base R’s `median()` function returns `NA` whenever the input vector
 contains one or more `NA`s. In many cases, missing values do make it
 impossible to compute the median. Yet some distributions have a clear
 median even so:
@@ -42,10 +42,9 @@ median(x1)
 #> [1] NA
 ```
 
-The actual median is 7, irrespective of the true value behind `NA`. Yet
-`median()` returns `NA`.
+The actual median is 7, irrespective of the true value behind `NA`.
 
-## The solution
+### The solution
 
 Use naidem’s `median2()` instead. This function will return the median
 whenever it can be determined:
@@ -65,7 +64,7 @@ median2(x2)
 #> [1] NA
 ```
 
-Compare this to `NA ^ 0`, which returns `1` even though `NA ^ 2` returns
+Compare this to `NA^0`, which returns `1` even though `NA^2` returns
 `NA`. If the exponent is 0, the result is the same for all possible
 bases. The same is sometimes true for the median. Therefore,
 implementations should check for this case and return the median if and
@@ -89,7 +88,7 @@ median_range(x2)
 #> [1] 3.5 4.5
 ```
 
-# About this package
+## About this package
 
 “naidem” is “median” backwards, but it also expresses the goal of
 treating `NA` in the same (*idem*) conceptual way as R language

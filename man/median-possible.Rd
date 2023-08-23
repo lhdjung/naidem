@@ -20,8 +20,8 @@ median_range(x)
 \item{x}{Numeric or similar. Vector to search for its possible medians.}
 }
 \value{
-Vector of the same type as \code{x}. Its values are unique and sorted by
-size. It always has length 2 when calling \code{median_range()}.
+Vector of the same type as \code{x}. Its values are unique and sorted. It
+always has length 2 when calling \code{median_range()}.
 
 If the median can be determined (i.e., \code{median2()} would return a non-\code{NA}
 value), \code{median_possible_values()} returns just one value, and

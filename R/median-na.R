@@ -17,16 +17,17 @@
 #'   classes for which a median is a reasonable concept (e.g., "[`Date`]").
 #'
 #'   If a new method is necessary, please make sure it deals with missing values
-#'   like `median2.default()` does.
+#'   like `median2.default()` does. See
+#'   \href{https://lhdjung.github.io/naidem/articles/algorithm.html}{*Implementing
+#'   the algorithm*} for further details.
 
 # # DON'T REFLOW THIS SECTION:
 
-#' @return Length-1 vector of the same type as `x`. The only exception:
-#'   If `x` is logical or integer and has an even length, the result will be a
-#'   double.
+#' @return Length-1 vector of the same type as `x`. The only exception: If `x`
+#'   is logical or integer and has an even length, the result will be a double.
 #'
-#'   Returns `NA` (of the same type as `x`) if and only if the median can't be
-#'   determined because of missing values, or if there are no values.
+#'   The output is `NA` (of the same type as `x`) if and only if the median
+#'   can't be determined because of missing values, or if there are no values.
 
 #' @export
 #'
@@ -86,8 +87,8 @@ median2.default <- function(x, na.rm = FALSE, ...) {
       return(x[NA_integer_])
     }
     x <- sort(x[!is.na(x)])
-    # Check for equality with offset value(s); see `vignette("algorithm")` for
-    # details:
+    # Check for equality with offset value(s); see
+    # https://lhdjung.github.io/naidem/articles/algorithm.html for details:
     if (!isTRUE(all(x[half] == x[half - nna]))) {
       return(x[NA_integer_])
     } else if (length(half) == 2L) {
