@@ -1,0 +1,163 @@
+---
+title: "Proving the algorithm"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Proving the algorithm}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This proof begins with the algorithm for odd lengths and then extends it to the one for even lenghts.
+
+Each algorithm only contains two steps that need to be proven; all other steps are merely definitional. See `vignette("algorithm")`, which also contains all definitions used here except for `is_missing(a)`. This predicate tests whether the scalar (length 1) value `a` is missing.
+
+## Proof for odd lengths
+
+``` {eval=FALSE}
+half := length(x) / 2 - 0.5
+nna := length(keep_missing(x))
+```
+
+The median is the midpoint of the sorted `x` distribution, which includes missing values --- i.e., `x[half]` after this step:
+
+``` {eval=FALSE}
+x := sort(x)
+```
+
+Sorted missing observations are still unknown, but the purpose here is to make some statements about all possible values they might have:
+
+``` {eval=FALSE}
+sorted_na := keep_missing(x)
+sorted_known := keep_known(x)
+```
+
+These Boolean values will be important below. They describe two possible ways in which `x` might be ordered --- all known values are less than all missing values, and the reverse:
+
+``` {eval=FALSE}
+all_known_values_less := sorted_known[length(sorted_known) - 1] < sorted_na[0]
+all_missing_values_less := sorted_na[length(sorted_na) - 1] < sorted_known[0]
+```
+
+### Proof of step 3
+
+If there are more missing than known values, the true order of `x` might be such that one of the missings is the median. Even if not, however, there would be no way to know from such data.
+
+``` {eval=FALSE}
+if nna > half:
+    length(sorted_na) > length(sorted_known)
+    if all_known_values_less || all_missing_values_less:
+        is_missing(x[half])
+```
+
+### Proof of step 5
+
+Consider two extreme cases:
+
+(1) All known values are less than all missing values, and thus, the median is equal to the vector of known values indexed at the midpoint of the entire input `x` vector:
+
+``` {eval=FALSE}
+if all_known_values_less:
+    x[half] == sorted_known[half]
+```
+
+(2) All missing values are less than all known values, and thus, the median is equal to the vector of known values indexed at the midpoint of `x` offset by the number of missing values:
+
+``` {eval=FALSE}
+if all_missing_values_less:
+    x[half] == sorted_known[half - nna]
+```
+
+These two points put bounds on the median:
+
+``` {eval=FALSE}
+sorted_known[half - nna] <= x[half] <= sorted_known[half]
+```
+
+Thus, if they are equal, they are also equal to the median. If the bounds are not equal, however, either could be the median, in addition to any values that might exist between them. In this case, there are at least two different possible medians, which renders the true median unknown:
+
+``` {eval=FALSE}
+if sorted_known[half - nna] == sorted_known[half]:
+    sorted_known[half] == x[half]
+    set_possible_medians == { sorted_known[half] }
+  else:
+    set_possible_medians == { sorted_known[half - nna]; ...; sorted_known[half] }
+```
+
+## Proof for even lengths
+
+The definitions are the same as above, except for the fact that there are two midpoints here:
+
+``` {eval=FALSE}
+half_2 := length(x) / 2
+half_1 := half_2 - 1
+nna := length(keep_missing(x))
+x := sort(x)
+sorted_na := keep_missing(x)
+sorted_known := keep_known(x)
+all_known_values_less := sorted_known[length(sorted_known) - 1] < sorted_na[0]
+all_missing_values_less := sorted_na[length(sorted_na) - 1] < sorted_known[0]
+```
+
+The target quantity is the mean of these two midpoints:
+
+``` {eval=FALSE}
+(x[half_1] + x[half_2]) / 2
+```
+
+### Proof of step 4
+
+If more than half of the `x` values are missing, this might include `half_1` or `half_2`. Either has to be missing, again assuming that the sequences of known and missing values don't alternate. We can't rule this out, so it's unknown whether it's the case. Since it is unknown whether at least one of `half_1` and `half_2` is missing, it is not possible to determine both of them. Therefore, the median is unknown as well, since `half_1` and `half_2` jointly form the basis for computing it:
+
+``` {eval=FALSE}
+if nna > half_1:
+    length(sorted_na) > length(sorted_known)
+    if all_known_values_less || all_missing_values_less:
+        is_missing(x[half_1]) || is_missing(x[half_2])
+        is_missing((x[half_1] + x[half_2]) / 2)
+```
+
+### Proof of step 6
+
+Analogous to case (1) in the proof for odd lengths:
+
+``` {eval=FALSE}
+if all_known_values_less:
+    x[half_1] == sorted_known[half_1]
+    x[half_2] == sorted_known[half_2]
+```
+
+Analogous to case (2):
+
+``` {eval=FALSE}
+if all_missing_values_less:
+    x[half_1] == sorted_known[half_1 - nna]
+    x[half_2] == sorted_known[half_2 - nna]
+```
+
+As in the previous proof, the extremes put bounds on the midpoints:
+
+``` {eval=FALSE}
+sorted_known[half_1 - nna] <= x[half_1] <= sorted_known[half_1]
+sorted_known[half_2 - nna] <= x[half_2] <= sorted_known[half_2]
+```
+
+Both pairs of extremes need to be equal, or else there are at least two possible medians, and the true median is unknown:
+
+``` {eval=FALSE}
+if sorted_known[half_1 - nna] == sorted_known[half_1] &&
+   sorted_known[half_2 - nna] == sorted_known[half_2]:
+      (sorted_known[half_1] + sorted_known[half_2]) / 2 == (x[half_1] + x[half_2]) / 2
+      set_possible_medians == { (sorted_known[half_1] + sorted_known[half_2]) / 2 }
+   else:
+      set_possible_medians == { 
+        (sorted_known[half_1 - nna] + sorted_known[half_1]) / 2; ...;
+        (sorted_known[half_2 - nna] + sorted_known[half_2]) / 2
+      }
+```
