@@ -80,11 +80,11 @@
     
 <p>This proof begins with the algorithm for odd lengths and then extends
 it to the one for even lenghts.</p>
-<p>Each algorithm only contains two steps that need to be proven; all
-other steps are merely definitional. See
-<code><a href="../articles/algorithm.html">vignette("algorithm")</a></code>, which also contains all definitions
-used here except for <code>is_missing(a)</code>. This predicate tests
-whether the scalar (length 1) value <code>a</code> is missing.</p>
+<p>Each partial algorithm only contains two steps that need to be
+proven; all other steps are merely definitional. See <a href="https://lhdjung.github.io/naidem/articles/algorithm.html"><em>Implementing
+the algorithm</em></a>, which also contains all definitions used here
+except for <code>is_missing(a)</code>. This predicate tests whether the
+scalar (length 1) value <code>a</code> is missing.</p>
 <div class="section level2">
 <h2 id="proof-for-odd-lengths">Proof for odd lengths<a class="anchor" aria-label="anchor" href="#proof-for-odd-lengths"></a>
 </h2>
@@ -142,9 +142,9 @@ least two different possible medians, which renders the true median
 unknown:</p>
 <pre eval="FALSE"><code>if sorted_known[half - nna] == sorted_known[half]:
     sorted_known[half] == x[half]
-    set_possible_medians == { sorted_known[half] }
+    possible_medians == { sorted_known[half] }
   else:
-    set_possible_medians == { sorted_known[half - nna]; ...; sorted_known[half] }</code></pre>
+    possible_medians == { sorted_known[half - nna]; ...; sorted_known[half] }</code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -200,11 +200,12 @@ two possible medians, and the true median is unknown:</p>
 <pre eval="FALSE"><code>if sorted_known[half_1 - nna] == sorted_known[half_1] &amp;&amp;
    sorted_known[half_2 - nna] == sorted_known[half_2]:
       (sorted_known[half_1] + sorted_known[half_2]) / 2 == (x[half_1] + x[half_2]) / 2
-      set_possible_medians == { (sorted_known[half_1] + sorted_known[half_2]) / 2 }
+      possible_medians == { (sorted_known[half_1] + sorted_known[half_2]) / 2 }
    else:
-      set_possible_medians == { 
-        (sorted_known[half_1 - nna] + sorted_known[half_1]) / 2; ...;
-        (sorted_known[half_2 - nna] + sorted_known[half_2]) / 2
+      possible_medians == { 
+        (sorted_known[half_1 - nna] + sorted_known[half_2 - nna]) / 2;
+        ...;
+        (sorted_known[half_1] + sorted_known[half_2]) / 2
       }</code></pre>
 </div>
 </div>

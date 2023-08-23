@@ -80,8 +80,9 @@
     
 <p>Follow these steps to implement naidem’s median algorithm in another
 language. It is tailored to numeric distributions in which some values
-are missing.</p>
-<p>This vignette uses pseudo-code to present two distinct algorithms for
+are missing. For a proof, see <a href="https://lhdjung.github.io/naidem/articles/proof.html"><em>Proving
+the algorithm</em></a>.</p>
+<p>This article uses pseudo-code to present two distinct algorithms for
 distributions of odd and even length (i.e., number of values). The R
 implementation, i.e., the default method for <code><a href="../reference/median2.html">median2()</a></code>,
 condenses both into one. That is because vectorization in R allows for
@@ -89,15 +90,14 @@ code that deemphasizes the difference in length. Other languages may
 need more explicit distinctions. However, it is of course possible to
 combine the two algorithms into a single one that first checks whether
 the length is even or odd.</p>
-<p>I have tested this algorithm with a good number of distributions, but
-I haven’t been able to formally prove it. Help is very welcome.</p>
 <p>Below, <code>x</code> is the input distribution.
 <code>length(d)</code> computes the number of values in a distribution
-<code>d</code>, <code>sort(d)</code> is a sorting algorithm, and
-<code>d[missing]</code> indexes all missing values in <code>d</code>
-(but no known values). <code>NA</code> denotes a single missing value.
-Unlike R, these algorithms use zero-indexing. Note that step 1 of the
-algorithm for odd lengths is equivalent to integer division for such
+<code>d</code>, <code>sort(d)</code> is a sorting algorithm,
+<code>keep_missing(d)</code> returns all missing values in
+<code>d</code> (but no known values), and <code>keep_known(d)</code> is
+the opposite. <code>NA</code> denotes a single missing value. Unlike R,
+these algorithms use zero-indexing. Step 1 of the algorithm for odd
+lengths is therefore equivalent to integer division for such
 distributions.</p>
 <div class="section level2">
 <h2 id="for-odd-length-distributions">For odd-length distributions<a class="anchor" aria-label="anchor" href="#for-odd-length-distributions"></a>
@@ -106,7 +106,7 @@ distributions.</p>
 half := length(x) / 2 - 0.5
 
 # 2. Count the missing values in `x`.
-nna := length(x[missing])
+nna := length(keep_missing(x))
 
 # 3. If the offset index is negative,
 # the median cannot be determined.
@@ -114,12 +114,12 @@ if nna &gt; half:
    return NA
 
 # 4. Remove all missing values from `x`, then sort `x`.
-x := sort(x[!missing])
+x := sort(keep_known(x))
 
 # 5. Check values at two specific indices for equality.
 # If they are equal, return the central `x` value, i.e.,
 # the median. If they are not equal, return a missing value.
-if x[half] == x[half - nna]:
+if x[half - nna] == x[half]:
    return x[half]
 else:
    return NA</code></pre>
@@ -134,7 +134,7 @@ half_2 := length(x) / 2
 half_1 := half_2 - 1
 
 # 3. Count the missing values in `x`.
-nna := length(x[missing])
+nna := length(keep_missing(x))
 
 # 4. Neither offset index can be negative.
 # If any is, the median cannot be determined.
@@ -142,12 +142,12 @@ if nna &gt; half_1:
    return NA
 
 # 5. Remove all missing values from `x`, then sort `x`.
-x := sort(x[!missing])
+x := sort(keep_known(x))
 
 # 6. Check whether both pairs are equal.
 # If they are, return the mean of the central values.
 # If one or both are not equal, return a missing value.
-if x[half_1] == x[half_1 - nna] &amp;&amp; x[half_2] == x[half_2 - nna]:
+if x[half_1 - nna] == x[half_1] &amp;&amp; x[half_2 - nna] == x[half_2]:
    return (x[half_1] + x[half_2]) / 2
 else:
    return NA</code></pre>
@@ -165,7 +165,15 @@ of the missing values in the sorted distribution — and thus, on their
 values. Since these are unknown, the median cannot be determined.
 However, if the median remains the same after the shift, it is
 indifferent to the missing values: the median is identical for all
-possible values behind the missing ones.</p>
+possible values behind the missing ones. See <a href="https://lhdjung.github.io/naidem/articles/proof.html"><em>Proving
+the algorithm</em></a> for details.</p>
+<p>Subtraction is used for the shift because <code>x</code> is still
+indexed at <code>half</code> (the midpoint of the input <code>x</code>)
+even though all missing values were already removed from <code>x</code>
+by that point. Therefore, <code>x[half]</code> is not actually the
+midpoint of <code>x</code>. The maximum possible number of steps by
+which missing values can shift the median is <code>nna</code>, so this
+number is subtracted.</p>
 <p>It is generally easier to determine the median for distributions of
 an odd length. The same is true when missing values are present. The
 even-length algorithm operates with two central indices instead of one
@@ -194,8 +202,8 @@ languages such as R and Python would handle them in unintended ways.</p>
 This plays into the strengths of R, but it does make the code look a
 little different from the above. Again, note that the pseudo-code uses
 zero-indexing but R uses one-indexing. This is why
-<code>any(nna + 1L &gt; half)</code> checks for non-positive indices,
-not just for negative ones.</p>
+<code>any(nna + 1L &gt; half)</code> checks for non-positive indices in
+general, not just for negative ones.</p>
 <p>The final condition checks whether the possible medians are
 <em>not</em> equal, and as a consequence, the function returns a missing
 value if the condition is <code>TRUE</code>. The reason is that the R
@@ -204,19 +212,20 @@ code combines both algorithms into one, and if the negation returns
 needs to check whether <code>x</code> was originally even or odd. To do
 so, it uses the <code>half</code> vector which has length 1 if
 <code>x</code> was odd and length 2 if <code>x</code> was even.</p>
-<p>Similarly, the condition is wrapped into <code>isTRUE(all())</code>,
-so that <code><a href="https://rdrr.io/r/base/all.html" class="external-link">all()</a></code> reduces two Boolean test results to one (in
-case of an even-length input). If this returns <code>NA</code>, the
-<code><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE()</a></code> wrapping returns <code>FALSE</code>, so that the
-negation returns <code>TRUE</code> (and makes the function return
-<code>NA</code>) whenever any comparison between the possible median
-values returns either <code>NA</code> or <code>FALSE</code>.</p>
+<p>Similarly, the condition is wrapped into <code>isTRUE(all(.))</code>,
+so that <code><a href="https://rdrr.io/r/base/all.html" class="external-link">all()</a></code> reduces two Boolean test results to one if
+the input has an even length. If this returns <code>NA</code>, the
+<code><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE()</a></code> wrapping returns <code>FALSE</code> so that the
+negation returns <code>TRUE</code> whenever any comparison between the
+possible median values returns either <code>NA</code> or
+<code>FALSE</code>. Since the median is unknown in this case, the
+function ultimately returns <code>NA</code>.</p>
 <p>If this doesn’t occur and <code>x</code> was originally even, the
 code uses <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code> instead of manually dividing the sum of
 the half-indexed <code>x</code> values by 2. That is because some
 classes may have specific <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code> methods implemented.
-Compare this to the details section of <code><a href="https://rdrr.io/r/stats/median.html" class="external-link">stats::median()</a></code>’s
-documentation.</p>
+Compare this to the details section of the documentation for
+<code><a href="https://rdrr.io/r/stats/median.html" class="external-link">stats::median()</a></code>.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

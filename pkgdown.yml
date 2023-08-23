@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   algorithm: algorithm.html
   proof: proof.html
-last_built: 2023-08-23T18:04Z
+last_built: 2023-08-23T23:07Z
 urls:
   reference: https://lhdjung.github.io/naidem/reference
   article: https://lhdjung.github.io/naidem/articles
