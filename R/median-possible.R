@@ -63,19 +63,17 @@ median_range <- function(x) {
 #' @export
 
 median_possible_values.default <- function(x) {
+  # As in `median2.default()`:
   n <- length(x)
-  x <- x[!is.na(x)]
-  nna <- n - length(x)
-  # Central index or indices in `x`; length 1 if the length of `x` is odd,
-  # length 2 if it is even:
   half <- if (n %% 2L == 1L) {
     (n + 1L) %/% 2L
   } else {
     (n + 1L:2L) %/% 2L
   }
-  rm(n)
+  nna <- length(x[is.na(x)])
+  x <- sort(x[!is.na(x)])
   # Some special rules:
-  # -- If all values are known, the only possible value is the actual one as
+  # -- If all values are known, the only possible median is the actual one as
   # determined by `median2()`.
   # -- If any central value is missing, there is no way to determine the
   # possible median values.
