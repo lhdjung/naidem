@@ -19,8 +19,9 @@ computation proceeds. Default is \code{FALSE}.}
 method.}
 }
 \value{
-Length-1 vector of the same type as \code{x}. The only exception: If \code{x}
-is logical or integer and has an even length, the result will be a double.
+Length-1 vector of the same type as \code{x}. The only exception occurs if
+\code{x} is Boolean or integer and its length is even, in which case the return
+value is double.
 
 The output is \code{NA} (of the same type as \code{x}) if and only if the median
 can't be determined because of missing values, or if there are no values.
@@ -34,8 +35,9 @@ checks if the median can be determined nevertheless.
 }
 \details{
 \code{median2()} is a generic function, so new methods can be defined for
-it. As with \code{\link[stats:median]{stats::median()}}, the default method should work for most
-classes for which a median is a reasonable concept (e.g., "\code{\link{Date}}").
+it. As with \code{\link[stats:median]{stats::median()}} from base R, the default method described
+here should work for most classes for which a median is a reasonable
+concept (e.g., "\code{\link{Date}}").
 
 If a new method is necessary, please make sure it deals with missing values
 like \code{median2.default()} does. See

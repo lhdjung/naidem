@@ -13,18 +13,18 @@
 #'   method.
 #'
 #' @details `median2()` is a generic function, so new methods can be defined for
-#'   it. As with [`stats::median()`], the default method should work for most
-#'   classes for which a median is a reasonable concept (e.g., "[`Date`]").
+#'   it. As with [`stats::median()`] from base R, the default method described
+#'   here should work for most classes for which a median is a reasonable
+#'   concept (e.g., "[`Date`]").
 #'
 #'   If a new method is necessary, please make sure it deals with missing values
 #'   like `median2.default()` does. See
 #'   \href{https://lhdjung.github.io/naidem/articles/algorithm.html}{*Implementing
 #'   the algorithm*} for further details.
 
-# # DON'T REFLOW THIS SECTION:
-
-#' @return Length-1 vector of the same type as `x`. The only exception: If `x`
-#'   is logical or integer and has an even length, the result will be a double.
+#' @return Length-1 vector of the same type as `x`. The only exception occurs if
+#'   `x` is Boolean or integer and its length is even, in which case the return
+#'   value is double.
 #'
 #'   The output is `NA` (of the same type as `x`) if and only if the median
 #'   can't be determined because of missing values, or if there are no values.
