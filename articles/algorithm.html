@@ -145,10 +145,11 @@ if nna &gt; half_1:
 x := sort(keep_known(x))
 
 # 6. Check whether both pairs are equal.
-# If they are, return the mean of the central values.
+# If they are, return the mean of the central
+# values (which is equal to both members of the pair).
 # If one or both are not equal, return a missing value.
 if x[half_1 - nna] == x[half_1] &amp;&amp; x[half_2 - nna] == x[half_2]:
-   return (x[half_1] + x[half_2]) / 2
+   return x[half_1]
 else:
    return NA</code></pre>
 </div>
@@ -182,8 +183,8 @@ algorithm needs to compare <code>x</code> at each of these indices with
 the respective index offset by the number of missing values. In this
 way, it effectively checks whether the pair of <code>x</code> values at
 the central indices in the offset case is equal to the pair without the
-offset. The odd-length algorithm just checks two single values for
-equality.</p>
+offset. If so, the two values are the same, so there is no need to
+compute the average.</p>
 <p>The algorithms return <code>NA</code> if any offset central index is
 negative, i.e., if <code>half(_1) - nna &lt; 0</code>. (This is step 3
 for odd lengths and step 4 for even lengths. The pseudo-code in the
@@ -194,38 +195,41 @@ Why return <code>NA</code> here? The median is never known in such
 cases, and indices must not be negative when testing for equality in the
 final condition. Negative indices are not well defined, and programming
 languages such as R and Python would handle them in unintended ways.</p>
+<p>As an aside, <code><a href="../reference/median2.html">median2()</a></code> has an <code>even</code> argument
+that allows users to opt for the value just above or below the median if
+the length of the distribution is even. This has no effect if
+<code>x</code> contains any missing values: If the median can be
+determined in this case, it is equal to both values around it.</p>
 </div>
 <div class="section level2">
 <h2 id="r-details">R details<a class="anchor" aria-label="anchor" href="#r-details"></a>
 </h2>
-<p>The R implementation in naidem is more succinct than the pseudo-code.
-This plays into the strengths of R, but it does make the code look a
-little different from the above. Again, note that the pseudo-code uses
-zero-indexing but R uses one-indexing. This is why
-<code>any(nna + 1L &gt; half)</code> checks for non-positive indices in
-general, not just for negative ones.</p>
-<p>The final condition checks whether the possible medians are
-<em>not</em> equal, and as a consequence, the function returns a missing
-value if the condition is <code>TRUE</code>. The reason is that the R
-code combines both algorithms into one, and if the negation returns
-<code>FALSE</code>, the median can be determined but the code still
-needs to check whether <code>x</code> was originally even or odd. To do
-so, it uses the <code>half</code> vector which has length 1 if
-<code>x</code> was odd and length 2 if <code>x</code> was even.</p>
-<p>Similarly, the condition is wrapped into <code>isTRUE(all(.))</code>,
-so that <code><a href="https://rdrr.io/r/base/all.html" class="external-link">all()</a></code> reduces two Boolean test results to one if
-the input has an even length. If this returns <code>NA</code>, the
-<code><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE()</a></code> wrapping returns <code>FALSE</code> so that the
-negation returns <code>TRUE</code> whenever any comparison between the
-possible median values returns either <code>NA</code> or
-<code>FALSE</code>. Since the median is unknown in this case, the
-function ultimately returns <code>NA</code>.</p>
-<p>If this doesn’t occur and <code>x</code> was originally even, the
-code uses <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code> instead of manually dividing the sum of
-the half-indexed <code>x</code> values by 2. That is because some
-classes may have specific <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code> methods implemented.
-Compare this to the details section of the documentation for
-<code><a href="https://rdrr.io/r/stats/median.html" class="external-link">stats::median()</a></code>.</p>
+<p>The R implementation in naidem is more succinct than the pseudo-code,
+combining both partial algorithms into one. This plays into the
+strengths of R, but it does make the code look a little different from
+the above. Again, note that the pseudo-code uses zero-indexing but R
+uses one-indexing. This is why <code>any(nna + 1L &gt; half)</code>
+checks for non-positive indices in general, not just for negative
+ones.</p>
+<p>The final condition is wrapped into <code>isTRUE(all(.))</code>, so
+that <code><a href="https://rdrr.io/r/base/all.html" class="external-link">all()</a></code> reduces two logical test results to one if the
+input has an even length. If any comparison between the possible median
+values returns either <code>NA</code> or <code>FALSE</code>, the
+<code><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE()</a></code> wrapping returns <code>FALSE</code> and the
+function returns <code>NA</code> because the median cannot be determined
+with certainty.</p>
+<p><code><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE()</a></code> will only return <code>TRUE</code> if both
+comparisons do. Recall that the <code>half</code> object is either
+length 1 (the index of the median of an odd-length distribution) or 2
+(the indices of the two values right above and below the median of an
+even-length distribution). If the median can be determined in the
+even-length scenario, it is <a href="https://lhdjung.github.io/naidem/articles/proof.html#proof-of-step-6">equal
+to both values around it</a>. This is why the function returns
+<code>x[half[1L]]</code>, i.e., the first of these two values. For an
+odd-length distribution, the index is redundant because
+<code>half[1L]</code> equals <code>half</code>. Thus,
+<code>x[half[1L]]</code> is the correct return value in both cases in
+which the median can be determined.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

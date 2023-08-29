@@ -99,7 +99,7 @@ is to make some statements about all possible values they might
 have:</p>
 <pre eval="FALSE"><code><span><span class="va">sorted_na</span> <span class="op">:=</span> <span class="fu">keep_missing</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="va">sorted_known</span> <span class="op">:=</span> <span class="fu">keep_known</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre>
-<p>These Boolean values will be important below. They describe two
+<p>These logical values will be important below. They describe two
 possible ways in which <code>x</code> might be ordered — all known
 values are less than all missing values, and the reverse:</p>
 <pre eval="FALSE"><code><span><span class="va">all_known_values_less</span> <span class="op">:=</span> <span class="va">sorted_known</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">sorted_known</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;</span> <span class="va">sorted_na</span><span class="op">[</span><span class="fl">0</span><span class="op">]</span></span>
@@ -142,9 +142,9 @@ least two different possible medians, which renders the true median
 unknown:</p>
 <pre eval="FALSE"><code>if sorted_known[half - nna] == sorted_known[half]:
     sorted_known[half] == x[half]
-    possible_medians == { sorted_known[half] }
+    set possible_medians == { sorted_known[half] }
   else:
-    possible_medians == { sorted_known[half - nna]; ...; sorted_known[half] }</code></pre>
+    set possible_medians == { sorted_known[half - nna]; ...; sorted_known[half] }</code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -200,13 +200,45 @@ two possible medians, and the true median is unknown:</p>
 <pre eval="FALSE"><code>if sorted_known[half_1 - nna] == sorted_known[half_1] &amp;&amp;
    sorted_known[half_2 - nna] == sorted_known[half_2]:
       (sorted_known[half_1] + sorted_known[half_2]) / 2 == (x[half_1] + x[half_2]) / 2
-      possible_medians == { (sorted_known[half_1] + sorted_known[half_2]) / 2 }
+      set possible_medians == { (sorted_known[half_1] + sorted_known[half_2]) / 2 }
    else:
-      possible_medians == { 
+      set possible_medians == { 
         (sorted_known[half_1 - nna] + sorted_known[half_2 - nna]) / 2;
         ...;
         (sorted_known[half_1] + sorted_known[half_2]) / 2
       }</code></pre>
+<p>This can be simplified:</p>
+<pre eval="FALSE"><code># Two general reminders:
+nna &gt; 0
+sorted_known[half_2 - 1] == sorted_known[half_1]
+
+if sorted_known[half_1 - nna] == sorted_known[half_1] &amp;&amp;
+   sorted_known[half_2 - nna] == sorted_known[half_2]:
+     # Is this possible?
+     if sorted_known[half_1] != sorted_known[half_2]:
+          sorted_known[half_2 - 1] != sorted_known[half_2]
+          # It isn't, because the median would then depend
+          # on the missing values' position within
+          # the rank order:
+          if all_known_values_less:
+               x[half_1] &lt; (x[half_1] + x[half_2]) / 2 &lt; x[half_2]
+          if all_missing_values_less:
+               x[half_1] &lt;= (x[half_1] + x[half_2]) / 2 &lt;= x[half_2]</code></pre>
+<p>As a consequence, more than one value is possible for each of
+<code>x[half_1]</code> and <code>x[half_2]</code> given the missing
+values. This, in turn, contradicts the basic premise that each of the
+two values around the median remains equal when offset by
+<code>nna</code>. If this premise is false, however, the median cannot
+be determined, as shown above. This is why <code>half_1</code> and
+<code>half_2</code> must be equal in order for the median to be
+determined, and since the mean of two equal values is equal to each of
+them, the median is equal to both <code>x[half_1]</code> and
+<code>x[half_2]</code>.</p>
+<p>If the median of an even-length distribution with missing values can
+be determined at all, the algorithm can simply return
+<code>x[half_1]</code> instead of
+<code>(x[half_1] + x[half_2]) / 2</code>. Simplifying the algorithm in
+this way makes it more efficient.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
