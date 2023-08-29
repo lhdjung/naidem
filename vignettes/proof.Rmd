@@ -38,7 +38,7 @@ sorted_na := keep_missing(x)
 sorted_known := keep_known(x)
 ```
 
-These Boolean values will be important below. They describe two possible ways in which `x` might be ordered --- all known values are less than all missing values, and the reverse:
+These logical values will be important below. They describe two possible ways in which `x` might be ordered --- all known values are less than all missing values, and the reverse:
 
 ``` {eval=FALSE}
 all_known_values_less := sorted_known[length(sorted_known) - 1] < sorted_na[0]

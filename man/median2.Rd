@@ -12,7 +12,7 @@ median2(x, na.rm = FALSE, even = c("mean", "low", "high"), ...)
 \arguments{
 \item{x}{Numeric or similar. Vector to search for its median.}
 
-\item{na.rm}{Boolean. If set to \code{TRUE}, missing values are removed before
+\item{na.rm}{Logical. If set to \code{TRUE}, missing values are removed before
 computation proceeds. Default is \code{FALSE}.}
 
 \item{even}{Character. What to do if \code{x} has an even length and contains no
@@ -25,7 +25,7 @@ method.}
 }
 \value{
 Length-1 vector of the same type as \code{x}. The only exception occurs if
-\code{x} is Boolean or integer and its length is even, in which case the return
+\code{x} is logical or integer and its length is even, in which case the return
 value is double.
 
 The output is \code{NA} (of the same type as \code{x}) if and only if the median

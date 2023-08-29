@@ -7,7 +7,7 @@
 #'   `median2()` checks if the median can be determined nevertheless.
 #'
 #' @param x Numeric or similar. Vector to search for its median.
-#' @param na.rm Boolean. If set to `TRUE`, missing values are removed before
+#' @param na.rm Logical. If set to `TRUE`, missing values are removed before
 #'   computation proceeds. Default is `FALSE`.
 #' @param even Character. What to do if `x` has an even length and contains no
 #'   missing values (or they were removed by `na.rm = TRUE`). The default,
@@ -27,7 +27,7 @@
 #'   the algorithm*} for further details.
 
 #' @return Length-1 vector of the same type as `x`. The only exception occurs if
-#'   `x` is Boolean or integer and its length is even, in which case the return
+#'   `x` is logical or integer and its length is even, in which case the return
 #'   value is double.
 #'
 #'   The output is `NA` (of the same type as `x`) if and only if the median
