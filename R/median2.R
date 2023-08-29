@@ -2,13 +2,17 @@
 #'
 #' @description Compute the sample median.
 #'
-#'   `median2()` works like the standard [`median()`] unless one or more values
-#'   are missing: `median()` always returns `NA` in this case, but `median2()`
-#'   checks if the median can be determined nevertheless.
+#'   `median2()` works like the standard [`median()`] by default unless one or
+#'   more values are missing: `median()` always returns `NA` in this case, but
+#'   `median2()` checks if the median can be determined nevertheless.
 #'
 #' @param x Numeric or similar. Vector to search for its median.
 #' @param na.rm Boolean. If set to `TRUE`, missing values are removed before
 #'   computation proceeds. Default is `FALSE`.
+#' @param even Character. What to do if `x` has an even length and contains no
+#'   missing values (or they were removed by `na.rm = TRUE`). The default,
+#'   `"mean"`, averages the two central values, `"low"` returns the lower
+#'   central value, and `"high"` returns the higher one.
 #' @param ... Optional further arguments for methods. Not used in the default
 #'   method.
 #'
@@ -18,7 +22,7 @@
 #'   concept (e.g., "[`Date`]").
 #'
 #'   If a new method is necessary, please make sure it deals with missing values
-#'   like `median2.default()` does. See
+#'   like the default method does. See
 #'   \href{https://lhdjung.github.io/naidem/articles/algorithm.html}{*Implementing
 #'   the algorithm*} for further details.
 
@@ -52,7 +56,7 @@
 #' # ...or too many unique values:
 #' median2(c(0, 1, 2, 3, NA))
 
-median2 <- function(x, na.rm = FALSE, ...) {
+median2 <- function(x, na.rm = FALSE, even = c("mean", "low", "high"), ...) {
   UseMethod("median2")
 }
 
@@ -64,7 +68,11 @@ median2 <- function(x, na.rm = FALSE, ...) {
 #' @name median2
 #' @export
 
-median2.default <- function(x, na.rm = FALSE, ...) {
+median2.default <- function(x, na.rm = FALSE,
+                            even = c("mean", "low", "high"), ...) {
+  ### START of new code (1 / 2)
+  even <- match.arg(even)
+  ### END of new code (1 / 2)
   if (is.factor(x) || is.data.frame(x))
     stop("need numeric data")
   if (length(names(x)))
@@ -101,8 +109,18 @@ median2.default <- function(x, na.rm = FALSE, ...) {
   if (n == 0L)
     return(x[NA_integer_])
   half <- (n + 1L)%/%2L
-  if (n%%2L == 1L)
+  if (n%%2L == 1L) {
     sort(x, partial = half)[half]
-  else mean(sort(x, partial = half + 0L:1L)[half + 0L:1L])
+  } else {
+    # In keeping with the original base R code, `x` is reduced
+    # to its values at the two central indices here:
+    x <- sort(x, partial = half + 0L:1L)[half + 0L:1L]
+    switch(
+      even,
+      "mean" = mean(x),
+      "low"  = x[1L],
+      "high" = x[2L]
+    )
+  }
 }
 

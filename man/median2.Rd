@@ -5,15 +5,20 @@
 \alias{median2.default}
 \title{Median with missing values analysis}
 \usage{
-median2(x, na.rm = FALSE, ...)
+median2(x, na.rm = FALSE, even = c("mean", "low", "high"), ...)
 
-\method{median2}{default}(x, na.rm = FALSE, ...)
+\method{median2}{default}(x, na.rm = FALSE, even = c("mean", "low", "high"), ...)
 }
 \arguments{
 \item{x}{Numeric or similar. Vector to search for its median.}
 
 \item{na.rm}{Boolean. If set to \code{TRUE}, missing values are removed before
 computation proceeds. Default is \code{FALSE}.}
+
+\item{even}{Character. What to do if \code{x} has an even length and contains no
+missing values (or they were removed by \code{na.rm = TRUE}). The default,
+\code{"mean"}, averages the two central values, \code{"low"} returns the lower
+central value, and \code{"high"} returns the higher one.}
 
 \item{...}{Optional further arguments for methods. Not used in the default
 method.}
@@ -29,9 +34,9 @@ can't be determined because of missing values, or if there are no values.
 \description{
 Compute the sample median.
 
-\code{median2()} works like the standard \code{\link[=median]{median()}} unless one or more values
-are missing: \code{median()} always returns \code{NA} in this case, but \code{median2()}
-checks if the median can be determined nevertheless.
+\code{median2()} works like the standard \code{\link[=median]{median()}} by default unless one or
+more values are missing: \code{median()} always returns \code{NA} in this case, but
+\code{median2()} checks if the median can be determined nevertheless.
 }
 \details{
 \code{median2()} is a generic function, so new methods can be defined for
@@ -40,7 +45,7 @@ here should work for most classes for which a median is a reasonable
 concept (e.g., "\code{\link{Date}}").
 
 If a new method is necessary, please make sure it deals with missing values
-like \code{median2.default()} does. See
+like the default method does. See
 \href{https://lhdjung.github.io/naidem/articles/algorithm.html}{\emph{Implementing
 the algorithm}} for further details.
 }
