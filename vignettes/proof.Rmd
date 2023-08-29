@@ -85,9 +85,9 @@ Thus, if they are equal, they are also equal to the median. If the bounds are no
 ``` {eval=FALSE}
 if sorted_known[half - nna] == sorted_known[half]:
     sorted_known[half] == x[half]
-    possible_medians == { sorted_known[half] }
+    set possible_medians == { sorted_known[half] }
   else:
-    possible_medians == { sorted_known[half - nna]; ...; sorted_known[half] }
+    set possible_medians == { sorted_known[half - nna]; ...; sorted_known[half] }
 ```
 
 ## Proof for even lengths
@@ -154,11 +154,36 @@ Both pairs of extremes need to be equal, or else there are at least two possible
 if sorted_known[half_1 - nna] == sorted_known[half_1] &&
    sorted_known[half_2 - nna] == sorted_known[half_2]:
       (sorted_known[half_1] + sorted_known[half_2]) / 2 == (x[half_1] + x[half_2]) / 2
-      possible_medians == { (sorted_known[half_1] + sorted_known[half_2]) / 2 }
+      set possible_medians == { (sorted_known[half_1] + sorted_known[half_2]) / 2 }
    else:
-      possible_medians == { 
+      set possible_medians == { 
         (sorted_known[half_1 - nna] + sorted_known[half_2 - nna]) / 2;
         ...;
         (sorted_known[half_1] + sorted_known[half_2]) / 2
       }
 ```
+
+This can be simplified:
+
+``` {eval=FALSE}
+# Two general reminders:
+nna > 0
+sorted_known[half_2 - 1] == sorted_known[half_1]
+
+if sorted_known[half_1 - nna] == sorted_known[half_1] &&
+   sorted_known[half_2 - nna] == sorted_known[half_2]:
+     # Is this possible?
+     if sorted_known[half_1] != sorted_known[half_2]:
+          sorted_known[half_2 - 1] != sorted_known[half_2]
+          # It isn't, because the median would then depend
+          # on the missing values' position within
+          # the rank order:
+          if all_known_values_less:
+               x[half_1] < (x[half_1] + x[half_2]) / 2 < x[half_2]
+          if all_missing_values_less:
+               x[half_1] <= (x[half_1] + x[half_2]) / 2 <= x[half_2]
+```
+
+As a consequence, more than one value is possible for each of `x[half_1]` and `x[half_2]` given the missing values. This, in turn, contradicts the basic premise that each of the two values around the median remains equal when offset by `nna`. If this premise is false, however, the median cannot be determined, as shown above. This is why `half_1` and `half_2` must be equal in order for the median to be determined, and since the mean of two equal values is equal to each of them, the median is equal to both `x[half_1]` and `x[half_2]`.
+
+If the median of an even-length distribution with missing values can be determined at all, the algorithm can simply return `x[half_1]` instead of `(x[half_1] + x[half_2]) / 2`. Simplifying the algorithm in this way makes it more efficient.

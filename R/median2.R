@@ -90,12 +90,10 @@ median2.default <- function(x, na.rm = FALSE, ...) {
     x <- sort(x[!is.na(x)])
     # Check for equality with offset value(s); see
     # https://lhdjung.github.io/naidem/articles/algorithm.html for details:
-    if (!isTRUE(all(x[half - nna] == x[half]))) {
-      return(x[NA_integer_])
-    } else if (length(half) == 2L) {
-      return(mean(x[half]))
+    if (isTRUE(all(x[half - nna] == x[half]))) {
+      return(x[half[1L]])
     } else {
-      return(x[half])
+      return(x[NA_integer_])
     }
   }
   ### END of new code

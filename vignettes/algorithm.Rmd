@@ -67,10 +67,11 @@ if nna > half_1:
 x := sort(keep_known(x))
 
 # 6. Check whether both pairs are equal.
-# If they are, return the mean of the central values.
+# If they are, return the mean of the central
+# values (which is equal to both members of the pair).
 # If one or both are not equal, return a missing value.
 if x[half_1 - nna] == x[half_1] && x[half_2 - nna] == x[half_2]:
-   return (x[half_1] + x[half_2]) / 2
+   return x[half_1]
 else:
    return NA
 ```
@@ -83,16 +84,14 @@ The algorithms check whether the putative median can be changed by a shift due t
 
 Subtraction is used for the shift because `x` is still indexed at `half` (the midpoint of the input `x`) even though all missing values were already removed from `x` by that point. Therefore, `x[half]` is not actually the midpoint of `x`. The maximum possible number of steps by which missing values can shift the median is `nna`, so this number is subtracted.
 
-It is generally easier to determine the median for distributions of an odd length. The same is true when missing values are present. The even-length algorithm operates with two central indices instead of one because even-length distributions don't have a single central value. The algorithm needs to compare `x` at each of these indices with the respective index offset by the number of missing values. In this way, it effectively checks whether the pair of `x` values at the central indices in the offset case is equal to the pair without the offset. The odd-length algorithm just checks two single values for equality.
+It is generally easier to determine the median for distributions of an odd length. The same is true when missing values are present. The even-length algorithm operates with two central indices instead of one because even-length distributions don't have a single central value. The algorithm needs to compare `x` at each of these indices with the respective index offset by the number of missing values. In this way, it effectively checks whether the pair of `x` values at the central indices in the offset case is equal to the pair without the offset. If so, the two values are the same, so there is no need to compute the average.
 
 The algorithms return `NA` if any offset central index is negative, i.e., if `half(_1) - nna < 0`. (This is step 3 for odd lengths and step 4 for even lengths. The pseudo-code in the algorithm is more efficient.) In the even-length case, only `half_1` needs to be tested because it is less than `half_2`, so it is negative whenever `half_2` is. Why return `NA` here? The median is never known in such cases, and indices must not be negative when testing for equality in the final condition. Negative indices are not well defined, and programming languages such as R and Python would handle them in unintended ways.
 
 ## R details
 
-The R implementation in naidem is more succinct than the pseudo-code. This plays into the strengths of R, but it does make the code look a little different from the above. Again, note that the pseudo-code uses zero-indexing but R uses one-indexing. This is why `any(nna + 1L > half)` checks for non-positive indices in general, not just for negative ones.
+The R implementation in naidem is more succinct than the pseudo-code, combining both partial algorithms into one. This plays into the strengths of R, but it does make the code look a little different from the above. Again, note that the pseudo-code uses zero-indexing but R uses one-indexing. This is why `any(nna + 1L > half)` checks for non-positive indices in general, not just for negative ones.
 
-The final condition checks whether the possible medians are *not* equal, and as a consequence, the function returns a missing value if the condition is `TRUE`. The reason is that the R code combines both algorithms into one, and if the negation returns `FALSE`, the median can be determined but the code still needs to check whether `x` was originally even or odd. To do so, it uses the `half` vector which has length 1 if `x` was odd and length 2 if `x` was even.
+The final condition is wrapped into `isTRUE(all(.))`, so that `all()` reduces two logical test results to one if the input has an even length. If any comparison between the possible median values returns either `NA` or `FALSE`, the `isTRUE()` wrapping returns `FALSE` and the function returns `NA` because the median cannot be determined with certainty.
 
-Similarly, the condition is wrapped into `isTRUE(all(.))`, so that `all()` reduces two Boolean test results to one if the input has an even length. If this returns `NA`, the `isTRUE()` wrapping returns `FALSE` so that the negation returns `TRUE` whenever any comparison between the possible median values returns either `NA` or `FALSE`. Since the median is unknown in this case, the function ultimately returns `NA`.
-
-If this doesn't occur and `x` was originally even, the code uses `mean()` instead of manually dividing the sum of the half-indexed `x` values by 2. That is because some classes may have specific `mean()` methods implemented. Compare this to the details section of the documentation for `stats::median()`.
+`isTRUE()` will only return `TRUE` if both comparisons do. Recall that the `half` object is either length 1 (the index of the median of an odd-length distribution) or 2 (the indices of the two values right above and below the median of an even-length distribution). If the median can be determined in the even-length scenario, it is [equal to both values around it](https://lhdjung.github.io/naidem/articles/proof.html#proof-of-step-6). This is why the function returns `x[half[1L]]`, i.e., the first of these two values. For an odd-length distribution, the index is redundant because `half[1L]` equals `half`. Thus, `x[half[1L]]` is the correct return value in both cases if the median can be determined.
