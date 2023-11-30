@@ -70,13 +70,13 @@ median_possible_values.default <- function(x) {
   } else {
     (n + 1L:2L) %/% 2L
   }
-  nna <- length(x[is.na(x)])
   x <- sort(x[!is.na(x)])
+  nna <- n - length(x)
   # Some special rules:
-  # -- If all values are known, the only possible median is the actual one as
+  # -- If all values are known, there is only one possible median, and it can be
   # determined by `median2()`.
   # -- If any central value is missing, there is no way to determine the
-  # possible median values.
+  # possible medians.
   if (nna == 0L) {
     return(median2(x))
   } else if (any(nna >= half)) {
@@ -94,7 +94,7 @@ median_possible_values.default <- function(x) {
   # possible median positions (`half_span`):
   out <- vector(typeof(x), length(half_span))
   for (i in seq_along(out)) {
-    out[i] <- mean(x[half_span[i:(i + 1L)]])
+    out[i] <- mean(x[half_span[c(i, i + 1L)]])
   }
   # Compute the last possible value "manually":
   half_span_last <- half_span[length(half_span)]
