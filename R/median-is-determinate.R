@@ -19,6 +19,6 @@
 #' # cannot be determined:
 #' median_is_determinate(c(1, 2, NA))
 
-median_is_determinate <- function(x) {
-  !is.na(median2(x, na.rm = FALSE))
+median_is_determinate <- function(x, na.rm.amount = 0) {
+  !is.na(median2(x, na.rm = FALSE, na.rm.amount = na.rm.amount))
 }
