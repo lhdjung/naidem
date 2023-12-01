@@ -47,8 +47,8 @@ decrease_na_amount <- function(x, na.rm, na.rm.amount, na.rm.from) {
   # Target the indices of those missings that should be ignored:
   x_missing_but_ignored <- switch(
     na.rm.from,
-    "start"  = utils::head(x_missing, length(x_missing) - nna),
-    "end"    = utils::tail(x_missing, length(x_missing) - nna),
+    "first"  = utils::head(x_missing, length(x_missing) - nna),
+    "last"   = utils::tail(x_missing, length(x_missing) - nna),
     "random" = sample(x_missing, size = length(x_missing) - nna)
   )
   # Return `x`, excluding those values:

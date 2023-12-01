@@ -11,6 +11,9 @@
 #'   computation proceeds. Default is `FALSE`.
 #' @param na.rm.amount Numeric. Alternative to `na.rm` that only removes a
 #'   specified number of missing values. Default is `0`.
+#' @param na.rm.from String. If `na.rm.amount` is used, from which position in
+#'   `x` should missing values be removed? Options are `"first"`, `"last"`, and
+#'   `"random"`. Default is `"first"`.
 #' @param even Character. What to do if `x` has an even length and contains no
 #'   missing values (or they were removed). The default, `"mean"`, averages the
 #'   two central values, `"low"` returns the lower central value, and `"high"`
@@ -73,7 +76,7 @@ median2 <- function(x, na.rm = FALSE, na.rm.amount = 0,
 #' @export
 
 median2.default <- function(x, na.rm = FALSE, na.rm.amount = 0,
-                            na.rm.from = c("start", "end", "random"),
+                            na.rm.from = c("first", "last", "random"),
                             even = c("mean", "low", "high"), ...) {
   na.rm.from <- match.arg(na.rm.from)
   even <- match.arg(even)
