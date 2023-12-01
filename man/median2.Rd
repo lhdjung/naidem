@@ -5,9 +5,23 @@
 \alias{median2.default}
 \title{Median with missing values analysis}
 \usage{
-median2(x, na.rm = FALSE, even = c("mean", "low", "high"), ...)
+median2(
+  x,
+  na.rm = FALSE,
+  na.rm.amount = 0,
+  na.rm.from = c("start", "end", "random"),
+  even = c("mean", "low", "high"),
+  ...
+)
 
-\method{median2}{default}(x, na.rm = FALSE, even = c("mean", "low", "high"), ...)
+\method{median2}{default}(
+  x,
+  na.rm = FALSE,
+  na.rm.amount = 0,
+  na.rm.from = c("first", "last", "random"),
+  even = c("mean", "low", "high"),
+  ...
+)
 }
 \arguments{
 \item{x}{Numeric or similar. Vector to search for its median.}
@@ -15,10 +29,17 @@ median2(x, na.rm = FALSE, even = c("mean", "low", "high"), ...)
 \item{na.rm}{Logical. If set to \code{TRUE}, missing values are removed before
 computation proceeds. Default is \code{FALSE}.}
 
+\item{na.rm.amount}{Numeric. Alternative to \code{na.rm} that only removes a
+specified number of missing values. Default is \code{0}.}
+
+\item{na.rm.from}{String. If \code{na.rm.amount} is used, from which position in
+\code{x} should missing values be removed? Options are \code{"first"}, \code{"last"}, and
+\code{"random"}. Default is \code{"first"}.}
+
 \item{even}{Character. What to do if \code{x} has an even length and contains no
-missing values (or they were removed by \code{na.rm = TRUE}). The default,
-\code{"mean"}, averages the two central values, \code{"low"} returns the lower
-central value, and \code{"high"} returns the higher one.}
+missing values (or they were removed). The default, \code{"mean"}, averages the
+two central values, \code{"low"} returns the lower central value, and \code{"high"}
+returns the higher one.}
 
 \item{...}{Optional further arguments for methods. Not used in the default
 method.}
@@ -34,7 +55,7 @@ can't be determined because of missing values, or if there are no values.
 \description{
 Compute the sample median.
 
-\code{median2()} works like the standard \code{\link[=median]{median()}} by default unless one or
+By default, \code{median2()} works like the standard \code{\link[=median]{median()}} unless one or
 more values are missing: \code{median()} always returns \code{NA} in this case, but
 \code{median2()} checks if the median can be determined nevertheless.
 }

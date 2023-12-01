@@ -2,17 +2,22 @@
 #'
 #' @description Compute the sample median.
 #'
-#'   `median2()` works like the standard [`median()`] by default unless one or
+#'   By default, `median2()` works like the standard [`median()`] unless one or
 #'   more values are missing: `median()` always returns `NA` in this case, but
 #'   `median2()` checks if the median can be determined nevertheless.
 #'
 #' @param x Numeric or similar. Vector to search for its median.
 #' @param na.rm Logical. If set to `TRUE`, missing values are removed before
 #'   computation proceeds. Default is `FALSE`.
+#' @param na.rm.amount Numeric. Alternative to `na.rm` that only removes a
+#'   specified number of missing values. Default is `0`.
+#' @param na.rm.from String. If `na.rm.amount` is used, from which position in
+#'   `x` should missing values be removed? Options are `"first"`, `"last"`, and
+#'   `"random"`. Default is `"first"`.
 #' @param even Character. What to do if `x` has an even length and contains no
-#'   missing values (or they were removed by `na.rm = TRUE`). The default,
-#'   `"mean"`, averages the two central values, `"low"` returns the lower
-#'   central value, and `"high"` returns the higher one.
+#'   missing values (or they were removed). The default, `"mean"`, averages the
+#'   two central values, `"low"` returns the lower central value, and `"high"`
+#'   returns the higher one.
 #' @param ... Optional further arguments for methods. Not used in the default
 #'   method.
 #'
@@ -56,7 +61,9 @@
 #' # ...or too many unique values:
 #' median2(c(0, 1, 2, 3, NA))
 
-median2 <- function(x, na.rm = FALSE, even = c("mean", "low", "high"), ...) {
+median2 <- function(x, na.rm = FALSE, na.rm.amount = 0,
+                    na.rm.from = c("start", "end", "random"),
+                    even = c("mean", "low", "high"), ...) {
   UseMethod("median2")
 }
 
@@ -68,19 +75,25 @@ median2 <- function(x, na.rm = FALSE, even = c("mean", "low", "high"), ...) {
 #' @name median2
 #' @export
 
-median2.default <- function(x, na.rm = FALSE,
+median2.default <- function(x, na.rm = FALSE, na.rm.amount = 0,
+                            na.rm.from = c("first", "last", "random"),
                             even = c("mean", "low", "high"), ...) {
-  ### START of new code (1 / 2)
+  na.rm.from <- match.arg(na.rm.from)
   even <- match.arg(even)
-  ### END of new code (1 / 2)
   if (is.factor(x) || is.data.frame(x))
     stop("need numeric data")
+  # The user may choose to ignore any number of missing values (see the utils.R
+  # file for the `decrease_na_amount()` helper function):
+  if (!missing(na.rm.amount)) {
+    x <- decrease_na_amount(x, na.rm, na.rm.amount, na.rm.from)
+  }
   if (length(names(x)))
     names(x) <- NULL
   if (na.rm)
     x <- x[!is.na(x)]
-  ### START of new code
+  ### START of key part
   else if (anyNA(x)) {
+    nna <- length(x[is.na(x)])
     # Using an `n` variable for consistency with the older code at the bottom:
     n <- length(x)
     # Central index or indices in `x`; length 1 if the length of `x` is odd,
@@ -90,7 +103,6 @@ median2.default <- function(x, na.rm = FALSE,
     } else {
       (n + 1L:2L) %/% 2L
     }
-    nna <- length(x[is.na(x)])
     # Check for non-positive indices:
     if (any(nna + 1L > half)) {
       return(x[NA_integer_])
@@ -104,7 +116,7 @@ median2.default <- function(x, na.rm = FALSE,
       return(x[NA_integer_])
     }
   }
-  ### END of new code
+  ### END of key part
   n <- length(x)
   if (n == 0L)
     return(x[NA_integer_])

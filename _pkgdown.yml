@@ -17,7 +17,8 @@ reference:
 - title: Actual median
 - contents:
   - median2
+  - median_is_determinate
 - title: Possible medians
 - contents:
-  - median_possible_values
   - median_range
+  - median_df
