@@ -124,6 +124,6 @@ median_df <- function(x, even = c("mean", "low", "high"), ...) {
   # stores the names of `x` if there are any:
   tibble::tibble(
     term = names(x), estimate, certainty, na_ignored, na_total, rate_ignored_na,
-    sum_total, rate_ignored_sum, stringsAsFactors = FALSE
+    sum_total, rate_ignored_sum
   )
 }
