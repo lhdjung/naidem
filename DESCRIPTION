@@ -28,6 +28,5 @@ Collate:
     'median2.R'
     'median-table.R'
     'utils.R'
-    'validate.R'
 Imports: 
     tibble
