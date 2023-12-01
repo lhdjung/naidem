@@ -22,12 +22,21 @@
     <loc>https://lhdjung.github.io/naidem/index.html</loc>
   </url>
   <url>
+    <loc>https://lhdjung.github.io/naidem/news/index.html</loc>
+  </url>
+  <url>
     <loc>https://lhdjung.github.io/naidem/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://lhdjung.github.io/naidem/reference/median-possible.html</loc>
+    <loc>https://lhdjung.github.io/naidem/reference/median-range.html</loc>
   </url>
   <url>
     <loc>https://lhdjung.github.io/naidem/reference/median2.html</loc>
+  </url>
+  <url>
+    <loc>https://lhdjung.github.io/naidem/reference/median_df.html</loc>
+  </url>
+  <url>
+    <loc>https://lhdjung.github.io/naidem/reference/median_is_determinate.html</loc>
   </url>
 </urlset>
