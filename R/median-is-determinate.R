@@ -1,7 +1,7 @@
 #' Can the median be determined?
 #'
 #' `median_is_determinate()` tests whether a vector's median can be determined
-#' despite missing values. It is based on `median2()`.
+#' despite missing values. It is based on [`median2()`].
 #'
 #' @inheritParams median2
 #'

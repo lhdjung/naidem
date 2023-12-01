@@ -4,17 +4,20 @@
 \alias{median_is_determinate}
 \title{Can the median be determined?}
 \usage{
-median_is_determinate(x)
+median_is_determinate(x, na.rm.amount = 0)
 }
 \arguments{
 \item{x}{Numeric or similar. Vector to search for its median.}
+
+\item{na.rm.amount}{Numeric. Alternative to \code{na.rm} that only removes a
+specified number of missing values. Default is \code{0}.}
 }
 \value{
 Logical (length 1).
 }
 \description{
 \code{median_is_determinate()} tests whether a vector's median can be determined
-despite missing values. It is based on \code{median2()}.
+despite missing values. It is based on \code{\link[=median2]{median2()}}.
 }
 \examples{
 # The median is 1, no matter which number

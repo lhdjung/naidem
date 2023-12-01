@@ -22,3 +22,12 @@ VignetteBuilder: knitr
 URL: https://github.com/lhdjung/naidem,
     https://lhdjung.github.io/naidem/
 BugReports: https://github.com/lhdjung/naidem/issues
+Collate: 
+    'median-is-determinate.R'
+    'median-range.R'
+    'median2.R'
+    'median-table.R'
+    'utils.R'
+    'validate.R'
+Imports: 
+    tibble
