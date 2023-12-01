@@ -90,6 +90,20 @@ if sorted_known[half - nna] == sorted_known[half]:
     set possible_medians == { sorted_known[half - nna]; ...; sorted_known[half] }
 ```
 
+Whenever the median can be determined, it is equivalent to the median of `sorted_known`. In other words, if the algorithm returns a non-`NA` value, that value is equal to the median of `x` after removing all missing values from it:
+
+```{eval=FALSE}
+sorted_known_median := sorted_known[length(sorted_known) / 2 - 0.5]
+sorted_known[half - nna] <= sorted_known_median <= sorted_known[half]
+
+if sorted_known[half - nna] == sorted_known[half]:
+    sorted_known[half] == x[half]
+    sorted_known[half] == sorted_known_median
+    set possible_medians == { sorted_known_median }
+  else:
+    set possible_medians == { sorted_known[half - nna]; ...; sorted_known[half] }
+```
+
 ## Proof for even lengths
 
 The definitions are the same as above, except for the fact that there are two midpoints here:
@@ -163,7 +177,7 @@ if sorted_known[half_1 - nna] == sorted_known[half_1] &&
       }
 ```
 
-This can be simplified:
+The return value can be simplified from `(sorted_known[half_1] + sorted_known[half_2]) / 2` to `x[half_1]`:
 
 ``` {eval=FALSE}
 # Two general reminders:
