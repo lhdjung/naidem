@@ -77,13 +77,11 @@ for more information on naidem’s solution.
 
 ### Possible medians
 
-What to do if the median really is unknown, like above? These two
-functions will attempt to narrow it down to its possible values, or the
-range of such values:
+What to do if the median really is unknown, like above? `median_range()`
+will attempt to narrow it down to its minimal and maximal possible
+medians:
 
 ``` r
-median_possible_values(x2)
-#> [1] 3.5 4.0 4.5
 median_range(x2)
 #> [1] 3.5 4.5
 ```
