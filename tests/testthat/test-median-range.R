@@ -40,6 +40,9 @@ test_that("`median_range()` works correctly with `x15`", {
   expect_equal(median_range(c(x15, rep(NA, 2))), c(6, 9))
   expect_equal(median_range(c(x15, rep(NA, 3))), c(NA_real_, NA_real_))
   expect_equal(median_range(c(x15, rep(NA, 4))), c(NA_real_, NA_real_))
+  expect_equal(median_range(c(x15, 5)), c(6.5, 8))
+  expect_equal(median_range(c(x15, 5), even = "low"), c(6, 7))
+  expect_equal(median_range(c(x15, 5), even = "high"), c(7, 9))
 })
 
 test_that("`median_range()` works correctly with `x16`", {

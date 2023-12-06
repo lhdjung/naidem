@@ -33,12 +33,9 @@ median_range <- function(x, na.rm.amount = 0, even = c("mean", "low", "high")) {
   UseMethod("median_range")
 }
 
+
 #' @name median-range
 #' @export
-
-
-# TODO: FIX FOR `c(7, 7, 7, 8, 9, 9, NA, NA)`; IT CURRENTLY RETURNS `c(7, 9)`
-# BUT SHOULD RETURN `c(7, 8.5)`!
 
 median_range.default <- function(x, na.rm.amount = 0,
                                  even = c("mean", "low", "high")) {
@@ -59,7 +56,7 @@ median_range.default <- function(x, na.rm.amount = 0,
   # determined by `median2()`.
   # -- If any central value is missing, there is no way to determine the bounds.
   if (nna == 0L) {
-    return(rep(median2(x), length = 2L))
+    return(rep(median2(x, even = even), length = 2L))
   } else if (any(nna >= half)) {
     return(rep(x[NA_integer_], length = 2L))
   }
