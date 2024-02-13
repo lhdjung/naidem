@@ -9,7 +9,7 @@ median2(
   x,
   na.rm = FALSE,
   na.rm.amount = 0,
-  na.rm.from = c("start", "end", "random"),
+  na.rm.from = c("first", "last", "random"),
   even = c("mean", "low", "high"),
   ...
 )

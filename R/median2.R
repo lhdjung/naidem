@@ -62,7 +62,7 @@
 #' median2(c(0, 1, 2, 3, NA))
 
 median2 <- function(x, na.rm = FALSE, na.rm.amount = 0,
-                    na.rm.from = c("start", "end", "random"),
+                    na.rm.from = c("first", "last", "random"),
                     even = c("mean", "low", "high"), ...) {
   UseMethod("median2")
 }
