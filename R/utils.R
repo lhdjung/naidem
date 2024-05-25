@@ -1,24 +1,4 @@
 
-# This NA-coalescing operator replaces any and all `NA` elements of `x` by a
-# safe fallback, `y`. It is named after `rlang::`%|%`()`, although that operator
-# is stricter about types than the one below.
-`%|%` <- function(x, y) {
-  `[<-`(x, is.na(x), y)
-}
-
-# Scalar version of the NA-coalescing operator. It throws an error if `x` is not
-# length 1, which is useful for testing the expectation that it always has
-# length 1.
-`%|1%` <- function(x, y) {
-  if (is.na(x)) {
-    y
-  } else {
-    x
-  }
-}
-
-
-
 # Adapted with modifications from the examples of the `?integer` documentation.
 # For each element of `x`, this vectorized helper checks whether it is
 # *conceptually* an integer (but not necessarily by object type). If `x` is not
