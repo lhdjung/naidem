@@ -36,7 +36,7 @@ specified number of missing values. Default is \code{0}.}
 \code{x} should missing values be removed? Options are \code{"first"}, \code{"last"}, and
 \code{"random"}. Default is \code{"first"}.}
 
-\item{even}{Character. What to do if \code{x} has an even length and contains no
+\item{even}{String. What to do if \code{x} has an even length and contains no
 missing values (or they were removed). The default, \code{"mean"}, averages the
 two central values, \code{"low"} returns the lower central value, and \code{"high"}
 returns the higher one.}
@@ -75,6 +75,7 @@ the algorithm}} for further details.
 # it works like `median()`:
 median(1:4)
 median2(1:4)
+
 median(c(1:3, 100, 1000))
 median2(c(1:3, 100, 1000))
 

@@ -14,7 +14,7 @@
 #' @param na.rm.from String. If `na.rm.amount` is used, from which position in
 #'   `x` should missing values be removed? Options are `"first"`, `"last"`, and
 #'   `"random"`. Default is `"first"`.
-#' @param even Character. What to do if `x` has an even length and contains no
+#' @param even String. What to do if `x` has an even length and contains no
 #'   missing values (or they were removed). The default, `"mean"`, averages the
 #'   two central values, `"low"` returns the lower central value, and `"high"`
 #'   returns the higher one.
@@ -47,6 +47,7 @@
 #' # it works like `median()`:
 #' median(1:4)
 #' median2(1:4)
+#'
 #' median(c(1:3, 100, 1000))
 #' median2(c(1:3, 100, 1000))
 #'
