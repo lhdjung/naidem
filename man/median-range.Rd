@@ -21,8 +21,9 @@ Vector of length 2 and the same type as \code{x}.
 If the median can be determined (i.e., \code{\link[=median2]{median2()}} would return a
 non-\code{NA} value), \code{median_range()} returns two identical values.
 
-If there are missing values at the median position, the median range cannot
-be determined. The function will then return \code{c(NA, NA)}.
+If there could be missing values at the median position, the median range
+cannot be determined. The function will then return \code{c(NA, NA)} but of the
+same type as \code{x}.
 }
 \description{
 \code{median_range()} computes the minimal and maximal possible
@@ -34,8 +35,13 @@ Like \code{\link[=median2]{median2()}}, this function is generic, so methods can
 defined for other classes. This documentation describes the default method.
 }
 \examples{
+# Lower and upper bounds are known,
+# even though `median2()` would return `NA`:
 median_range(c(7, 7, 8, 9, NA))
 median_range(c(7, 7, 7, 8, 9, 9, NA, NA))
+
+# Too many missing values, so the range is unknown:
+median_range(c(7, 7, 8, 9, NA, NA, NA, NA))
 }
 \author{
 Lukas Jung, R Core Team
