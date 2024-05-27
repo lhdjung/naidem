@@ -94,9 +94,10 @@ median2.default <- function(x, na.rm = FALSE, na.rm.amount = 0,
     x <- x[!is.na(x)]
   ### START of key part
   else if (anyNA(x)) {
-    nna <- length(x[is.na(x)])
     # Using an `n` variable for consistency with the older code at the bottom:
     n <- length(x)
+    x <- sort(x[!is.na(x)])
+    nna <- n - length(x)
     # Central index or indices in `x`; length 1 if the length of `x` is odd,
     # length 2 if it is even:
     half <- if (n %% 2L == 1L) {
@@ -108,7 +109,6 @@ median2.default <- function(x, na.rm = FALSE, na.rm.amount = 0,
     if (any(nna + 1L > half)) {
       return(x[NA_integer_])
     }
-    x <- sort(x[!is.na(x)])
     # Check for equality with offset value(s); see
     # https://lhdjung.github.io/naidem/articles/algorithm.html for details:
     if (isTRUE(all(x[half - nna] == x[half]))) {
