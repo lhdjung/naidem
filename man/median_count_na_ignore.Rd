@@ -4,23 +4,31 @@
 \alias{median_count_na_ignore}
 \title{How many \code{NA}s need to be ignored for a median estimate?}
 \usage{
-median_count_na_ignore(x)
+median_count_na_ignore(x, format = c("total", "proportion"))
 }
 \arguments{
 \item{x}{A numeric vector or similar.}
+
+\item{format}{String. If \code{"total"} (the default), the function returns the
+absolute number of \code{NA}s that must be ignored. If \code{"proportion"}, it
+returns that number divided by the count of all \code{NA}s.}
 }
 \value{
-Integer (length 1). The value ranges from zero to
-\code{length(which(is.na(x)))}, i.e., the total number of missing values in \code{x}.
+Numeric (length 1), never \code{NA}. The value depends on \code{format}:
+\itemize{
+\item With the default \code{format = "total"}, it is an integer that ranges from
+\code{0} to \code{length(which(is.na(x)))}, i.e., the total number of missing values
+in \code{x}.
+\item With \code{format = "proportion"}, it is a double that ranges from \code{0} to \code{1}.
+}
 }
 \description{
 \code{median_count_na_ignore()} returns the number of missing values
 that need to be ignored to safely determine the median of the remaining
-values. The point is to retain as many \code{NA}s as possible when looking for a
-median estimate, instead of simply ignoring all of them.
+values.
 
-This function is currently experimental. It only works if the number of
-known values is odd (see examples).
+The point is to retain as many \code{NA}s as possible when looking for a median
+estimate, instead of simply ignoring all of them.
 }
 \examples{
 # The median can only be `8`, so
@@ -32,10 +40,10 @@ median_count_na_ignore(c(8, 8, 8, NA))
 median_count_na_ignore(c(8, 9, 9, NA))
 
 # Ignoring two `NA`s leads to the same
-# state as in the first case:
+# state as in the first example:
 median_count_na_ignore(c(8, 8, 8, NA, NA, NA))
 
-# However, the function wrongly treats
-# this in the same way:
+# All need to be ignored here because
+# a single one could change the median:
 median_count_na_ignore(c(8, 9, NA, NA, NA))
 }

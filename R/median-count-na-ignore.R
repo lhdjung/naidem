@@ -2,16 +2,21 @@
 #'
 #' @description `median_count_na_ignore()` returns the number of missing values
 #'   that need to be ignored to safely determine the median of the remaining
-#'   values. The point is to retain as many `NA`s as possible when looking for a
-#'   median estimate, instead of simply ignoring all of them.
+#'   values.
 #'
-#'   This function is currently experimental. It only works if the number of
-#'   known values is odd (see examples).
+#'   The point is to retain as many `NA`s as possible when looking for a median
+#'   estimate, instead of simply ignoring all of them.
 #'
 #' @param x A numeric vector or similar.
+#' @param format String. If `"total"` (the default), the function returns the
+#'   absolute number of `NA`s that must be ignored. If `"proportion"`, it
+#'   returns that number divided by the count of all `NA`s.
 #'
-#' @return Integer (length 1). The value ranges from zero to
-#'   `length(which(is.na(x)))`, i.e., the total number of missing values in `x`.
+#' @return Numeric (length 1), never `NA`. The value depends on `format`:
+#'   - With the default `format = "total"`, it is an integer that ranges from
+#'   `0` to `length(which(is.na(x)))`, i.e., the total number of missing values
+#'   in `x`.
+#'   - With `format = "proportion"`, it is a double that ranges from `0` to `1`.
 #'
 #' @export
 #'
@@ -25,11 +30,11 @@
 #' median_count_na_ignore(c(8, 9, 9, NA))
 #'
 #' # Ignoring two `NA`s leads to the same
-#' # state as in the first case:
+#' # state as in the first example:
 #' median_count_na_ignore(c(8, 8, 8, NA, NA, NA))
 #'
-#' # However, the function wrongly treats
-#' # this in the same way:
+#' # All need to be ignored here because
+#' # a single one could change the median:
 #' median_count_na_ignore(c(8, 9, NA, NA, NA))
 
 
@@ -38,11 +43,22 @@
 # x <- c(8, 8, 9, 9, NA, NA, NA)
 
 
-median_count_na_ignore <- function(x) {
+median_count_na_ignore <- function(x, format = c("total", "proportion")) {
+  format <- match.arg(format)
   n <- length(x)
   x <- sort(x[!is.na(x)])
   n_known <- length(x)
   nna <- n - n_known
+
+  # Special rules apply with extreme (low or high) numbers of missing values:
+  # -- No missing values, nothing to ignore.
+  # -- All values are missing, all must be ignored. This is recursive: remove
+  # one, and the median is still unknown.
+  if (nna == 0L) {
+    return(0L)
+  } else if (nna == n) {
+    return(nna)
+  }
 
   # # New attempt -- is it enough to count points of overlap? No, this is too
   # # simple: it won't detect the difference between, e.g., `c(8, 8, NA, NA, NA)`
@@ -55,15 +71,16 @@ median_count_na_ignore <- function(x) {
   # them. Even so, however, this single value is assigned to two variables
   # because these are needed in case of an even number. This avoids having to
   # split the remainder of the code into one odd-length and one even-length arm.
-  if (n_known %% 2L == 1L) {
-    half_lower <- (n_known + 1L) %/% 2L
-    half_upper <- half_lower
-    one_if_even <- 0L
-  } else {
+  n_known_is_even <- n_known %% 2L == 0L
+  if (n_known_is_even) {
     # stop("Even length of known values not yet supported!")
     half_lower <- n_known %/% 2L
     half_upper <- half_lower + 1L
-    one_if_even <- 1L
+    # one_if_even <- 1L
+  } else {
+    half_lower <- (n_known + 1L) %/% 2L
+    half_upper <- half_lower
+    # one_if_even <- 0L
   }
 
   # # Starting at the central index (or indices), go out "left" and "right", i.e.,
@@ -75,26 +92,52 @@ median_count_na_ignore <- function(x) {
   # steps_right <- match(x[half_upper], x[(half_upper + add_upper + 1L):n_known], 0L)
 
   # indices_x_arm <- seq_len(n_known %/% 2L + one_if_even)
-  # left_test_arm_against_half  <- x[half_lower] == rev(x[indices_x_arm])
-  # right_test_arm_against_half <- x[half_upper] == x[indices_x_arm + half_lower]
+  # left_test_arm  <- x[half_lower] == rev(x[indices_x_arm])
+  # right_test_arm <- x[half_upper] == x[indices_x_arm + half_lower]
 
-  # steps_left  <- match(FALSE, left_test_arm_against_half)  - 1L
-  # steps_right <- match(FALSE, right_test_arm_against_half) - 1L
+  # steps_left  <- match(FALSE, left_test_arm)  - 1L
+  # steps_right <- match(FALSE, right_test_arm) - 1L
 
-  # TODO: Fix this; it seems correct if `n_known` is odd, but not if it's even.
+  # In case of two unequal central values, a single `NA` can shift the median,
+  # so all `NA`s must be ignored. This can only occur with an even number of
+  # known values.
+  if (x[half_lower] != x[half_upper]) {
+    return(nna)
+  }
+
+  # Special rules apply if there are not enough known values to meaningfully
+  # count the steps within their center:
+  # -- A single known value can't tolerate any missing values.
+  # -- With two known values, they are known to be equal due to the check above.
+  # They tolerate exactly one `NA`, so all but one need to be ignored.
+  # Subtraction can't return a negative number here because the zero-`NA` case
+  # was already handled before.
+  if (n_known < 3L) {
+    if (n_known == 1L) {
+      return(nna)
+    } else {
+      return(nna - 1L)
+    }
+  }
+
+  # Using a helper function, count the steps from the central value outward in
+  # each direction where the value is still the same as in the center:
   steps_left <- count_steps_within_center(
-    test_arm_against_half = x[half_lower] == rev(x[seq_len(half_upper - 1L)]),
-    one_if_even_else_zero = one_if_even
+    x[half_lower] == rev(c(x[seq_len(half_upper - 1L)]))
   )
-
   steps_right <- count_steps_within_center(
-    test_arm_against_half = x[half_upper] == x[(half_lower + 1L):n_known],
-    one_if_even_else_zero = one_if_even
+    x[half_upper] == c(x[(half_lower + 1L):n_known])
   )
 
-  # Calculate the maximal number of `NA`s that can be tolerated -- i.e., that
-  # don't need to be ignored -- when attempting to determine the median:
-  nna_tolerated <- 2L * min(steps_left, steps_right)
+  # # Calculate the maximal number of `NA`s that can be tolerated -- i.e., that
+  # # don't need to be ignored -- when attempting to determine the median:
+  # nna_tolerated <- 2L * min(steps_left, steps_right)
+
+  nna_tolerated <- if (n_known_is_even) {
+    min(steps_left, steps_right)
+  } else {
+    min(steps_left, steps_right) * 2L
+  }
 
   # Subtract this quantity from the total number of missing values to get the
   # number of `NA`s that are *not* tolerated, and therefore need to be ignored.
@@ -102,24 +145,30 @@ median_count_na_ignore <- function(x) {
   # values could tolerate more `NA`s than there actually are -- the resulting
   # negative number needs to be replaced by zero because it is not possible to
   # ignore a negative amount of values.
-  max(0L, nna - nna_tolerated)
+  total <- max(0L, nna - nna_tolerated)
+
+  # Return the result, either as an absolute number or as a share of all `NA`s:
+  switch(
+    format,
+    "total"      = total,
+    "proportion" = total / nna
+  )
 }
 
 
 # Helper function used within `median_count_na_ignore()`. If the output of
 # `match()` is `NA`, provide an appropriate replacement based on the logic of
 # the two "arms" of the distribution:
-count_steps_within_center <- function(test_arm_against_half,
-                                      one_if_even_else_zero) {
-  steps <- match(FALSE, test_arm_against_half) - 1L
+count_steps_within_center <- function(test_arm) {
+  steps <- match(FALSE, test_arm) - 1L
   if (!is.na(steps)) {
     return(steps)
   }
-  message("Steps derived, not directly counted")
-  if (length(test_arm_against_half) == 0L) {
+  # message("Steps derived, not directly counted")
+  if (length(test_arm) == 0L) {
     0L
-  } else if (all(test_arm_against_half)) {
-    length(test_arm_against_half) + one_if_even_else_zero
+  } else if (all(test_arm)) {
+    length(test_arm)
   } else {
     stop(paste(
       "Unknown error in `median_count_na_ignore()` -->",
