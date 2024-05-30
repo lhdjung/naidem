@@ -11,6 +11,19 @@
 #' @param format String. If `"total"` (the default), the function returns the
 #'   absolute number of `NA`s that must be ignored. If `"proportion"`, it
 #'   returns that number divided by the count of all `NA`s.
+#' @param nna Integer. Ignore unless the function is used as a helper. If
+#'   missing values in `x` were counted elsewhere and then removed, specify
+#'   `nna` as that number to avoid redundantly dealing with `NA`s again. In this
+#'   case, `x` must already be sorted and no longer have any `NA`s! Default is
+#'   to deal with `NA`s within this function.
+#'
+#' @details If you specify `nna`, make sure that all `NA`s were already removed
+#'   from `x`, and that `x` is sorted. The function won't check for either, and
+#'   if you don't get this right, it may silently return wrong results.
+#'
+#'   The main purpose is to speed up [`median_table()`], which uses the present
+#'   function as a helper. Although both are exported, [`median_table()`] is
+#'   generally more useful.
 #'
 #' @return Numeric (length 1), never `NA`. The value depends on `format`:
 #'   - With the default `format = "total"`, it is an integer that ranges from
@@ -43,12 +56,27 @@
 # x <- c(8, 8, 9, 9, NA, NA, NA)
 
 
-median_count_na_ignore <- function(x, format = c("total", "proportion")) {
+median_count_na_ignore <- function(x,
+                                   format = c("total", "proportion"),
+                                   nna = NULL) {
   format <- match.arg(format)
   n <- length(x)
-  x <- sort(x[!is.na(x)])
-  n_known <- length(x)
-  nna <- n - n_known
+
+  # When `median_count_na_ignore()` is used as a helper, the calling function
+  # will likely count `NA`s itself, as well as remove them from `x` and then
+  # sort `x`. Doing so again here would be redundant and inefficient. The `nna`
+  # argument allows the caller to pass this number to the present function
+  # instead. This requires `x` to no longer have any `NA`s, and to be sorted!
+  if (is.null(nna)) {
+    x <- sort(x)
+    n_known <- length(x)
+    nna <- n - n_known
+  } else {
+    # x <- sort(x)
+    nna <- as.integer(nna)
+    n_known <- n
+    n <- n + nna
+  }
 
   # Special rules apply with extreme (low or high) numbers of missing values:
   # -- No missing values, nothing to ignore.
@@ -107,26 +135,27 @@ median_count_na_ignore <- function(x, format = c("total", "proportion")) {
 
   # Special rules apply if there are not enough known values to meaningfully
   # count the steps within their center:
-  # -- A single known value can't tolerate any missing values.
   # -- With two known values, they are known to be equal due to the check above.
   # They tolerate exactly one `NA`, so all but one need to be ignored.
   # Subtraction can't return a negative number here because the zero-`NA` case
   # was already handled before.
+  # -- A single known value can't tolerate any missing values, so all of them
+  # must be ignored. At this point, `n_known` can only be one, not zero, because
+  # of the checks above.
   if (n_known < 3L) {
-    if (n_known == 1L) {
-      return(nna)
-    } else {
+    if (n_known == 2L) {
       return(nna - 1L)
     }
+    return(nna)
   }
 
   # Using a helper function, count the steps from the central value outward in
   # each direction where the value is still the same as in the center:
   steps_left <- count_steps_within_center(
-    x[half_lower] == rev(c(x[seq_len(half_upper - 1L)]))
+    x[half_lower] == x[rev(seq_len(half_upper - 1L))]
   )
   steps_right <- count_steps_within_center(
-    x[half_upper] == c(x[(half_lower + 1L):n_known])
+    x[half_upper] == x[(half_lower + 1L):n_known]
   )
 
   # # Calculate the maximal number of `NA`s that can be tolerated -- i.e., that
@@ -143,15 +172,15 @@ median_count_na_ignore <- function(x, format = c("total", "proportion")) {
   # number of `NA`s that are *not* tolerated, and therefore need to be ignored.
   # If this number is greater than `nna` -- i.e., if the distribution of known
   # values could tolerate more `NA`s than there actually are -- the resulting
-  # negative number needs to be replaced by zero because it is not possible to
-  # ignore a negative amount of values.
-  total <- max(0L, nna - nna_tolerated)
+  # negative number needs to be replaced by zero because there can't be a
+  # negative amount of values.
+  nna_ignored <- max(0L, nna - nna_tolerated)
 
   # Return the result, either as an absolute number or as a share of all `NA`s:
   switch(
     format,
-    "total"      = total,
-    "proportion" = total / nna
+    "total"      = nna_ignored,
+    "proportion" = nna_ignored / nna
   )
 }
 
@@ -160,14 +189,25 @@ median_count_na_ignore <- function(x, format = c("total", "proportion")) {
 # `match()` is `NA`, provide an appropriate replacement based on the logic of
 # the two "arms" of the distribution:
 count_steps_within_center <- function(test_arm) {
-  steps <- match(FALSE, test_arm) - 1L
-  if (!is.na(steps)) {
-    return(steps)
+  n_steps <- match(FALSE, test_arm) - 1L
+
+  # # Maybe the rest of the function can be replaced by just the next block? This
+  # # would require that the two special cases that are currently checked cover
+  # # all possible cases. In other words, if `test_arm` is `NA`, either
+  # # `length(test_arm) == 0L` or `all(test_arm)` is `TRUE`. So the challenge is
+  # # to figure out whether that is correct.
+  # if (is.na(n_steps)) {
+  #   length(test_arm)
+  # } else {
+  #   n_steps
+  # }
+
+  if (!is.na(n_steps)) {
+    return(n_steps)
   }
-  # message("Steps derived, not directly counted")
-  if (length(test_arm) == 0L) {
-    0L
-  } else if (all(test_arm)) {
+  # message("n_steps derived, not directly counted")
+  if (length(test_arm) == 0L || all(test_arm)) {
+    # message("Length of test arm returned!")
     length(test_arm)
   } else {
     stop(paste(

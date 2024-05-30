@@ -4,7 +4,7 @@
 \alias{median_count_na_ignore}
 \title{How many \code{NA}s need to be ignored for a median estimate?}
 \usage{
-median_count_na_ignore(x, format = c("total", "proportion"))
+median_count_na_ignore(x, format = c("total", "proportion"), nna = NULL)
 }
 \arguments{
 \item{x}{A numeric vector or similar.}
@@ -12,6 +12,12 @@ median_count_na_ignore(x, format = c("total", "proportion"))
 \item{format}{String. If \code{"total"} (the default), the function returns the
 absolute number of \code{NA}s that must be ignored. If \code{"proportion"}, it
 returns that number divided by the count of all \code{NA}s.}
+
+\item{nna}{Integer. Ignore unless the function is used as a helper. If
+missing values in \code{x} were counted elsewhere and then removed, specify
+\code{nna} as that number to avoid redundantly dealing with \code{NA}s again. In this
+case, \code{x} must already be sorted and no longer have any \code{NA}s! Default is
+to deal with \code{NA}s within this function.}
 }
 \value{
 Numeric (length 1), never \code{NA}. The value depends on \code{format}:
@@ -29,6 +35,15 @@ values.
 
 The point is to retain as many \code{NA}s as possible when looking for a median
 estimate, instead of simply ignoring all of them.
+}
+\details{
+If you specify \code{nna}, make sure that all \code{NA}s were already removed
+from \code{x}, and that \code{x} is sorted. The function won't check for either, and
+if you don't get this right, it may silently return wrong results.
+
+The main purpose is to speed up \code{\link[=median_table]{median_table()}}, which uses the present
+function as a helper. Although both are exported, \code{\link[=median_table]{median_table()}} is
+generally more useful.
 }
 \examples{
 # The median can only be `8`, so
