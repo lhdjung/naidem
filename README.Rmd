@@ -26,7 +26,7 @@ devtools::load_all(".")
 
 The goal of naidem is to compute the median in a way that handles missing values properly: returning `NA` if and only if the median can't be determined from the data. Its source code has no dependencies.
 
-Use `median2()` as a drop-in replacement for `median()`. It is the same as in `median()` by default, except for handling missing values.
+Use `median2()` as a drop-in replacement for `median()`. Except for handling missing values, it works like `median()` by default.
 
 ## Installation
 
@@ -81,6 +81,15 @@ What to do if the median really is unknown, like above? `median_range()` will at
 
 ```{r}
 median_range(x2)
+```
+
+However, `median_table()` is even more informative. It estimates the median while only ignoring as many missing values as absolutely necessary. This balances the need for knowledge about the central tendency with its degree of uncertainty.
+
+```{r}
+x1
+x2
+
+median_table(list(x1, x2))
 ```
 
 ## About this package
