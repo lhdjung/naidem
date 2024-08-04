@@ -12,7 +12,7 @@ Description: Provide alternatives to 'median()' methods
 License: GPL (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Suggests: 
     knitr,
     rmarkdown,
@@ -23,10 +23,12 @@ URL: https://github.com/lhdjung/naidem,
     https://lhdjung.github.io/naidem/
 BugReports: https://github.com/lhdjung/naidem/issues
 Collate: 
-    'median2.R'
-    'median-df.R'
+    'median-count-na-ignore.R'
     'median-is-determinate.R'
+    'median-print.R'
     'median-range.R'
+    'median2.R'
+    'median-table.R'
     'utils.R'
 Imports: 
     tibble

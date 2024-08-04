@@ -1,9 +1,9 @@
 #' Tabulate median estimates with the certainty about them
 #'
-#' @description `median_df()` takes a data frame (or another list) of numeric
+#' @description `median_table()` takes a data frame (or another list) of numeric
 #'   vectors and computes the median of each element. Where the true median is
-#'   unknown due to missing values, more and more missings are ignored until an
-#'   estimate for the median is found.
+#'   unknown due to missing values, it only ignores as many of them as
+#'   necessary.
 #'
 #'   Estimates are presented along with information about whether they are known
 #'   to be the true median, how many missing had to be ignored during
@@ -24,7 +24,7 @@
 #'   even trying to compute an estimate. Instead, it only removes the minimum
 #'   number of `NA`s necessary, because some distributions have a known median
 #'   even if some of their values are missing. By keeping track of the removed
-#'   `NA`s, `median_df()` quantifies the uncertainty about its estimates.
+#'   `NA`s, `median_table()` quantifies the uncertainty about its estimates.
 #'
 #' @return Data frame with these columns:
 #'   - `term`: the names of `x` elements. Only present if any are named.
@@ -54,76 +54,79 @@
 #'   d = c(96, 24, 3, NA)
 #' )
 #'
-#' median_df(my_list)
+#' median_table(my_list)
 #'
 #' # Data frames are allowed:
-#' median_df(iris[1:4])
+#' median_table(iris[1:4])
 
-median_df <- function(x, even = c("mean", "low", "high"), ...) {
-  # Check that `x` is a list because the point of this function is to find
+
+median_table <- function(x, even = c("mean", "low", "high")) {
+
+  # Check that `x` is a list, because the point of this function is to find
   # estimates for the median of each element of `x`:
   if (!is.list(x)) {
-    stop("`x` must be a list.")
+    x <- as.list(x)
   }
+
   # Initialize the two most important output vectors. They will be columns of
-  # the output data frame. `estimate` is integer for the corner case that all
-  # values that will be assigned to its elements are integers (i.e., none is a
-  # double; this would coerce any integer elements):
-  length_x <- length(x)
-  estimate <- integer(length_x)
-  na_ignored <- integer(length_x)
-  # Loop through the `x` elements, attempting to find a median estimate for each
-  # by removing one `NA` at a time:
-  for (i in seq_len(length_x)) {
+  # the output data frame. Note that `estimate` is integer in case all values
+  # that will be assigned to its elements are integers (i.e., none is a double,
+  # which would coerce any integer elements):
+  nx <- length(x)
+  estimate <- integer(nx)
+
+  # These others will also be output columns. At present, they should be integer
+  # vectors just like `estimate`, so they can be initialized like this:
+  na_ignored <- estimate
+  na_total <- estimate
+  sum_total <- estimate
+
+  # Loop through the `x` elements, estimating the median of each and checking
+  # how many `NA`s need to be ignored to do so:
+  for (i in seq_len(nx)) {
+
+    n_current <- length(x[[i]])
+    x_known_current <- sort(x[[i]])  # equivalent to indexing `[!is.na(x[[i]])]`
+    nna_current <- n_current - length(x_known_current)
+    sum_total[[i]] <- n_current
+
     # Vectors where all elements are missing have an unknown median, so the
     # estimate should be `NA`, as well. This is implemented via a shortcut:
-    if (all(is.na(x[[i]]))) {
+    if (nna_current == n_current) {
       estimate[[i]] <- x[[i]][NA_integer_]
+      na_ignored[[i]] <- nna_current
+      na_total[[i]] <- nna_current
       next
     }
-    # Initialize the number of `NA`s that need to be ignored at zero because the
-    # true median of a given element of `x` may yet be known at this point. This
-    # value will be incremented in the while loop once for every failed attempt
-    # to get a non-`NA` estimate. If this was successful, `looking_for_estimate`
-    # will cause the loop to terminate:
-    na_ignored_current <- 0L
-    repeat {
-      estimate_current <- median2(
-        x[[i]], na.rm = FALSE, na.rm.amount = na_ignored_current, even = even
-      )
-      # -- If the estimate is `NA`, there will be a next iteration of the while
-      # loop, and it will ignore one more `NA`.
-      # -- If a non-`NA` estimate has been found, enter it into the `estimate`
-      # vector, record the number of `NA`s that needed to be ignored for this
-      # result, and set the flag to `FALSE` to terminate the while loop.
-      if (is.na(estimate_current)) {
-        na_ignored_current <- na_ignored_current + 1L
-      } else {
-        na_ignored[i] <- na_ignored_current
-        estimate[[i]] <- estimate_current
-        break
-      }
-    }
+
+    estimate[[i]] <- median2(x_known_current, even = even)
+    na_ignored[[i]] <- median_count_na_ignore(
+      x = x_known_current,
+      nna = nna_current
+    )
+    na_total[[i]] <- nna_current
   }
+
   # As a purely mechanical consequence of the `na_ignored` integer vector,
   # `certainty` marks those cases where no `NA`s needed to be ignored to compute
   # an estimate; and thus, where there is a known and determinate median:
-  certainty <- logical(length_x)
+  certainty <- logical(nx)
   certainty[na_ignored == 0L] <- TRUE
-  # Count the missing values in each element of `x`, then compute the rate of
-  # missing values that had to be ignored (to find a median estimate) as a share
-  # of the total number of missing values:
-  na_total <- vapply(
-    x, function(y) length(y[[1L]][is.na(y)]), integer(1L), USE.NAMES = FALSE
-  )
+
   # Compute the rates of ignored `NA`s from all `NA`s and from all values:
-  sum_total <- vapply(x, length, integer(1L), USE.NAMES = FALSE)
   rate_ignored_na <- na_ignored / na_total
   rate_ignored_sum <- na_ignored / sum_total
+
   # Collect the length-`x` vectors in a data frame, adding a `term` column that
   # stores the names of `x` if there are any:
   tibble::tibble(
-    term = names(x), estimate, certainty, na_ignored, na_total, rate_ignored_na,
-    sum_total, rate_ignored_sum
+    term = names(x),
+    estimate,
+    certainty,
+    na_ignored,
+    na_total,
+    rate_ignored_na,
+    sum_total,
+    rate_ignored_sum
   )
 }
