@@ -68,7 +68,8 @@ median_count_na_ignore <- function(x,
   # argument allows the caller to pass this number to the present function
   # instead. This requires `x` to no longer have any `NA`s, and to be sorted!
   if (is.null(nna)) {
-    x <- sort(x)
+    # This removes all `NA`s:
+    x <- sort(x, na.last = NA)
     n_known <- length(x)
     nna <- n - n_known
   } else {
@@ -151,12 +152,8 @@ median_count_na_ignore <- function(x,
 
   # Using a helper function, count the steps from the central value outward in
   # each direction where the value is still the same as in the center:
-  steps_left <- count_steps_within_center(
-    x[half_lower] == x[rev(seq_len(half_upper - 1L))]
-  )
-  steps_right <- count_steps_within_center(
-    x[half_upper] == x[(half_lower + 1L):n_known]
-  )
+  steps_left  <- count_steps_with_central_value(x[half_lower] == x[rev(seq_len(half_upper - 1L))])
+  steps_right <- count_steps_with_central_value(x[half_upper] == x[(half_lower + 1L):n_known])
 
   # # Calculate the maximal number of `NA`s that can be tolerated -- i.e., that
   # # don't need to be ignored -- when attempting to determine the median:
@@ -188,7 +185,26 @@ median_count_na_ignore <- function(x,
 # Helper function used within `median_count_na_ignore()`. If the output of
 # `match()` is `NA`, provide an appropriate replacement based on the logic of
 # the two "arms" of the distribution:
-count_steps_within_center <- function(test_arm) {
+
+
+#' Count steps from the central value where the same value is still found
+#'
+#' @description The internal helper `count_steps_with_central_value()` is used
+#'   within `median_count_na_ignore()`.
+#'
+#'   The function starts from one of the two central values (upper or lower) of
+#'   the sorted distribution after all `NA`s were removed. It counts the steps
+#'   outward (i.e., up or down) where the value is still the same as the central
+#'   value. Finally, it returns the number of these steps.
+#'
+#' @param test_arm Logical vector resulting from the `==` comparison between one
+#'   of the two (lower and upper) central values and the rest of the (lower or
+#'   upper) half of the sorted distribution.
+#'
+#' @return Integer (length 1).
+#'
+#' @noRd
+count_steps_with_central_value <- function(test_arm) {
   n_steps <- match(FALSE, test_arm) - 1L
 
   # # Maybe the rest of the function can be replaced by just the next block? This
@@ -205,16 +221,19 @@ count_steps_within_center <- function(test_arm) {
   if (!is.na(n_steps)) {
     return(n_steps)
   }
+
   # message("n_steps derived, not directly counted")
+
   if (length(test_arm) == 0L || all(test_arm)) {
     # message("Length of test arm returned!")
     length(test_arm)
   } else {
     stop(paste(
       "Unknown error in `median_count_na_ignore()` -->",
-      "`count_steps_within_center()`"
+      "`count_steps_with_central_value()`"
     ))
   }
+
 }
 
 
