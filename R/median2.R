@@ -113,9 +113,8 @@ median2.default <- function(x, na.rm = FALSE, na.rm.amount = 0,
     # https://lhdjung.github.io/naidem/articles/algorithm.html for details:
     if (isTRUE(all(x[half - nna] == x[half]))) {
       return(x[half[1L]])
-    } else {
-      return(x[NA_integer_])
     }
+    return(x[NA_integer_])
   }
   ### END of key part
   n <- length(x)
