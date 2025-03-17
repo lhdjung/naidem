@@ -152,8 +152,8 @@ median_count_na_ignore <- function(x,
 
   # Using a helper function, count the steps from the central value outward in
   # each direction where the value is still the same as in the center:
-  steps_left  <- count_steps_with_central_value(x[half_lower] == x[rev(seq_len(half_upper - 1L))])
-  steps_right <- count_steps_with_central_value(x[half_upper] == x[(half_lower + 1L):n_known])
+  steps_left  <- count_central_steps(x[half_lower] == x[rev(seq_len(half_upper - 1L))])
+  steps_right <- count_central_steps(x[half_upper] == x[(half_lower + 1L):n_known])
 
   # # Calculate the maximal number of `NA`s that can be tolerated -- i.e., that
   # # don't need to be ignored -- when attempting to determine the median:
@@ -189,8 +189,8 @@ median_count_na_ignore <- function(x,
 
 #' Count steps from the central value where the same value is still found
 #'
-#' @description The internal helper `count_steps_with_central_value()` is used
-#'   within `median_count_na_ignore()`.
+#' @description The internal helper `count_central_steps()` is used within
+#'   `median_count_na_ignore()`.
 #'
 #'   The function starts from one of the two central values (upper or lower) of
 #'   the sorted distribution after all `NA`s were removed. It counts the steps
@@ -204,7 +204,7 @@ median_count_na_ignore <- function(x,
 #' @return Integer (length 1).
 #'
 #' @noRd
-count_steps_with_central_value <- function(test_arm) {
+count_central_steps <- function(test_arm) {
   n_steps <- match(FALSE, test_arm) - 1L
 
   # # Maybe the rest of the function can be replaced by just the next block? This
@@ -229,8 +229,8 @@ count_steps_with_central_value <- function(test_arm) {
     length(test_arm)
   } else {
     stop(paste(
-      "Unknown error in `median_count_na_ignore()` -->",
-      "`count_steps_with_central_value()`"
+      "Violation of internal assumption in `median_count_na_ignore()` -->",
+      "`count_central_steps()`. Please report to the maintainer of naidem."
     ))
   }
 
