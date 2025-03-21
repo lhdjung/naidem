@@ -106,7 +106,7 @@ median2.default <- function(x, na.rm = FALSE, na.rm.amount = 0,
       (n + 1L:2L) %/% 2L
     }
     # Check for non-positive indices:
-    if (any(nna + 1L > half)) {
+    if (any(nna >= half)) {
       return(x[NA_integer_])
     }
     # Check for equality with offset value(s); see
