@@ -18,61 +18,61 @@ Follow these steps to implement naidem's median algorithm in another language. I
 
 This article uses pseudo-code to present two distinct algorithms for distributions of odd and even length (i.e., number of values). The R implementation, i.e., the default method for `median2()`, condenses both into one. That is because vectorization in R allows for code that deemphasizes the difference in length. Other languages may need more explicit distinctions. However, it is of course possible to combine the two algorithms into a single one that first checks whether the length is even or odd.
 
-Below, `x` is the input distribution. `length(d)` computes the number of values in a distribution `d`, `sort(d)` is a sorting algorithm, `keep_missing(d)` returns all missing values in `d` (but no known values), and `keep_known(d)` is the opposite. `NA` denotes a single missing value. Unlike R, these algorithms use zero-indexing. Step 1 of the algorithm for odd lengths is therefore equivalent to integer division for such distributions.
-
-## For odd-length distributions
+Below, `x` is the input distribution. `length(d)` computes the number of values in a distribution `d`, `sort(d)` is a sorting algorithm, and `keep_known(d)` returns all known values in `d` (but no missing values). `NA` denotes a single missing value. Unlike R, these algorithms use zero-indexing. Step 1 of the algorithm for odd lengths is therefore equivalent to integer division for such distributions.
 
 ``` {eval=FALSE}
-# 1. Determine the central index of `x`.
-half := length(x) / 2 - 0.5
+# 1. Count the elements of `x`.
+n := length(x)
 
-# 2. Count the missing values in `x`.
-nna := length(keep_missing(x))
-
-# 3. If the offset index is negative,
-# the median cannot be determined.
-if nna > half:
-   return NA
-
-# 4. Remove all missing values from `x`, then sort `x`.
+# 2. Sort `x` after removing missing values from it.
 x := sort(keep_known(x))
 
-# 5. Check values at two specific indices for equality.
-# If they are equal, return the central `x` value, i.e.,
-# the median. If they are not equal, return a missing value.
-if x[half - nna] == x[half]:
-   return x[half]
-else:
+# 3. Infer the number of missing values.
+nna := n - length(x)
+
+# For odd-length distributions:
+if n mod 2 == 1:
+   
+   # 4. Determine the central index of `x` (including missing values).
+   half := n / 2 - 0.5
+   
+   # 5. If the missing values could potentially form a block
+   # that starts at one end and reaches into the central position,
+   # the median is uncertain.
+   if nna > half:
+      return NA
+   
+   # 6. Check values at two specific indices for equality.
+   # If they are equal, return the central `x` value,
+   # which is the median in this case.
+   if x[half - nna] == x[half]:
+      return x[half]
+   
+   # 7. If they are not equal, return a missing value.
    return NA
-```
-
-## For even-length distributions
-
-``` {eval=FALSE}
-# 1. Determine the upper central index of `x`.
-half_2 := length(x) / 2
-
-# 2. Determine the lower central index.
-half_1 := half_2 - 1
-
-# 3. Count the missing values in `x`.
-nna := length(keep_missing(x))
-
-# 4. Neither offset index can be negative.
-# If any is, the median cannot be determined.
-if nna > half_1:
-   return NA
-
-# 5. Remove all missing values from `x`, then sort `x`.
-x := sort(keep_known(x))
-
-# 6. Check whether both pairs are equal.
-# If they are, return the mean of the central
-# values (which is equal to both members of the pair).
-# If one or both are not equal, return a missing value.
-if x[half_1 - nna] == x[half_1] && x[half_2 - nna] == x[half_2]:
-   return x[half_1]
+   
+# For even-length distributions:
 else:
+   
+   # 4a. Determine the upper central index of `x`.
+   half_2 := n / 2
+   
+   # 4b. Determine the lower central index.
+   half_1 := half_2 - 1
+   
+   # 5. If the missing values could potentially form a block
+   # that starts at one end and reaches into either central position,
+   # the median is uncertain.
+   if nna > half_1:
+      return NA
+   
+   # 6. Check whether both pairs are equal.
+   # If they are, return the mean of the two central
+   # values (which is equal to each member of the pair).
+   if x[half_1 - nna] == x[half_1] && x[half_2 - nna] == x[half_2]:
+      return x[half_1]
+   
+   # 7. If one or both are not equal, return a missing value.
    return NA
 ```
 
@@ -92,7 +92,7 @@ As an aside, `median2()` has an `even` argument that allows users to opt for the
 
 ## R details
 
-The R implementation in naidem is more succinct than the pseudo-code, combining both partial algorithms into one. This plays into the strengths of R, but it does make the code look a little different from the above. Again, note that the pseudo-code uses zero-indexing but R uses one-indexing. This is why `any(nna + 1L > half)` checks for non-positive indices in general, not just for negative ones.
+The R implementation in naidem is more succinct than the pseudo-code, combining both partial algorithms into one. This plays into the strengths of R, but it does make the code look a little different from the above. Again, note that the pseudo-code uses zero-indexing but R uses one-indexing. This is why `any(nna >= half)` checks for non-positive indices in general, not just for negative ones.
 
 The final condition is wrapped into `isTRUE(all(.))`, so that `all()` reduces two logical test results to one if the input has an even length. If any comparison between the possible median values returns either `NA` or `FALSE`, the `isTRUE()` wrapping returns `FALSE` and the function returns `NA` because the median cannot be determined with certainty.
 
