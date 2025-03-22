@@ -7,8 +7,8 @@
 median_table(x, even = c("mean", "low", "high"))
 }
 \arguments{
-\item{x}{List of vectors. Each vector needs to be numeric or similar. Note
-that data frames are lists, so \code{x} can be a data frame.}
+\item{x}{Vector or list of vectors. Each vector needs to be numeric or
+similar. Note that data frames are lists, so \code{x} can be a data frame.}
 
 \item{even}{Passed on to \code{\link[=median2]{median2()}}.}
 
@@ -34,14 +34,16 @@ ignored from among all values, missing or not.
 }
 }
 \description{
-\code{median_table()} takes a data frame (or another list) of numeric
-vectors and computes the median of each element. Where the true median is
+\code{median_table()} computes the sample median. Where the median is
 unknown due to missing values, it only ignores as many of them as
 necessary.
 
 Estimates are presented along with information about whether they are known
 to be the true median, how many missing had to be ignored during
 estimation, the rate of ignored values, etc.
+
+The function can also take a data frame (or another list) of numeric
+vectors. It will then compute the median of each element.
 }
 \details{
 The function deals with missing values (\code{NA}s) by first checking
@@ -56,6 +58,8 @@ even if some of their values are missing. By keeping track of the removed
 \code{NA}s, \code{median_table()} quantifies the uncertainty about its estimates.
 }
 \examples{
+median_table(c(5, 23, 5, NA, 5, NA))
+
 # Use a list of numeric vectors:
 my_list <- list(
   a = 1:15,

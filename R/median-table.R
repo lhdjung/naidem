@@ -1,7 +1,6 @@
 #' Tabulate median estimates with the certainty about them
 #'
-#' @description `median_table()` takes a data frame (or another list) of numeric
-#'   vectors and computes the median of each element. Where the true median is
+#' @description `median_table()` computes the sample median. Where the median is
 #'   unknown due to missing values, it only ignores as many of them as
 #'   necessary.
 #'
@@ -9,8 +8,11 @@
 #'   to be the true median, how many missing had to be ignored during
 #'   estimation, the rate of ignored values, etc.
 #'
-#' @param x List of vectors. Each vector needs to be numeric or similar. Note
-#'   that data frames are lists, so `x` can be a data frame.
+#'   The function can also take a data frame (or another list) of numeric
+#'   vectors. It will then compute the median of each element.
+#'
+#' @param x Vector or list of vectors. Each vector needs to be numeric or
+#'   similar. Note that data frames are lists, so `x` can be a data frame.
 #' @param even Passed on to [`median2()`].
 #' @param ... Optional further arguments for [`median2()`] methods. Not used in
 #'   its default method.
@@ -46,6 +48,8 @@
 #' @include median2.R
 #'
 #' @examples
+#' median_table(c(5, 23, 5, NA, 5, NA))
+#'
 #' # Use a list of numeric vectors:
 #' my_list <- list(
 #'   a = 1:15,
@@ -65,7 +69,7 @@ median_table <- function(x, even = c("mean", "low", "high")) {
   # Check that `x` is a list, because the point of this function is to find
   # estimates for the median of each element of `x`:
   if (!is.list(x)) {
-    x <- as.list(x)
+    x <- list(x)
   }
 
   # Initialize the two most important output vectors. They will be columns of
@@ -110,11 +114,10 @@ median_table <- function(x, even = c("mean", "low", "high")) {
   # As a purely mechanical consequence of the `na_ignored` integer vector,
   # `certainty` marks those cases where no `NA`s needed to be ignored to compute
   # an estimate; and thus, where there is a known and determinate median:
-  certainty <- logical(nx)
-  certainty[na_ignored == 0L] <- TRUE
+  certainty <- na_ignored == 0L
 
   # Compute the rates of ignored `NA`s from all `NA`s and from all values:
-  rate_ignored_na <- na_ignored / na_total
+  rate_ignored_na  <- na_ignored / na_total
   rate_ignored_sum <- na_ignored / sum_total
 
   # Collect the length-`x` vectors in a data frame, adding a `term` column that
@@ -129,4 +132,5 @@ median_table <- function(x, even = c("mean", "low", "high")) {
     sum_total,
     rate_ignored_sum
   )
+
 }
