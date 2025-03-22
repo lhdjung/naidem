@@ -22,3 +22,4 @@ reference:
 - contents:
   - median_range
   - median_table
+  - median_count_na_ignore
