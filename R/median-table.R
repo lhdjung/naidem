@@ -5,8 +5,8 @@
 #'   necessary.
 #'
 #'   Estimates are presented along with information about whether they are known
-#'   to be the true median, how many missing had to be ignored during
-#'   estimation, the rate of ignored values, etc.
+#'   to be the true median, how many missings had to be ignored, the rate of
+#'   ignored values, etc.
 #'
 #'   The function can also take a data frame (or another list) of numeric
 #'   vectors. It will then compute the median of each element.
@@ -28,12 +28,16 @@
 #'   even if some of their values are missing. By keeping track of the removed
 #'   `NA`s, `median_table()` quantifies the uncertainty about its estimates.
 #'
+#'   The `min` and `max` columns are based on [`median_range()`].
+#'
 #' @return Data frame with these columns:
 #'   - `term`: the names of `x` elements. Only present if any are named.
 #'   - `estimate`: the medians of `x` elements, ignoring as many `NA`s as
 #'   necessary.
 #'   - `certainty`: `TRUE` if the corresponding estimate is certain to be the
 #'   true median, and `FALSE` if this is unclear due to missing values.
+#'   - `min`, `max`: Lower and upper bounds of the median. Equal if `certainty`
+#'   is `TRUE` because in that case, the precise value is known.
 #'   - `na_ignored`: the number of missing values that had to be ignored to
 #'   arrive at the estimate.
 #'   - `na_total`: the total number of missing values.
@@ -45,7 +49,7 @@
 #'
 #' @export
 #'
-#' @include median2.R
+#' @include median2.R median-range.R
 #'
 #' @examples
 #' median_table(c(5, 23, 5, NA, 5, NA))
@@ -81,6 +85,8 @@ median_table <- function(x, even = c("mean", "low", "high")) {
 
   # These others will also be output columns. At present, they should be integer
   # vectors just like `estimate`, so they can be initialized like this:
+  min <- estimate
+  max <- estimate
   na_ignored <- estimate
   na_total <- estimate
   sum_total <- estimate
@@ -104,11 +110,19 @@ median_table <- function(x, even = c("mean", "low", "high")) {
     }
 
     estimate[[i]] <- median2(x_known_current, even = even)
-    na_ignored[[i]] <- median_count_na_ignore(
+
+    nna_current_ignore <- median_count_na_ignore(
       x = x_known_current,
       nna = nna_current
     )
+
+    na_ignored[[i]] <- nna_current_ignore
     na_total[[i]] <- nna_current
+
+    range_current <- median_range(x[[i]], even = even)
+
+    min[[i]] <- range_current[1L]
+    max[[i]] <- range_current[2L]
   }
 
   # As a purely mechanical consequence of the `na_ignored` integer vector,
@@ -126,6 +140,8 @@ median_table <- function(x, even = c("mean", "low", "high")) {
     term = names(x),
     estimate,
     certainty,
+    min,
+    max,
     na_ignored,
     na_total,
     rate_ignored_na,

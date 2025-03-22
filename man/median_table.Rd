@@ -23,6 +23,8 @@ Data frame with these columns:
 necessary.
 \item \code{certainty}: \code{TRUE} if the corresponding estimate is certain to be the
 true median, and \code{FALSE} if this is unclear due to missing values.
+\item \code{min}, \code{max}: Lower and upper bounds of the median. Equal if \code{certainty}
+is \code{TRUE} because in that case, the precise value is known.
 \item \code{na_ignored}: the number of missing values that had to be ignored to
 arrive at the estimate.
 \item \code{na_total}: the total number of missing values.
@@ -39,8 +41,8 @@ unknown due to missing values, it only ignores as many of them as
 necessary.
 
 Estimates are presented along with information about whether they are known
-to be the true median, how many missing had to be ignored during
-estimation, the rate of ignored values, etc.
+to be the true median, how many missings had to be ignored, the rate of
+ignored values, etc.
 
 The function can also take a data frame (or another list) of numeric
 vectors. It will then compute the median of each element.
@@ -56,6 +58,8 @@ even trying to compute an estimate. Instead, it only removes the minimum
 number of \code{NA}s necessary, because some distributions have a known median
 even if some of their values are missing. By keeping track of the removed
 \code{NA}s, \code{median_table()} quantifies the uncertainty about its estimates.
+
+The \code{min} and \code{max} columns are based on \code{\link[=median_range]{median_range()}}.
 }
 \examples{
 median_table(c(5, 23, 5, NA, 5, NA))
