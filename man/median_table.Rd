@@ -36,30 +36,16 @@ ignored from among all values, missing or not.
 }
 }
 \description{
-\code{median_table()} computes the sample median. Where the median is
+\code{median_table()} computes the sample median. If the median is
 unknown due to missing values, it only ignores as many of them as
-necessary.
+necessary. In this way, a true median estimate of the remaining known and
+unknown values can be found.
 
-Estimates are presented along with information about whether they are known
-to be the true median, how many missings had to be ignored, the rate of
-ignored values, etc.
+Estimates are presented along with lower and upper bounds, the number of
+missing values that had to be ignored, etc.
 
 The function can also take a data frame (or another list) of numeric
 vectors. It will then compute the median of each element.
-}
-\details{
-The function deals with missing values (\code{NA}s) by first checking
-whether they make the true median unknown. If they do, it removes one \code{NA},
-then checks again; and so on until an estimate is found.
-
-This strategy is based on \code{\link[=median2]{median2()}} and its \code{na.rm.amount} argument,
-which represents a middle way between simply ignoring all \code{NA}s and not
-even trying to compute an estimate. Instead, it only removes the minimum
-number of \code{NA}s necessary, because some distributions have a known median
-even if some of their values are missing. By keeping track of the removed
-\code{NA}s, \code{median_table()} quantifies the uncertainty about its estimates.
-
-The \code{min} and \code{max} columns are based on \code{\link[=median_range]{median_range()}}.
 }
 \examples{
 median_table(c(5, 23, 5, NA, 5, NA))
@@ -76,4 +62,12 @@ median_table(my_list)
 
 # Data frames are allowed:
 median_table(iris[1:4])
+}
+\seealso{
+\itemize{
+\item \code{\link[=median_count_na_ignore]{median_count_na_ignore()}} for the logic of ignoring just as many \code{NA}s
+as needed.
+\item \code{\link[=median_range]{median_range()}} for the \code{min} and \code{max} columns; the lower and upper
+bounds of an uncertain median.
+}
 }

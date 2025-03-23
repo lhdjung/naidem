@@ -1,12 +1,12 @@
 #' Tabulate median estimates with the certainty about them
 #'
-#' @description `median_table()` computes the sample median. Where the median is
+#' @description `median_table()` computes the sample median. If the median is
 #'   unknown due to missing values, it only ignores as many of them as
-#'   necessary.
+#'   necessary. In this way, a true median estimate of the remaining known and
+#'   unknown values can be found.
 #'
-#'   Estimates are presented along with information about whether they are known
-#'   to be the true median, how many missings had to be ignored, the rate of
-#'   ignored values, etc.
+#'   Estimates are presented along with lower and upper bounds, the number of
+#'   missing values that had to be ignored, etc.
 #'
 #'   The function can also take a data frame (or another list) of numeric
 #'   vectors. It will then compute the median of each element.
@@ -17,18 +17,11 @@
 #' @param ... Optional further arguments for [`median2()`] methods. Not used in
 #'   its default method.
 #'
-#' @details The function deals with missing values (`NA`s) by first checking
-#'   whether they make the true median unknown. If they do, it removes one `NA`,
-#'   then checks again; and so on until an estimate is found.
-#'
-#'   This strategy is based on [`median2()`] and its `na.rm.amount` argument,
-#'   which represents a middle way between simply ignoring all `NA`s and not
-#'   even trying to compute an estimate. Instead, it only removes the minimum
-#'   number of `NA`s necessary, because some distributions have a known median
-#'   even if some of their values are missing. By keeping track of the removed
-#'   `NA`s, `median_table()` quantifies the uncertainty about its estimates.
-#'
-#'   The `min` and `max` columns are based on [`median_range()`].
+#' @seealso
+#'   - [`median_count_na_ignore()`] for the logic of ignoring just as many `NA`s
+#' as needed.
+#'   - [`median_range()`] for the `min` and `max` columns; the lower and upper
+#'   bounds of an uncertain median.
 #'
 #' @return Data frame with these columns:
 #'   - `term`: the names of `x` elements. Only present if any are named.
