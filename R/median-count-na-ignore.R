@@ -165,42 +165,37 @@ median_count_na_ignore <- function(x,
 #'
 #'   The function starts from one of the two central values (upper or lower) of
 #'   the sorted distribution after all `NA`s were removed. It counts the steps
-#'   outward (i.e., up or down) where the value is still the same as the central
-#'   value. Finally, it returns the number of these steps.
+#'   outward (i.e., left or right) where the value is still the same as the
+#'   central value. Finally, it returns the number of these steps.
+#'
+#' @details `FALSE` is matched against `test_arm` to find the index of the first
+#'   value that is not equal to the central value. `1L` is subtracted from this
+#'   index to get the number of steps where the value found is still equal.
+#'
+#'   `n_steps` is `NA_integer_` if and only if `test_arm` does not contain any
+#'   `FALSE` elements (see `?match`). The only possible reason is that
+#'   `test_arm` only contains `TRUE` values: the case where it contains no
+#'   values at all is ruled out by the check for `n_known < 3L`. But even if it
+#'   was not, the number of steps outward where the central value is still
+#'   encountered is equal to the number of values in `test_arm` in any case:
+#'
+#'   - Zero values, zero matching steps.
+#'   - All values are `TRUE`, so all of them are matching steps.
 #'
 #' @param test_arm Logical vector resulting from the `==` comparison between one
 #'   of the two (lower and upper) central values and the rest of the (lower or
 #'   upper) half of the sorted distribution.
 #'
-#' @return Integer (length 1).
+#' @return Integer (length 1). Never `NA`.
 #'
 #' @noRd
 count_central_steps <- function(test_arm) {
   n_steps <- match(FALSE, test_arm) - 1L
-
-  # # Maybe the rest of the function can be replaced by just the next block? This
-  # # would require that the two special cases that are currently checked cover
-  # # all possible cases. In other words, if `test_arm` is `NA`, either
-  # # `length(test_arm) == 0L` or `all(test_arm)` is `TRUE`. So the challenge is
-  # # to figure out whether that is correct.
-  # if (is.na(n_steps)) {
-  #   length(test_arm)
-  # } else {
-  #   n_steps
-  # }
-
-  if (!is.na(n_steps)) {
-    n_steps
-  } else if (length(test_arm) == 0L || all(test_arm)) {
-    # message("Length of test arm returned!")
+  if (is.na(n_steps)) {
     length(test_arm)
   } else {
-    stop(paste(
-      "Violation of internal assumption in `median_count_na_ignore()` -->",
-      "`count_central_steps()`. Please report to the maintainer of naidem."
-    ))
+    n_steps
   }
-
 }
 
 
