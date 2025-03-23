@@ -4,6 +4,9 @@
 #'   median values. This is helpful if [`median2()`] returns `NA`: the median
 #'   can't be determined, but at least its bounds might be known.
 #'
+#'   It is used within [`median_table()`] to compute the `min` and `max`
+#'   columns.
+#'
 #' @param x Numeric or similar. Vector to search for its possible medians.
 #' @param na.rm.amount,even Passed on to [`median2()`].
 #'
@@ -43,7 +46,8 @@ median_range <- function(x, na.rm.amount = 0, even = c("mean", "low", "high")) {
 #' @name median-range
 #' @export
 
-median_range.default <- function(x, na.rm.amount = 0,
+median_range.default <- function(x,
+                                 na.rm.amount = 0,
                                  even = c("mean", "low", "high")) {
   # As in `median2.default()`:
   even <- match.arg(even)
@@ -62,9 +66,9 @@ median_range.default <- function(x, na.rm.amount = 0,
   # into the median position if all of them were either at the start or the end,
   # there is no way to determine the bounds.
   if (nna == 0L) {
-    return(rep(median2(x, even = even), length = 2L))
+    return(rep(median2(x, even = even), times = 2L))
   } else if (any(nna >= half)) {
-    return(rep(x[NA_integer_], length = 2L))
+    return(rep(x[NA_integer_], times = 2L))
   }
   # Compute the bounds by checking what the median would be if all `NA`s were
   # positioned at the start or the end of `x`. This implementation creates such

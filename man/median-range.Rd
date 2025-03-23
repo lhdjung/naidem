@@ -29,6 +29,9 @@ same type as \code{x}.
 \code{median_range()} computes the minimal and maximal possible
 median values. This is helpful if \code{\link[=median2]{median2()}} returns \code{NA}: the median
 can't be determined, but at least its bounds might be known.
+
+It is used within \code{\link[=median_table]{median_table()}} to compute the \code{min} and \code{max}
+columns.
 }
 \details{
 Like \code{\link[=median2]{median2()}}, this function is generic, so methods can be
