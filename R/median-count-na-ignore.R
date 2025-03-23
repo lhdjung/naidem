@@ -88,26 +88,27 @@ median_count_na_ignore <- function(x,
     return(nna)
   }
 
-  # With an odd number of known values, there is only one central index for
-  # them. Even so, however, this single value is assigned to two variables
-  # because these are needed in case of an even number. This avoids having to
-  # split the remainder of the code into one odd-length and one even-length arm.
   n_known_is_even <- n_known %% 2L == 0L
+
   if (n_known_is_even) {
     # Just using integer division here for integer typing; `n_known / 2L` would
     # be a double value but otherwise equal.
     half_lower <- n_known %/% 2L
     half_upper <- half_lower + 1L
+    # In case of two unequal central values, even just a single `NA` can shift
+    # the median, so all `NA`s must be ignored. This can only occur with an even
+    # number of known values.
+    if (x[half_lower] != x[half_upper]) {
+      return(nna)
+    }
+    # With an odd number of known values, there is only one central index for
+    # them. Even so, however, this single value is assigned to two variables
+    # here because these are needed in case of an even number. This avoids
+    # having to split the remainder of the code into one odd-length arm and one
+    # even-length arm.
   } else {
     half_lower <- (n_known + 1L) %/% 2L
     half_upper <- half_lower
-  }
-
-  # In case of two unequal central values, a single `NA` can shift the median,
-  # so all `NA`s must be ignored. This can only occur with an even number of
-  # known values.
-  if (x[half_lower] != x[half_upper]) {
-    return(nna)
   }
 
   # Special rules apply if there are not enough known values to meaningfully
@@ -190,7 +191,6 @@ count_central_steps <- function(test_arm) {
 
   if (!is.na(n_steps)) {
     n_steps
-    # message("n_steps derived, not directly counted")
   } else if (length(test_arm) == 0L || all(test_arm)) {
     # message("Length of test arm returned!")
     length(test_arm)
