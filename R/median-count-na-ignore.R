@@ -132,10 +132,10 @@ median_count_na_ignore <- function(x,
   # Using a helper function, count the steps from the central value outward in
   # each direction where the value is still the same as in the center:
   steps_left  <- count_central_steps(
-    near(x[half_lower], x[rev(seq_len(half_upper - 1L))])
+    near(x[half_lower], x[rev(seq_len(half_lower - 1L))])
   )
   steps_right <- count_central_steps(
-    near(x[half_upper], x[(half_lower + 1L):n_known])
+    near(x[half_upper], x[(half_upper + 1L):n_known])
   )
 
   # Calculate the maximal number of `NA`s that can be tolerated -- i.e., that
