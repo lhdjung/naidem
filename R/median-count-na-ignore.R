@@ -140,8 +140,25 @@ median_count_na_ignore <- function(x,
 
   # Calculate the maximal number of `NA`s that can be tolerated -- i.e., that
   # don't need to be ignored -- when attempting to determine the median:
+
+  # NEW CONJECTURE: For even values of `n_known`, the correct solution is
+  # `min(steps_left, steps_right) * 2L + 1L` -- or without `+ 1L` if the
+  # `half_*` indices themselves count as central steps? Or just `min(...) + 1L`?
+  # Or perhaps it is `n_stable - 1L`, where  `n_stable` is the length of the
+  # stable region (i.e., the subarray of contiguous values that include the
+  # central value and are equal to it)?
+
+  # - 1, 1, 1, 2
+  # - 1, 1, 1, 1
+  # - 1, 1, 1, 1, 2, 2
+  # - 1, 2, 2, 3
+  # - 1, 1, 2, 2, 3, 3
+
+  # Note that (1, 2) and (1, 2, 3, 4) do NOT count -- the two central indices
+  # are unequal, so they would have been filtered out earlier!
+
   nna_tolerated <- if (n_known_is_even) {
-    min(steps_left, steps_right)
+    min(steps_left, steps_right) * 2L + 1L
   } else {
     min(steps_left, steps_right) * 2L
   }
