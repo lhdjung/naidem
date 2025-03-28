@@ -63,3 +63,9 @@ decrease_na_amount <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
   x[-na_indices_ignored]
 }
 
+
+# Adapted from `dplyr::near()`
+near <- function(x, y) {
+  abs(x - y) < .Machine$double.eps^0.5
+}
+

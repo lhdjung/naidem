@@ -42,8 +42,8 @@
 #' # behind `NA`, so the `NA` really must be ignored:
 #' median_count_na_ignore(c(8, 9, 9, NA))
 #'
-#' # Ignoring two `NA`s leads to the same
-#' # state as in the first example:
+#' # This vector can take two `NA`s, so only one
+#' # of the three needs to be ignored:
 #' median_count_na_ignore(c(8, 8, 8, NA, NA, NA))
 #'
 #' # All need to be ignored here because
@@ -97,8 +97,10 @@ median_count_na_ignore <- function(x,
     half_upper <- half_lower + 1L
     # In case of two unequal central values, even just a single `NA` can shift
     # the median, so all `NA`s must be ignored. This can only occur with an even
-    # number of known values.
-    if (x[half_lower] != x[half_upper]) {
+    # number of known values. The `near()` function is like `==` except it
+    # ignores spurious differences that arise due to floating point inaccuracies.
+    # E.g., `0.1 + 0.2 == 0.3` is `FALSE` but `near(0.1 + 0.2, 0.3)` is `TRUE`.
+    if (!near(x[half_lower], x[half_upper])) {
       return(nna)
     }
     # With an odd number of known values, there is only one central index for
@@ -129,8 +131,12 @@ median_count_na_ignore <- function(x,
 
   # Using a helper function, count the steps from the central value outward in
   # each direction where the value is still the same as in the center:
-  steps_left  <- count_central_steps(x[half_lower] == x[rev(seq_len(half_upper - 1L))])
-  steps_right <- count_central_steps(x[half_upper] == x[(half_lower + 1L):n_known])
+  steps_left  <- count_central_steps(
+    near(x[half_lower], x[rev(seq_len(half_upper - 1L))])
+  )
+  steps_right <- count_central_steps(
+    near(x[half_upper], x[(half_lower + 1L):n_known])
+  )
 
   # Calculate the maximal number of `NA`s that can be tolerated -- i.e., that
   # don't need to be ignored -- when attempting to determine the median:
