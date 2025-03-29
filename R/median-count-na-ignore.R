@@ -98,7 +98,7 @@ median_count_na_ignore <- function(x,
     # In case of two unequal central values, even just a single `NA` can shift
     # the median, so all `NA`s must be ignored. This can only occur with an even
     # number of known values. The `near()` function is like `==` except it
-    # ignores spurious differences that arise due to floating point inaccuracies.
+    # ignores spurious differences that arise due to floating point errors.
     # E.g., `0.1 + 0.2 == 0.3` is `FALSE` but `near(0.1 + 0.2, 0.3)` is `TRUE`.
     if (!near(x[half_lower], x[half_upper])) {
       return(nna)
@@ -130,12 +130,30 @@ median_count_na_ignore <- function(x,
   }
 
   # Using a helper function, count the steps from the central value outward in
-  # each direction where the value is still the same as in the center:
-  steps_left  <- count_central_steps(
-    near(x[half_lower], x[rev(seq_len(half_lower - 1L))])
+  # each direction where the value is still the same as in the center. Maybe
+  # read the `steps_right` part first; it is certainly more intuitive.
+
+  # For the left-hand arm, `seq_len()` creates a vector from 1 to the first
+  # value to the left of the lower central value, and `rev()` then reverses it,
+  # so that `x[half_lower]` will first be compared to the first value to its
+  # left, then the next value on the left, and so on.
+  steps_left <- count_central_steps(
+    near(
+      x[half_lower],
+      x[rev(seq_len(half_lower - 1L))]
+    )
   )
+
+  # For the right-hand arm, start at the first value to the right of the upper
+  # central value, and go from there to `n_known`; the total number of known
+  # values. In this way, the upper central value will be compared successively
+  # to the values to its right, until a different value is found. See the docs
+  # for `count_central_steps()` below this function.
   steps_right <- count_central_steps(
-    near(x[half_upper], x[(half_upper + 1L):n_known])
+    near(
+      x[half_upper],
+      x[(half_upper + 1L):n_known]
+    )
   )
 
   # Calculate the maximal number of `NA`s that can be tolerated -- i.e., that
@@ -191,31 +209,31 @@ median_count_na_ignore <- function(x,
 #'   outward (i.e., left or right) where the value is still the same as the
 #'   central value. Finally, it returns the number of these steps.
 #'
-#' @details `FALSE` is matched against `test_arm` to find the index of the first
-#'   value that is not equal to the central value. `1L` is subtracted from this
-#'   index to get the number of steps where the value found is still equal.
+#' @details `FALSE` is matched against `test_path` to find the index of the
+#'   first value that is not equal to the central value. `1L` is subtracted from
+#'   this index to get the number of steps where the value found is still equal.
 #'
-#'   `n_steps` is `NA_integer_` if and only if `test_arm` does not contain any
+#'   `n_steps` is `NA_integer_` if and only if `test_path` does not contain any
 #'   `FALSE` elements (see `?match`). The only possible reason is that
-#'   `test_arm` only contains `TRUE` values: the case where it contains no
+#'   `test_path` only contains `TRUE` values: the case where it contains no
 #'   values at all is ruled out by the check for `n_known < 3L`. But even if it
 #'   was not, the number of steps outward where the central value is still
-#'   encountered is equal to the number of values in `test_arm` in any case:
+#'   encountered is equal to the number of values in `test_path` in any case:
 #'
 #'   - Zero values, zero matching steps.
 #'   - All values are `TRUE`, so all of them are matching steps.
 #'
-#' @param test_arm Logical vector resulting from the `==` comparison between one
-#'   of the two (lower and upper) central values and the rest of the (lower or
-#'   upper) half of the sorted distribution.
+#' @param test_path Logical vector resulting from the `near()` comparison
+#'   between one of the two (lower and upper) central values and the rest of the
+#'   (lower or upper) half of the sorted distribution.
 #'
 #' @return Integer (length 1). Never `NA`.
 #'
 #' @noRd
-count_central_steps <- function(test_arm) {
-  n_steps <- match(FALSE, test_arm) - 1L
+count_central_steps <- function(test_path) {
+  n_steps <- match(FALSE, test_path) - 1L
   if (is.na(n_steps)) {
-    length(test_arm)
+    length(test_path)
   } else {
     n_steps
   }

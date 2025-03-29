@@ -54,8 +54,8 @@ median_count_na_ignore(c(8, 8, 8, NA))
 # behind `NA`, so the `NA` really must be ignored:
 median_count_na_ignore(c(8, 9, 9, NA))
 
-# Ignoring two `NA`s leads to the same
-# state as in the first example:
+# This vector can take two `NA`s, so only one
+# of the three needs to be ignored:
 median_count_na_ignore(c(8, 8, 8, NA, NA, NA))
 
 # All need to be ignored here because
