@@ -18,10 +18,10 @@
 #'   its default method.
 #'
 #' @seealso
-#'   - [`median_count_na_ignore()`] for the logic of ignoring just as many `NA`s
-#' as needed.
+#'   - [`median_count_tolerable()`] for the logic of preserving as many `NA`s
+#' as possible.
 #'   - [`median_range()`] for the `min` and `max` columns; the lower and upper
-#'   bounds of an uncertain median.
+#' bounds of an uncertain median.
 #'
 #' @return Data frame with these columns:
 #'   - `term`: the names of `x` elements. Only present if any are named.
@@ -104,12 +104,12 @@ median_table <- function(x, even = c("mean", "low", "high")) {
 
     estimate[[i]] <- median2(x_known_current, even = even)
 
-    nna_current_ignore <- median_count_na_ignore(
+    nna_tolerable <- median_count_tolerable(
       x = x_known_current,
-      nna = nna_current
+      needs_prep = FALSE
     )
 
-    na_ignored[[i]] <- nna_current_ignore
+    na_ignored[[i]] <- max(0L, nna_current - nna_tolerable)
     na_total[[i]] <- nna_current
 
     range_current <- median_range(x[[i]], even = even)

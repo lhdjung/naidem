@@ -65,8 +65,8 @@ median_table(iris[1:4])
 }
 \seealso{
 \itemize{
-\item \code{\link[=median_count_na_ignore]{median_count_na_ignore()}} for the logic of ignoring just as many \code{NA}s
-as needed.
+\item \code{\link[=median_count_tolerable]{median_count_tolerable()}} for the logic of preserving as many \code{NA}s
+as possible.
 \item \code{\link[=median_range]{median_range()}} for the \code{min} and \code{max} columns; the lower and upper
 bounds of an uncertain median.
 }
