@@ -39,7 +39,7 @@ ignored from among all values, missing or not.
 \code{median_table()} computes the sample median. If the median is
 unknown due to missing values, it only ignores as many of them as
 necessary. In this way, a true median estimate of the remaining known and
-unknown values can be found.
+unknown values can be found, preserving as much data as possible.
 
 Estimates are presented along with lower and upper bounds, the number of
 missing values that had to be ignored, etc.

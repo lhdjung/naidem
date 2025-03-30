@@ -3,7 +3,7 @@
 #' @description `median_table()` computes the sample median. If the median is
 #'   unknown due to missing values, it only ignores as many of them as
 #'   necessary. In this way, a true median estimate of the remaining known and
-#'   unknown values can be found.
+#'   unknown values can be found, preserving as much data as possible.
 #'
 #'   Estimates are presented along with lower and upper bounds, the number of
 #'   missing values that had to be ignored, etc.
@@ -78,8 +78,8 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
 
   # These others will also be output columns. At present, they should be integer
   # vectors just like `estimate`, so they can be initialized like this:
-  min <- estimate
-  max <- estimate
+  min_vec <- estimate
+  max_vec <- estimate
   na_ignored <- estimate
   na_total <- estimate
   sum_total <- estimate
@@ -114,8 +114,8 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
 
     range_current <- median_range(x[[i]], even = even)
 
-    min[[i]] <- range_current[1L]
-    max[[i]] <- range_current[2L]
+    min_vec[[i]] <- range_current[1L]
+    max_vec[[i]] <- range_current[2L]
   }
 
   # As a purely mechanical consequence of the `na_ignored` integer vector,
@@ -134,8 +134,9 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
       term = names(x),
       estimate = estimate,
       certainty = certainty,
-      min = min,
-      max = max,
+      # Names of these two are different for safety:
+      min = min_vec,
+      max = max_vec,
       na_ignored = na_ignored,
       na_total = na_total,
       rate_ignored_na = rate_ignored_na,
