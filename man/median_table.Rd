@@ -4,7 +4,7 @@
 \alias{median_table}
 \title{Tabulate median estimates with the certainty about them}
 \usage{
-median_table(x, even = c("mean", "low", "high"))
+median_table(x, even = c("mean", "low", "high"), ...)
 }
 \arguments{
 \item{x}{Vector or list of vectors. Each vector needs to be numeric or

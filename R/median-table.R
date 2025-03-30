@@ -61,7 +61,7 @@
 #' median_table(iris[1:4])
 
 
-median_table <- function(x, even = c("mean", "low", "high")) {
+median_table <- function(x, even = c("mean", "low", "high"), ...) {
 
   # Check that `x` is a list, because the point of this function is to find
   # estimates for the median of each element of `x`:
@@ -102,7 +102,7 @@ median_table <- function(x, even = c("mean", "low", "high")) {
       next
     }
 
-    estimate[[i]] <- median2(x_known_current, even = even)
+    estimate[[i]] <- median2(x = x_known_current, even = even, ...)
 
     nna_tolerable <- median_count_tolerable(
       x = x_known_current,
