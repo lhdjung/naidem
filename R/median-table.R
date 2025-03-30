@@ -129,17 +129,20 @@ median_table <- function(x, even = c("mean", "low", "high")) {
 
   # Collect the length-`x` vectors in a data frame, adding a `term` column that
   # stores the names of `x` if there are any:
-  tibble::tibble(
-    term = names(x),
-    estimate,
-    certainty,
-    min,
-    max,
-    na_ignored,
-    na_total,
-    rate_ignored_na,
-    sum_total,
-    rate_ignored_sum
+  tibble::new_tibble(
+    x = list(
+      term = names(x),
+      estimate = estimate,
+      certainty = certainty,
+      min = min,
+      max = max,
+      na_ignored = na_ignored,
+      na_total = na_total,
+      rate_ignored_na = rate_ignored_na,
+      sum_total = sum_total,
+      rate_ignored_sum = rate_ignored_sum
+    ),
+    nrow = nx
   )
 
 }
