@@ -111,7 +111,7 @@ median2.default <- function(x, na.rm = FALSE, na.rm.amount = 0,
     }
     # Check for equality with offset value(s); see
     # https://lhdjung.github.io/naidem/articles/algorithm.html for details:
-    if (isTRUE(all(x[half - nna] == x[half]))) {
+    if (isTRUE(all(near(x[half - nna], x[half])))) {
       return(x[half[1L]])
     }
     return(x[NA_integer_])
