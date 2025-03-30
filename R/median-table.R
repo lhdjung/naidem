@@ -128,7 +128,8 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
   rate_ignored_sum <- na_ignored / sum_total
 
   # Collect the length-`x` vectors in a data frame, adding a `term` column that
-  # stores the names of `x` if there are any:
+  # stores the names of `x` if there are any. This uses a low-level tibble
+  # constructor for performance and for adding an S3 class.
   tibble::new_tibble(
     x = list(
       term = names(x),
@@ -143,7 +144,8 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
       sum_total = sum_total,
       rate_ignored_sum = rate_ignored_sum
     ),
-    nrow = nx
+    nrow = nx,
+    class = "median_table"
   )
 
 }
