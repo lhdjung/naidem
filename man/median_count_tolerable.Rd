@@ -17,10 +17,11 @@ Integer (length 1). Never \code{NA}, never negative.
 }
 \description{
 \code{median_count_tolerable()} returns the number of missing values
-that can be preserved while determining the median.
+that can be preserved while determining the median. This retains as many
+data points as possible, instead of simply ignoring all \code{NA}s.
 
-The point is to retain as many data points as possible when looking for a
-median estimate, instead of simply ignoring all \code{NA}s.
+It is used within \code{\link[=median_table]{median_table()}} to determine how many missing values
+need to be ignored.
 }
 \details{
 With the default \code{needs_prep = TRUE}, missing values will be removed
@@ -31,7 +32,7 @@ this right, the function may silently return wrong results.
 
 The main purpose of \code{needs_prep} is to speed up \code{\link[=median_table]{median_table()}}, which
 uses the present function as a helper. Although both are exported,
-\code{median_table()}, is generally more useful.
+\code{median_table()} is generally more useful.
 }
 \examples{
 # With two or fewer `NA`s, the median can only be `8`,

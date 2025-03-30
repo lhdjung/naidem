@@ -1,10 +1,11 @@
 #' How many `NA`s can be tolerated for a median estimate?
 #'
 #' @description `median_count_tolerable()` returns the number of missing values
-#'   that can be preserved while determining the median.
+#'   that can be preserved while determining the median. This retains as many
+#'   data points as possible, instead of simply ignoring all `NA`s.
 #'
-#'   The point is to retain as many data points as possible when looking for a
-#'   median estimate, instead of simply ignoring all `NA`s.
+#'   It is used within [`median_table()`] to determine how many missing values
+#'   need to be ignored.
 #'
 #' @param x A numeric vector or similar.
 #' @param needs_prep Logical. Ignore unless the function is used as a helper.
@@ -18,7 +19,7 @@
 #'
 #'   The main purpose of `needs_prep` is to speed up [`median_table()`], which
 #'   uses the present function as a helper. Although both are exported,
-#'   `median_table()`, is generally more useful.
+#'   `median_table()` is generally more useful.
 #'
 #' @return Integer (length 1). Never `NA`, never negative.
 #'
