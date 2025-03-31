@@ -2,7 +2,7 @@
 #'
 #' @description `median_range()` computes the minimal and maximal possible
 #'   median values. This is helpful if [`median2()`] returns `NA`: the median
-#'   can't be determined, but at least its bounds might be known.
+#'   can't be determined, but at least it might have lower and upper bounds.
 #'
 #'   It is used within [`median_table()`] to compute the `min` and `max`
 #'   columns.
@@ -10,17 +10,23 @@
 #' @param x Numeric or similar. Vector to search for its possible medians.
 #' @param na.rm.amount,even Passed on to [`median2()`].
 #'
-#' @details Like [`median2()`], this function is generic, so methods can be
-#'   defined for other classes. This documentation describes the default method.
+#' @details Two edge cases may occur:
 #'
-#' @return Vector of length 2 and the same type as `x`.
+#'   - If the median can be precisely determined, `median_range()` returns two
+#'   identical values. This is the same case in which [`median2()`] would return
+#'   a non-`NA` value.
+#'   - If the number of missing values is so high that a continuous array of
+#'   them could extend from the start or end of `x` into the median position,
+#'   the data do not constrict the median to fall in between any finite bounds.
+#'   The function will then return `c(-Inf, Inf)` because such an array of `NA`s
+#'   would act as a tunnel to negative or positive infinity, enabling the median
+#'   to assume indefinitely low or high values.
 #'
-#'   If the median can be determined (i.e., [`median2()`] would return a
-#'   non-`NA` value), `median_range()` returns two identical values.
+#'   Like [`median2()`], this function is generic, so methods can be defined for
+#'   other classes. This documentation describes the default method.
 #'
-#'   If there could be missing values at the median position, the median range
-#'   cannot be determined. The function will then return `c(NA, NA)` but of the
-#'   same type as `x`.
+#' @return Vector of length 2 and the same type as `x` (never `NA`). The only
+#'   exception is `c(-Inf, Inf)` which is always a double vector. See details.
 #'
 #' @name median-range
 #'
@@ -29,12 +35,12 @@
 #' @author Lukas Jung, R Core Team
 #'
 #' @examples
-#' # Lower and upper bounds are known,
-#' # even though `median2()` would return `NA`:
+#' # Lower and upper bounds can be found,
+#' # even though the precise median is unknown:
 #' median_range(c(7, 7, 8, 9, NA))
 #' median_range(c(7, 7, 7, 8, 9, 9, NA, NA))
 #'
-#' # Too many missing values, so the range is unknown:
+#' # Too many missing values, so there is no finite range:
 #' median_range(c(7, 7, 8, 9, NA, NA, NA, NA))
 
 
@@ -64,11 +70,11 @@ median_range.default <- function(x,
   # be determined by `median2()`.
   # -- If the number of missing values is so high that the `NA`s would extend
   # into the median position if all of them were either at the start or the end,
-  # there is no way to determine the bounds.
+  # the data do not constrict the bounds to any finite values. See details.
   if (nna == 0L) {
     return(rep(median2(x, even = even), times = 2L))
   } else if (any(nna >= half)) {
-    return(rep(x[NA_integer_], times = 2L))
+    return(c(-Inf, Inf))
   }
   # Compute the bounds by checking what the median would be if all `NA`s were
   # positioned at the start or the end of `x`. This implementation creates such

@@ -16,34 +16,41 @@ median_range(x, na.rm.amount = 0, even = c("mean", "low", "high"))
 \item{na.rm.amount, even}{Passed on to \code{\link[=median2]{median2()}}.}
 }
 \value{
-Vector of length 2 and the same type as \code{x}.
-
-If the median can be determined (i.e., \code{\link[=median2]{median2()}} would return a
-non-\code{NA} value), \code{median_range()} returns two identical values.
-
-If there could be missing values at the median position, the median range
-cannot be determined. The function will then return \code{c(NA, NA)} but of the
-same type as \code{x}.
+Vector of length 2 and the same type as \code{x} (never \code{NA}). The only
+exception is \code{c(-Inf, Inf)} which is always a double vector. See details.
 }
 \description{
 \code{median_range()} computes the minimal and maximal possible
 median values. This is helpful if \code{\link[=median2]{median2()}} returns \code{NA}: the median
-can't be determined, but at least its bounds might be known.
+can't be determined, but at least it might have lower and upper bounds.
 
 It is used within \code{\link[=median_table]{median_table()}} to compute the \code{min} and \code{max}
 columns.
 }
 \details{
-Like \code{\link[=median2]{median2()}}, this function is generic, so methods can be
-defined for other classes. This documentation describes the default method.
+Two edge cases may occur:
+\itemize{
+\item If the median can be precisely determined, \code{median_range()} returns two
+identical values. This is the same case in which \code{\link[=median2]{median2()}} would return
+a non-\code{NA} value.
+\item If the number of missing values is so high that a continuous array of
+them could extend from the start or end of \code{x} into the median position,
+the data do not constrict the median to fall in between any finite bounds.
+The function will then return \code{c(-Inf, Inf)} because such an array of \code{NA}s
+would act as a tunnel to negative or positive infinity, enabling the median
+to assume indefinitely low or high values.
+}
+
+Like \code{\link[=median2]{median2()}}, this function is generic, so methods can be defined for
+other classes. This documentation describes the default method.
 }
 \examples{
-# Lower and upper bounds are known,
-# even though `median2()` would return `NA`:
+# Lower and upper bounds can be found,
+# even though the precise median is unknown:
 median_range(c(7, 7, 8, 9, NA))
 median_range(c(7, 7, 7, 8, 9, 9, NA, NA))
 
-# Too many missing values, so the range is unknown:
+# Too many missing values, so there is no finite range:
 median_range(c(7, 7, 8, 9, NA, NA, NA, NA))
 }
 \author{
