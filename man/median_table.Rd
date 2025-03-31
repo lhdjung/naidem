@@ -18,7 +18,7 @@ its default method.}
 \value{
 Data frame with these columns:
 \itemize{
-\item \code{term}: the names of \code{x} elements. Only present if any are named.
+\item \code{term}: the names of \code{x} elements.
 \item \code{estimate}: the medians of \code{x} elements, ignoring as many \code{NA}s as
 necessary.
 \item \code{certainty}: \code{TRUE} if the corresponding estimate is certain to be the

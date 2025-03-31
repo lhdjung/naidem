@@ -24,7 +24,7 @@
 #' bounds of an uncertain median.
 #'
 #' @return Data frame with these columns:
-#'   - `term`: the names of `x` elements. Only present if any are named.
+#'   - `term`: the names of `x` elements.
 #'   - `estimate`: the medians of `x` elements, ignoring as many `NA`s as
 #'   necessary.
 #'   - `certainty`: `TRUE` if the corresponding estimate is certain to be the
@@ -127,12 +127,18 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
   rate_ignored_na  <- na_ignored / na_total
   rate_ignored_sum <- na_ignored / sum_total
 
-  # Collect the length-`x` vectors in a data frame, adding a `term` column that
-  # stores the names of `x` if there are any. This uses a low-level tibble
+  # Record any names of `x` elements. If there are none, just empty strings.
+  term <- if (is.null(names(x))) {
+    rep("", times = nx)
+  } else {
+    names(x)
+  }
+
+  # Collect the length-`x` vectors in a data frame. This uses a low-level tibble
   # constructor for performance and for adding an S3 class.
   tibble::new_tibble(
     x = list(
-      term = names(x),
+      term = term,
       estimate = estimate,
       certainty = certainty,
       # Names of these two are different for safety:
