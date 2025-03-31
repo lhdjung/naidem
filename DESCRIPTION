@@ -25,10 +25,13 @@ BugReports: https://github.com/lhdjung/naidem/issues
 Collate: 
     'median-count-tolerable.R'
     'median-is-determinate.R'
+    'median-plot.R'
     'median-print.R'
     'median-range.R'
     'median2.R'
     'median-table.R'
     'utils.R'
 Imports: 
+    ggplot2,
+    rlang,
     tibble
