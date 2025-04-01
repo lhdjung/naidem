@@ -4,10 +4,16 @@
 #'   shows the `min` and `max` median bounds using error bars. Median estimates
 #'   are displayed as points.
 #'
-#'   If no bounds can be found for a sample because of too many missing values,
-#'   the error bars span the height of the plot, and the point is empty. The
-#'   median is particularly uncertain because it cannot be confined to a range.
-#'   See [`median_range()`].
+#' @section Visuals legend:
+#' - Point estimates that are known to be the true median have a "ring of
+#'   certainty" around them.
+#' - Error bars display the uncertainty about the true median created by missing
+#'   values. The median is known to fall between the two error bars, even if its
+#'   exact value in that range is unknown.
+#' - If no bounds can be found for a sample because of too many missing
+#'   values, the error bars span the height of the plot, and the point is a
+#'   hexagram. The median is particularly uncertain in this case because it
+#'   cannot be confined to a range. See [`median_range()`].
 #'
 #' @param data Data frame returned by [`median_table()`].
 #' @param point_size Numeric. Size of the median estimate points. Default is
@@ -42,10 +48,11 @@
 #'
 #' data
 #'
-#' # Some medians are known (no error bar expansion).
-#' # Some medians are unknown but confined to a range.
-#' # One median doesn't even have a range, its error bars
-#' # are expanded into infinity, and its point is empty.
+#' # -- Some medians are known: "ring of certainty" and no
+#' # error bar expansion.
+#' # -- Some medians are unknown but confined to a range.
+#' # -- One median doesn't even have a range, its error bars
+#' # extend into infinity, and its point is a hexagram.
 #' median_plot(data)
 
 
@@ -74,9 +81,7 @@ median_plot <- function(data,
 
   range_is_inf <- is.infinite(data$min)
 
-  # Exclude cases where `estimate` would occlude `min` / `max`
-  data_min <- data[!near(data$estimate, data$min), ]
-  data_max <- data[!near(data$estimate, data$max), ]
+  data_certainty <- data[data$certainty, ]
 
 
   # Build the plot
@@ -87,13 +92,20 @@ median_plot <- function(data,
       mapping = ggplot2::aes(ymin = .data$min, ymax = .data$max),
       # linetype = ifelse(range_is_inf, 2, 1),
       width = line_width,
-      size = line_size
+      size  = line_size
     ) +
 
     # Point estimate
     ggplot2::geom_point(
-      shape = ifelse(range_is_inf, 1, 19),
-      size = point_size
+      shape = ifelse(range_is_inf, 11, 19),
+      size  = ifelse(range_is_inf, point_size + 1, point_size)
+    ) +
+
+    # "Ring of certainty"
+    ggplot2::geom_point(
+      shape = 1,
+      size  = point_size + 3,
+      data  = data_certainty
     ) +
 
     # All the rest

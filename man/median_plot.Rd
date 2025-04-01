@@ -25,12 +25,22 @@ A ggplot object.
 \code{median_plot()} visualizes the results of \code{\link[=median_table]{median_table()}}. It
 shows the \code{min} and \code{max} median bounds using error bars. Median estimates
 are displayed as points.
-
-If no bounds can be found for a sample because of too many missing values,
-the error bars span the height of the plot, and the point is empty. The
-median is particularly uncertain because it cannot be confined to a range.
-See \code{\link[=median_range]{median_range()}}.
 }
+\section{Visuals legend}{
+
+\itemize{
+\item Point estimates that are known to be the true median have a "ring of
+certainty" around them.
+\item Error bars display the uncertainty about the true median created by missing
+values. The median is known to fall between the two error bars, even if its
+exact value in that range is unknown.
+\item If no bounds can be found for a sample because of too many missing
+values, the error bars span the height of the plot, and the point is a
+hexagram. The median is particularly uncertain in this case because it
+cannot be confined to a range. See \code{\link[=median_range]{median_range()}}.
+}
+}
+
 \examples{
 # Example data:
 data <- median_table(
@@ -51,9 +61,10 @@ data <- median_table(
 
 data
 
-# Some medians are known (no error bar expansion).
-# Some medians are unknown but confined to a range.
-# One median doesn't even have a range, its error bars
-# are expanded into infinity, and its point is empty.
+# -- Some medians are known: "ring of certainty" and no
+# error bar expansion.
+# -- Some medians are unknown but confined to a range.
+# -- One median doesn't even have a range, its error bars
+# extend into infinity, and its point is a hexagram.
 median_plot(data)
 }
