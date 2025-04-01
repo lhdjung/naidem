@@ -2,20 +2,58 @@
 % Please edit documentation in R/median-plot.R
 \name{median_plot}
 \alias{median_plot}
-\title{Visualize median estimate certainty}
+\title{Visualize median estimate uncertainty}
 \usage{
-median_plot(data, line_width = 0.35)
+median_plot(data, point_size = 2, line_size = 0.5, line_width = 0.75)
 }
 \arguments{
 \item{data}{Data frame returned by \code{\link[=median_table]{median_table()}}.}
 
+\item{point_size}{Numeric. Size of the median estimate points. Default is
+\code{2}.}
+
+\item{line_size}{Numeric. Thickness of the error bars, including the vertical
+lines. Default is \code{0.5}.}
+
 \item{line_width}{Numeric (length 1). Width of the horizontal lines. Default
-is \code{0.35}.}
+is \code{0.75}.}
 }
 \value{
 A ggplot object.
 }
 \description{
-Use \code{median_plot()} to visualize the results of
-\code{\link[=median_table]{median_table()}}.
+\code{median_plot()} visualizes the results of \code{\link[=median_table]{median_table()}}. It
+shows the \code{min} and \code{max} median bounds using error bars. Median estimates
+are displayed as points.
+
+If no bounds can be found for a sample because of too many missing values,
+the error bars span the height of the plot, and the point is empty. The
+median is particularly uncertain because it cannot be confined to a range.
+See \code{\link[=median_range]{median_range()}}.
+}
+\examples{
+# Example data:
+data <- median_table(
+  list(
+    c(0, 1, 1, 1, NA),
+    c(1, 1, NA),
+    c(1, 2, NA),
+    c(0, 0, NA, 0, 0),
+    c(1, 1, 1, 1, NA, NA),
+    c(1, 1, 1, 1, NA, NA, NA),
+    c(1, 1, 1, 1, NA, NA, NA, NA),
+    iris$Sepal.Length,
+    c(5.6, 5.7, 5.9, 6, 6.1, 6.3, 6.4, 6.6, 6.7, NA),
+    c(6.1, 6.3, 5.9, 6, 6.1, 6.3, 6.4, 6.6, 6.7, NA, NA, NA, NA),
+    c(7, 7, 7, 8, NA, NA)
+  )
+)
+
+data
+
+# Some medians are known (no error bar expansion).
+# Some medians are unknown but confined to a range.
+# One median doesn't even have a range, its error bars
+# are expanded into infinity, and its point is empty.
+median_plot(data)
 }
