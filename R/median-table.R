@@ -22,6 +22,7 @@
 #' as possible.
 #'   - [`median_range()`] for the `min` and `max` columns; the lower and upper
 #' bounds of an uncertain median.
+#'   - [`median_plot()`] for a follow-up visualization.
 #'
 #' @return Data frame with these columns:
 #'   - `term`: the names of `x` elements.

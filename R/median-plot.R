@@ -92,7 +92,14 @@ median_plot <- function(data,
       mapping = ggplot2::aes(ymin = .data$min, ymax = .data$max),
       # linetype = ifelse(range_is_inf, 2, 1),
       width = line_width,
-      size  = line_size
+      size = line_size,
+      data = data[!range_is_inf, ]
+    ) +
+
+    # Alternative to true error bars for infinitely wide ranges
+    ggplot2::geom_vline(
+      xintercept = index_rows[range_is_inf]  # ,
+      # data = data[range_is_inf, ]
     ) +
 
     # Point estimate

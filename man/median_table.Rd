@@ -69,5 +69,6 @@ median_table(iris[1:4])
 as possible.
 \item \code{\link[=median_range]{median_range()}} for the \code{min} and \code{max} columns; the lower and upper
 bounds of an uncertain median.
+\item \code{\link[=median_plot]{median_plot()}} for a follow-up visualization.
 }
 }
