@@ -69,3 +69,18 @@ near <- function(x, y) {
   abs(x - y) < .Machine$double.eps^0.5
 }
 
+
+# # Test function below with:
+# geom <- geom_uncertainty_bars
+# field <- "aes_params"
+# aes_name <- "linewidth"
+# aes_value <- 0.35
+
+# Copied from an MIT-licensed repo:
+# https://github.com/lhdjung/moder/blob/06195ed218b875a797b7175287cf3ff4c4b19350/R/utils.R
+aes_add <- function(geom, field, aes_name, aes_value) {
+  names(aes_value) <- aes_name
+  geom[[field]] <- c(geom[[field]], aes_value)
+  invisible(NULL)
+}
+

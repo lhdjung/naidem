@@ -72,7 +72,9 @@ median_plot <- function(data,
     stop("needs output of `median_table()`.")
   }
 
-  index_rows <- seq_len(nrow(data))
+  index_rows <- as.character(seq_len(nrow(data)))
+  index_rows <- factor(index_rows, levels = index_rows)
+
   data$index <- index_rows
 
   if (all(data$term == "")) {
@@ -81,20 +83,42 @@ median_plot <- function(data,
 
   range_is_inf <- is.infinite(data$min)
 
-  data_certainty <- data[data$certainty, ]
+  # Versions of ggplot2 before 3.4.0 have the `size` aesthetic instead of the
+  # more modern `linewidth`...
+  linewidth_name <- if (utils::packageVersion("ggplot2") < "3.4.0") {
+    "size"
+  } else {
+    "linewidth"
+  }
+
+  # ...so the geom where `size` / `linewidth` will be used is pre-assigned...
+  geom_uncertainty_bars <- ggplot2::geom_errorbar(
+    mapping = ggplot2::aes(ymin = .data$min, ymax = .data$max),
+    width = line_width
+    # linetype = ifelse(range_is_inf, 2, 1)
+  )
+
+  # ...and the aesthetic with the correct name is added to the geom. Unlike most
+  # R functions, this helper modifies in place, so no assignment is needed.
+  aes_add(
+    geom = geom_uncertainty_bars,
+    field = "aes_params",
+    aes_name = linewidth_name,
+    aes_value = line_width
+  )
 
 
   # Build the plot
-  ggplot2::ggplot(data, ggplot2::aes(x = .data$term, y = .data$estimate)) +
+  ggplot2::ggplot(
+    data,
+    ggplot2::aes(
+      x = .data$term,
+      y = .data$estimate
+    )
+  ) +
 
     # Min and max "errorbars" -- drawing them first to make the points go on top
-    ggplot2::geom_errorbar(
-      mapping = ggplot2::aes(ymin = .data$min, ymax = .data$max),
-      # linetype = ifelse(range_is_inf, 2, 1),
-      width = line_width,
-      size = line_size,
-      data = data[!range_is_inf, ]
-    ) +
+    geom_uncertainty_bars +
 
     # Alternative to true error bars for infinitely wide ranges
     ggplot2::geom_vline(
@@ -112,7 +136,7 @@ median_plot <- function(data,
     ggplot2::geom_point(
       shape = 1,
       size  = point_size + 3,
-      data  = data_certainty
+      data  = data[data$certainty, ]
     ) +
 
     # All the rest

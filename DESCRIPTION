@@ -34,4 +34,5 @@ Collate:
 Imports: 
     ggplot2,
     rlang,
-    tibble
+    tibble,
+    utils
