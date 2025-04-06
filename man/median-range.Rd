@@ -32,7 +32,7 @@ Two edge cases may occur:
 \itemize{
 \item If the median can be precisely determined, \code{median_range()} returns two
 identical values. This is the same case in which \code{\link[=median2]{median2()}} would return
-a non-\code{NA} value.
+a non-\code{NA} value, and \code{\link[=median_plot]{median_plot()}} would show a "ring of certainty".
 \item If the number of missing values is so high that a continuous array of
 them could extend from the start or end of \code{x} into the median position,
 the data do not constrict the median to fall in between any finite bounds.
