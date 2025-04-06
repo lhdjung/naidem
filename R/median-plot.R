@@ -18,8 +18,6 @@
 #' @param data Data frame returned by [`median_table()`].
 #' @param point_size Numeric. Size of the median estimate points. Default is
 #'   `2`.
-#' @param line_size Numeric. Thickness of the error bars, including the vertical
-#'   lines. Default is `0.5`.
 #' @param line_width Numeric (length 1). Width of the horizontal lines. Default
 #'   is `0.5`.
 #'
@@ -59,13 +57,11 @@
 # # Test using:
 # data <- median_table(list(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11))
 # point_size <- 2
-# line_size <- 0.5
 # line_width <- 0.35
 
 
 median_plot <- function(data,
                         point_size = 2,
-                        line_size = 0.5,
                         line_width = 0.5) {
 
   if (!inherits(data, "median_table")) {
@@ -74,8 +70,6 @@ median_plot <- function(data,
 
   index_rows <- as.character(seq_len(nrow(data)))
   index_rows <- factor(index_rows, levels = index_rows)
-
-  data$index <- index_rows
 
   if (all(data$term == "")) {
     data$term <- index_rows
@@ -95,7 +89,6 @@ median_plot <- function(data,
   geom_uncertainty_bars <- ggplot2::geom_errorbar(
     mapping = ggplot2::aes(ymin = .data$min, ymax = .data$max),
     width = line_width
-    # linetype = ifelse(range_is_inf, 2, 1)
   )
 
   # ...and the aesthetic with the correct name is added to the geom. Unlike most
@@ -119,12 +112,6 @@ median_plot <- function(data,
 
     # Min and max "errorbars" -- drawing them first to make the points go on top
     geom_uncertainty_bars +
-
-    # Alternative to true error bars for infinitely wide ranges
-    ggplot2::geom_vline(
-      xintercept = index_rows[range_is_inf]  # ,
-      # data = data[range_is_inf, ]
-    ) +
 
     # Point estimate
     ggplot2::geom_point(
