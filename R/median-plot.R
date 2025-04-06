@@ -21,7 +21,7 @@
 #' @param line_size Numeric. Thickness of the error bars, including the vertical
 #'   lines. Default is `0.5`.
 #' @param line_width Numeric (length 1). Width of the horizontal lines. Default
-#'   is `0.75`.
+#'   is `0.5`.
 #'
 #' @returns A ggplot object.
 #'
@@ -66,7 +66,7 @@
 median_plot <- function(data,
                         point_size = 2,
                         line_size = 0.5,
-                        line_width = 0.75) {
+                        line_width = 0.5) {
 
   if (!inherits(data, "median_table")) {
     stop("needs output of `median_table()`.")

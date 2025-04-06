@@ -4,7 +4,7 @@
 \alias{median_plot}
 \title{Visualize median estimate uncertainty}
 \usage{
-median_plot(data, point_size = 2, line_size = 0.5, line_width = 0.75)
+median_plot(data, point_size = 2, line_size = 0.5, line_width = 0.5)
 }
 \arguments{
 \item{data}{Data frame returned by \code{\link[=median_table]{median_table()}}.}
@@ -16,7 +16,7 @@ median_plot(data, point_size = 2, line_size = 0.5, line_width = 0.75)
 lines. Default is \code{0.5}.}
 
 \item{line_width}{Numeric (length 1). Width of the horizontal lines. Default
-is \code{0.75}.}
+is \code{0.5}.}
 }
 \value{
 A ggplot object.
