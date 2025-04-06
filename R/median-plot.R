@@ -58,7 +58,7 @@
 
 
 # # Test using:
-# data <- median_table(list(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11))
+# data <- median_table(list(x1, x2, x3, x4, a = x5, x6, x7, x8, x9, x10, x11))
 # point_size <- 2
 # line_width <- 0.35
 
@@ -72,11 +72,16 @@ median_plot <- function(data,
     stop("needs output of `median_table()`.")
   }
 
-  if (all(data$term == "")) {
+  # Replace any empty "term" sample names by index numbers
+  if (any(data$term == "")) {
     index_rows <- as.character(seq_len(nrow(data)))
-    data$term <- factor(index_rows, levels = index_rows)
+    term_new <- data$term
+    empty <- term_new == ""
+    term_new[empty] <- index_rows[empty]
+    data$term <- factor(term_new, levels = term_new)
   }
 
+  # To mark median estimates that are not confined to a range
   range_is_inf <- is.infinite(data$min)
 
   # Versions of ggplot2 before 3.4.0 have the `size` aesthetic instead of the
