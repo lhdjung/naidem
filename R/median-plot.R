@@ -140,10 +140,6 @@ median_plot <- function(data,
     ) +
 
     # All the rest
-    ggplot2::scale_x_continuous(
-      breaks = index_rows,
-      labels = index_rows
-    ) +
     ggplot2::theme(
       panel.grid.major.x = ggplot2::element_blank(),
       panel.grid.minor.x = ggplot2::element_blank()
