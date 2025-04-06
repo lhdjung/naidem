@@ -129,10 +129,10 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
   rate_ignored_sum <- na_ignored / sum_total
 
   # Record any names of `x` elements. If there are none, just empty strings.
-  term <- if (is.null(names(x))) {
-    rep("", times = nx)
-  } else {
-    names(x)
+  term <- names(x)
+
+  if (is.null(term)) {
+    term <- rep("", times = nx)
   }
 
   # Collect the length-`x` vectors in a data frame. This uses a low-level tibble
