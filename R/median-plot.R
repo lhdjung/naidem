@@ -4,22 +4,25 @@
 #'   shows the `min` and `max` median bounds using error bars. Median estimates
 #'   are displayed as points.
 #'
-#' @section Visuals legend:
-#' - Point estimates that are known to be the true median have a "ring of
-#'   certainty" around them.
-#' - Error bars display the uncertainty about the true median created by missing
-#'   values. The median is known to fall between the two error bars, even if its
-#'   exact value in that range is unknown.
+#' @section Visual guide:
+#' - Points are medians of the non-`NA` values.
+#' - Points that are known to be true medians have a "ring of certainty"
+#'   around them.
+#' - Error bars display lower and upper bounds of the true median, reflecting
+#'   any uncertainty created by missing values. The median is known to fall
+#'   between the two error bars, even if its exact value is unknown.
 #' - If no bounds can be found for a sample because of too many missing
 #'   values, the error bars span the height of the plot, and the point is a
 #'   hexagram. The median is particularly uncertain in this case because it
-#'   cannot be confined to a range. See [`median_range()`].
+#'   cannot even be confined to a range. See [`median_range()`].
 #'
 #' @param data Data frame returned by [`median_table()`].
 #' @param point_size Numeric. Size of the median estimate points. Default is
 #'   `2`.
-#' @param line_width Numeric (length 1). Width of the horizontal lines. Default
+#' @param line_width Numeric (length 1). Width of the error bar lines. Default
 #'   is `0.5`.
+#' @param bar_width Numeric (length 1). Extension of the horizontal bars.
+#'   Default is `0.9`.
 #'
 #' @returns A ggplot object.
 #'
@@ -62,17 +65,16 @@
 
 median_plot <- function(data,
                         point_size = 2,
-                        line_width = 0.5) {
+                        line_width = 0.5,
+                        bar_width = 0.9) {
 
   if (!inherits(data, "median_table")) {
     stop("needs output of `median_table()`.")
   }
 
-  index_rows <- as.character(seq_len(nrow(data)))
-  index_rows <- factor(index_rows, levels = index_rows)
-
   if (all(data$term == "")) {
-    data$term <- index_rows
+    index_rows <- as.character(seq_len(nrow(data)))
+    data$term <- factor(index_rows, levels = index_rows)
   }
 
   range_is_inf <- is.infinite(data$min)
@@ -88,7 +90,7 @@ median_plot <- function(data,
   # ...so the geom where `size` / `linewidth` will be used is pre-assigned...
   geom_uncertainty_bars <- ggplot2::geom_errorbar(
     mapping = ggplot2::aes(ymin = .data$min, ymax = .data$max),
-    width = line_width
+    width = bar_width
   )
 
   # ...and the aesthetic with the correct name is added to the geom. Unlike most

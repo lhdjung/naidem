@@ -4,7 +4,7 @@
 \alias{median_plot}
 \title{Visualize median estimate uncertainty}
 \usage{
-median_plot(data, point_size = 2, line_width = 0.5)
+median_plot(data, point_size = 2, line_width = 0.5, bar_width = 0.9)
 }
 \arguments{
 \item{data}{Data frame returned by \code{\link[=median_table]{median_table()}}.}
@@ -12,8 +12,11 @@ median_plot(data, point_size = 2, line_width = 0.5)
 \item{point_size}{Numeric. Size of the median estimate points. Default is
 \code{2}.}
 
-\item{line_width}{Numeric (length 1). Width of the horizontal lines. Default
+\item{line_width}{Numeric (length 1). Width of the error bar lines. Default
 is \code{0.5}.}
+
+\item{bar_width}{Numeric (length 1). Extension of the horizontal bars.
+Default is \code{0.9}.}
 }
 \value{
 A ggplot object.
@@ -23,18 +26,19 @@ A ggplot object.
 shows the \code{min} and \code{max} median bounds using error bars. Median estimates
 are displayed as points.
 }
-\section{Visuals legend}{
+\section{Visual guide}{
 
 \itemize{
-\item Point estimates that are known to be the true median have a "ring of
-certainty" around them.
-\item Error bars display the uncertainty about the true median created by missing
-values. The median is known to fall between the two error bars, even if its
-exact value in that range is unknown.
+\item Points are medians of the non-\code{NA} values.
+\item Points that are known to be true medians have a "ring of certainty"
+around them.
+\item Error bars display lower and upper bounds of the true median, reflecting
+any uncertainty created by missing values. The median is known to fall
+between the two error bars, even if its exact value is unknown.
 \item If no bounds can be found for a sample because of too many missing
 values, the error bars span the height of the plot, and the point is a
 hexagram. The median is particularly uncertain in this case because it
-cannot be confined to a range. See \code{\link[=median_range]{median_range()}}.
+cannot even be confined to a range. See \code{\link[=median_range]{median_range()}}.
 }
 }
 
