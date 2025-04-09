@@ -85,7 +85,7 @@ median2.default <- function(x, na.rm = FALSE, na.rm.amount = 0,
     stop("need numeric data")
   # The user may choose to ignore any number of missing values (see the utils.R
   # file for the `decrease_na_amount()` helper function):
-  if (!missing(na.rm.amount)) {
+  if (na.rm.amount != 0) {
     x <- decrease_na_amount(x, na.rm, na.rm.amount, na.rm.from)
   }
   if (length(names(x)))
