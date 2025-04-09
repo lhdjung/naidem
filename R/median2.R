@@ -1,10 +1,9 @@
-#' Median with missing values analysis
+#' Drop-in `median()` replacement
 #'
-#' @description Compute the sample median.
-#'
-#'   By default, `median2()` works like the standard [`median()`] unless one or
-#'   more values are missing: `median()` always returns `NA` in this case, but
-#'   `median2()` checks if the median can be determined nevertheless.
+#' @description `median2()` computes the sample median. By default, it works
+#'   like the standard [`median()`] unless one or more values are missing:
+#'   `median()` always returns `NA` in this case, but `median2()` checks if the
+#'   median can be determined nevertheless.
 #'
 #' @param x Numeric or similar. Vector to search for its median.
 #' @param na.rm Logical. If set to `TRUE`, missing values are removed before

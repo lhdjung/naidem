@@ -3,7 +3,7 @@
 \name{median2}
 \alias{median2}
 \alias{median2.default}
-\title{Median with missing values analysis}
+\title{Drop-in \code{median()} replacement}
 \usage{
 median2(
   x,
@@ -53,11 +53,10 @@ The output is \code{NA} (of the same type as \code{x}) if and only if the median
 can't be determined because of missing values, or if there are no values.
 }
 \description{
-Compute the sample median.
-
-By default, \code{median2()} works like the standard \code{\link[=median]{median()}} unless one or
-more values are missing: \code{median()} always returns \code{NA} in this case, but
-\code{median2()} checks if the median can be determined nevertheless.
+\code{median2()} computes the sample median. By default, it works
+like the standard \code{\link[=median]{median()}} unless one or more values are missing:
+\code{median()} always returns \code{NA} in this case, but \code{median2()} checks if the
+median can be determined nevertheless.
 }
 \details{
 \code{median2()} is a generic function, so new methods can be defined for
