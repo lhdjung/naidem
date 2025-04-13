@@ -113,7 +113,11 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
     na_ignored[[i]] <- max(0L, nna_current - nna_tolerable)
     na_total[[i]] <- nna_current
 
-    range_current <- median_range(x[[i]], even = even)
+    range_current <- median_range(
+      x = x_known_current,
+      even = even,
+      nna = nna_current
+    )
 
     min_vec[[i]] <- range_current[1L]
     max_vec[[i]] <- range_current[2L]
