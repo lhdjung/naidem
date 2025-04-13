@@ -9,6 +9,9 @@
 #'
 #' @param x Numeric or similar. Vector to search for its possible medians.
 #' @param na.rm.amount,even Passed on to [`median2()`].
+#' @param nna Integer. Ignore unless the function is used as a helper. It is
+#'   like `needs_prep` in [`median_count_tolerable()`] except it can submit the
+#'   number of missing values.
 #'
 #' @details Two edge cases may occur:
 #'
@@ -44,7 +47,10 @@
 #' median_range(c(7, 7, 8, 9, NA, NA, NA, NA))
 
 
-median_range <- function(x, na.rm.amount = 0, even = c("mean", "low", "high")) {
+median_range <- function(x,
+                         na.rm.amount = 0,
+                         even = c("mean", "low", "high"),
+                         nna = NULL) {
   UseMethod("median_range")
 }
 
@@ -54,17 +60,28 @@ median_range <- function(x, na.rm.amount = 0, even = c("mean", "low", "high")) {
 
 median_range.default <- function(x,
                                  na.rm.amount = 0,
-                                 even = c("mean", "low", "high")) {
+                                 even = c("mean", "low", "high"),
+                                 nna = NULL) {
   # As in `median2.default()`:
   even <- match.arg(even)
   n <- length(x)
+  # The `nna` argument here follows the same basic idea as `needs_prep` in
+  # `median_count_tolerable()`. However, it is integer instead of logical; and
+  # if specified, it needs to be added to `n` which, in this case, previously
+  # was just the number of known values. Note: this requires `x` to no longer
+  # have any `NA`s, and to be sorted!
+  if (is.null(nna)) {
+    x <- sort(x[!is.na(x)])
+    nna <- n - length(x)
+  } else {
+    n <- n + nna
+  }
+  # As in `median2()`:
   half <- if (n %% 2L == 1L) {
     (n + 1L) %/% 2L
   } else {
     (n + 1L:2L) %/% 2L
   }
-  x <- sort(x[!is.na(x)])
-  nna <- n - length(x)
   # Special rules apply to extremely low or high numbers of missing values:
   # -- If no values are missing, there is only one possible median, and it can
   # be determined by `median2()`.

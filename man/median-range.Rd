@@ -6,14 +6,18 @@
 \alias{median_range.default}
 \title{Bounds on an unknown median}
 \usage{
-median_range(x, na.rm.amount = 0, even = c("mean", "low", "high"))
+median_range(x, na.rm.amount = 0, even = c("mean", "low", "high"), nna = NULL)
 
-\method{median_range}{default}(x, na.rm.amount = 0, even = c("mean", "low", "high"))
+\method{median_range}{default}(x, na.rm.amount = 0, even = c("mean", "low", "high"), nna = NULL)
 }
 \arguments{
 \item{x}{Numeric or similar. Vector to search for its possible medians.}
 
 \item{na.rm.amount, even}{Passed on to \code{\link[=median2]{median2()}}.}
+
+\item{nna}{Integer. Ignore unless the function is used as a helper. It is
+like \code{needs_prep} in \code{\link[=median_count_tolerable]{median_count_tolerable()}} except it can submit the
+number of missing values.}
 }
 \value{
 Vector of length 2 and the same type as \code{x} (never \code{NA}). The only
