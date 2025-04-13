@@ -10,6 +10,11 @@ vec1 <- list(
 
 vec2 <- iris[1:4]
 
+vec3 <- rep(NA_real_, 10)
+
+
+# Expected results --------------------------------------------------------
+
 vec1_exp <- structure(
   tibble::tibble(
     term = c("a", "b", "c", "d"),
@@ -42,10 +47,27 @@ vec2_exp <- structure(
   class = c("median_table", "tbl_df", "tbl", "data.frame")
 )
 
+vec3_exp <- structure(
+  tibble::tibble(
+    term = "",
+    estimate = NA_real_,
+    certainty = FALSE,
+    min = -Inf,
+    max = Inf,
+    na_ignored = 10L,
+    na_total = 10L,
+    rate_ignored_na = 1,
+    sum_total = 10L,
+    rate_ignored_sum = 1,
+  ),
+  class = c("median_table", "tbl_df", "tbl", "data.frame")
+)
+
 
 # Testing -----------------------------------------------------------------
 
 test_that("`median_table()` works correctly", {
   expect_equal(median_table(vec1), vec1_exp)
   expect_equal(median_table(vec2), vec2_exp)
+  expect_equal(median_table(vec3), vec3_exp)
 })
