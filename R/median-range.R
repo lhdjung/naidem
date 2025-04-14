@@ -65,6 +65,12 @@ median_range.default <- function(x,
   # As in `median2.default()`:
   even <- match.arg(even)
   n <- length(x)
+  # This is also checked in `median2()`. It is only needed because one early
+  # return below would otherwise make it possible that a call with wrong
+  # arguments would silently pass through without reaching a `median2()` call.
+  if (even == "mean" && !is.numeric(x)) {
+    error_non_numeric_mean(x)
+  }
   # The `nna` argument here follows the same basic idea as `needs_prep` in
   # `median_count_tolerable()`. However, it is integer instead of logical; and
   # if specified, it needs to be added to `n` which, in this case, previously

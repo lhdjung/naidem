@@ -84,3 +84,61 @@ aes_add <- function(geom, field, aes_name, aes_value) {
   invisible(NULL)
 }
 
+
+# Throw an error if `median2()` or a function that called it took a non-numeric
+# `x` argument but failed to override the `even = "mean"` default. In the
+# even-length scenario, such a function would compute the mean of the two
+# central values, which is only meaningful for numeric data. Therefore, the user
+# needs to explicitly choose the lower or the higher central value when taking
+# the median of non-numeric vectors. (Strictly speaking, logical vectors are
+# also allowed. This is because they are implicitly coerced to numeric.)
+error_non_numeric_mean <- function(x) {
+  if (is.null(x)) {
+    return(invisible(NULL))
+  }
+  # Date and factor are classes, not types, so they need special treatment when
+  # identifying why `x` is not the right kind of object here. In the future,
+  # this could possibly be extended to other classes.
+  data_label <- NULL
+  trigger_classes <- c("Date", "factor")
+  for (trigger in trigger_classes) {
+    if (inherits(x, trigger)) {
+      data_label <- tolower(paste0(trigger, "s"))
+    }
+  }
+  # Otherwise, the type is the problem
+  if (is.null(data_label)) {
+    data_label <- typeof(x)
+    if (rlang::is_vector(x)) {
+      data_label <- paste(data_label, "vectors")
+    } else {
+      data_label <- paste0(data_label, "s")
+    }
+  }
+  # Give a begrudging nod to traditional bool conversion
+  hint_for_logicals <- if (is.logical(x)) {
+    paste(
+      "Alternatively, you may use `as.numeric()` to explicitly coerce the",
+      "logical vector beforehand."
+    )
+  } else {
+    NULL
+  }
+  # Throw a bespoke error that names the directly calling function -- such as
+  # `median2.default()` -- as its source.
+  cli::cli_abort(
+    message = c(
+      "Median of {data_label} requires `even = \"low\"` or \
+      `even = \"high\"`.",
+      "x" = "You left the default `even = \"mean\"` in place.",
+      "x" = "In case `x` has an even length, the mean of the two \
+      central values of the sorted vector is computed by default, \
+      but this is not possible with {data_label}.",
+      "i" = "Choose `even = \"low\"` for the lower central value or \
+      `even = \"high\"` for the higher one.",
+      "i" = hint_for_logicals
+    ),
+    call = rlang::caller_call()
+  )
+}
+

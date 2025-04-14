@@ -1,9 +1,13 @@
 #' Drop-in `median()` replacement
 #'
 #' @description `median2()` computes the sample median. By default, it works
-#'   like the standard [`median()`] unless one or more values are missing:
-#'   `median()` always returns `NA` in this case, but `median2()` checks if the
-#'   median can be determined nevertheless.
+#'   like the standard [`median()`], with these exceptions:
+#'   - If one or more values are missing, `median2()` checks if the median can
+#'   be determined nevertheless. `median()` always returns `NA` in this case.
+#'   - Non-numeric data require one of `even = "low"` and `even = "high"`. This
+#'   option doesn't exist in `median()`. It avoids "computing the mean" of the
+#'   two central values of sorted vectors with an even length when no such
+#'   operation exists, e.g., with strings.
 #'
 #' @param x Numeric or similar. Vector to search for its median.
 #' @param na.rm Logical. If set to `TRUE`, missing values are removed before
@@ -13,10 +17,10 @@
 #' @param na.rm.from String. If `na.rm.amount` is used, from which position in
 #'   `x` should missing values be removed? Options are `"first"`, `"last"`, and
 #'   `"random"`. Default is `"first"`.
-#' @param even String. What to do if `x` has an even length and contains no
+#' @param even String. What to return if `x` has an even length and contains no
 #'   missing values (or they were removed). The default, `"mean"`, averages the
-#'   two central values, `"low"` returns the lower central value, and `"high"`
-#'   returns the higher one.
+#'   two central values of the sorted vector, `"low"` returns the lower central
+#'   value, and `"high"` returns the higher one.
 #' @param ... Optional further arguments for methods. Not used in the default
 #'   method.
 #'
@@ -80,8 +84,12 @@ median2.default <- function(x, na.rm = FALSE, na.rm.amount = 0,
                             even = c("mean", "low", "high"), ...) {
   na.rm.from <- match.arg(na.rm.from)
   even <- match.arg(even)
-  if (is.factor(x) || is.data.frame(x))
-    stop("need numeric data")
+  if (is.data.frame(x))
+    stop("need numeric data or similar")
+  # Prevent even-length problems
+  if (even == "mean" && !is.numeric(x)) {
+    error_non_numeric_mean(x)
+  }
   # The user may choose to ignore any number of missing values (see the utils.R
   # file for the `decrease_na_amount()` helper function):
   if (na.rm.amount != 0) {
