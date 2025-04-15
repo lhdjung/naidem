@@ -31,6 +31,29 @@
 #' @seealso [`median_plot_errorbar()`]
 #'
 #' @examples
+#' # Example data:
+#' data <- median_table(
+#'   list(
+#'     c(0, 1, 1, 1, NA),
+#'     c(1, 1, NA),
+#'     c(1, 2, NA),
+#'     c(0, 0, NA, 0, 0),
+#'     c(1, 1, 1, 1, NA, NA),
+#'     c(1, 1, 1, 1, NA, NA, NA),
+#'     c(1, 1, 1, 1, NA, NA, NA, NA),
+#'     iris$Sepal.Length,
+#'     c(5.6, 5.7, 5.9, 6, 6.1, 6.3, 6.4, 6.6, 6.7, NA),
+#'     c(6.1, 6.3, 5.9, 6, 6.1, 6.3, 6.4, 6.6, 6.7, NA, NA, NA, NA),
+#'     c(7, 7, 7, 8, NA, NA)
+#'   )
+#' )
+#'
+#' data
+#'
+#' # See visual guide above
+#' median_plot_col(data)
+
+
 median_plot_col <- function(data,
                             bar_alpha = 0.4,
                             bar_color_na = "red",
