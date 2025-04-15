@@ -19,10 +19,14 @@
 #' @param data Data frame returned by [`median_table()`].
 #' @param point_size Numeric. Size of the median estimate points. Default is
 #'   `2`.
+#' @param point_color String (length 1). Color of the estimate points, including
+#'   any "ring of certainty". By default, the same as `bar_color`.
 #' @param line_width Numeric (length 1). Width of the error bar lines. Default
 #'   is `0.5`.
 #' @param bar_width Numeric (length 1). Extension of the horizontal bars.
 #'   Default is `0.9`.
+#' @param bar_color String (length 1). Color of the error bars. Default is
+#'   `"black"`.
 #'
 #' @returns A ggplot object.
 #'
@@ -64,8 +68,10 @@
 
 
 median_plot <- function(data,
+                        point_color = bar_color,
                         point_size = 2,
                         line_width = 0.5,
+                        bar_color = "black",
                         bar_width = 0.9) {
 
   if (!inherits(data, "median_table")) {
@@ -95,7 +101,8 @@ median_plot <- function(data,
   # ...so the geom where `size` / `linewidth` will be used is pre-assigned...
   geom_uncertainty_bars <- ggplot2::geom_errorbar(
     mapping = ggplot2::aes(ymin = .data$min, ymax = .data$max),
-    width = bar_width
+    width = bar_width,
+    color = bar_color
   )
 
   # ...and the aesthetic with the correct name is added to the geom. Unlike most
@@ -123,13 +130,15 @@ median_plot <- function(data,
     # Point estimate
     ggplot2::geom_point(
       shape = ifelse(range_is_inf, 11, 19),
-      size  = ifelse(range_is_inf, point_size + 1, point_size)
+      size  = ifelse(range_is_inf, point_size + 1, point_size),
+      color = point_color
     ) +
 
     # "Ring of certainty"
     ggplot2::geom_point(
       shape = 1,
       size  = point_size + 3,
+      color = point_color,
       data  = data[data$certainty, ]
     ) +
 
