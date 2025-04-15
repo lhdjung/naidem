@@ -1,8 +1,8 @@
 #' Visualize median estimate uncertainty
 #'
-#' @description `median_plot()` visualizes the results of [`median_table()`]. It
-#'   shows the `min` and `max` median bounds using error bars. Median estimates
-#'   are displayed as points.
+#' @description `median_plot_errorbar()` visualizes the results of
+#'   [`median_table()`]. It shows the `min` and `max` median bounds using error
+#'   bars. Median estimates are displayed as points.
 #'
 #' @section Visual guide:
 #' - Points are medians of the non-`NA` values.
@@ -58,7 +58,7 @@
 #' # -- Some medians are unknown but confined to a range.
 #' # -- One median doesn't even have a range, its error bars
 #' # extend into infinity, and its point is a hexagram.
-#' median_plot(data)
+#' median_plot_errorbar(data)
 
 
 # # Test using:
@@ -67,12 +67,12 @@
 # line_width <- 0.35
 
 
-median_plot <- function(data,
-                        point_color = bar_color,
-                        point_size = 2,
-                        line_width = 0.5,
-                        bar_color = "black",
-                        bar_width = 0.9) {
+median_plot_errorbar <- function(data,
+                                 point_color = bar_color,
+                                 point_size = 2,
+                                 line_width = 0.5,
+                                 bar_color = "black",
+                                 bar_width = 0.9) {
 
   if (!inherits(data, "median_table")) {
     stop("needs output of `median_table()`.")

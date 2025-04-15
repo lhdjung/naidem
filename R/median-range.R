@@ -17,7 +17,8 @@
 #'
 #'   - If the median can be precisely determined, `median_range()` returns two
 #'   identical values. This is the same case in which [`median2()`] would return
-#'   a non-`NA` value, and [`median_plot()`] would show a "ring of certainty".
+#'   a non-`NA` value, and [`median_plot_errorbar()`] would show a "ring of
+#'   certainty".
 #'   - If the number of missing values is so high that a continuous array of
 #'   them could extend from the start or end of `x` into the median position,
 #'   the data do not constrict the median to fall in between any finite bounds.

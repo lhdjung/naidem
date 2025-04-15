@@ -4,7 +4,7 @@
 #'   [`median_table()`]. It shows the rates of missing values that had to be
 #'   ignored to estimate the median of the remaining values.
 #'
-#' @inheritParams median_plot
+#' @inheritParams median_plot_errorbar
 #'
 #' @param point_size Numeric. Size of the "ring of certainty" half circle.
 #'   Default is `5`.
@@ -28,7 +28,7 @@
 #' @importFrom rlang .data
 #' @export
 #'
-#' @seealso [median_plot()]
+#' @seealso [`median_plot_errorbar()`]
 #'
 #' @examples
 median_plot_col <- function(data,
