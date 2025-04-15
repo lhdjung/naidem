@@ -94,17 +94,6 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
     nna_current <- n_current - length(x_known_current)
     sum_total[[i]] <- n_current
 
-    # Vectors where all elements are missing have an unknown median, so the
-    # estimate should be `NA`, as well. This is implemented via a shortcut:
-    if (nna_current == n_current) {
-      estimate[[i]] <- x[[i]][NA_integer_]
-      na_ignored[[i]] <- nna_current
-      na_total[[i]] <- nna_current
-      min_vec[[i]] <- -Inf
-      max_vec[[i]] <- Inf
-      next
-    }
-
     estimate[[i]] <- median2(x = x_known_current, even = even, ...)
 
     nna_tolerable <- median_count_tolerable(
