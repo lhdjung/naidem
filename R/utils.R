@@ -90,8 +90,7 @@ aes_add <- function(geom, field, aes_name, aes_value) {
 # even-length scenario, such a function would compute the mean of the two
 # central values, which is only meaningful for numeric data. Therefore, the user
 # needs to explicitly choose the lower or the higher central value when taking
-# the median of non-numeric vectors. (Strictly speaking, logical vectors are
-# also allowed. This is because they are implicitly coerced to numeric.)
+# the median of non-numeric vectors, including logicals.
 error_non_numeric_mean <- function(x) {
   if (is.null(x)) {
     return(invisible(NULL))
@@ -104,6 +103,7 @@ error_non_numeric_mean <- function(x) {
   for (trigger in trigger_classes) {
     if (inherits(x, trigger)) {
       data_label <- tolower(paste0(trigger, "s"))
+      break
     }
   }
   # Otherwise, the type is the problem
