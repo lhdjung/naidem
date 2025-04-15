@@ -24,7 +24,6 @@ URL: https://github.com/lhdjung/naidem,
 BugReports: https://github.com/lhdjung/naidem/issues
 Collate: 
     'median-count-tolerable.R'
-    'median-is-determinate.R'
     'median-plot.R'
     'median-print.R'
     'median-range.R'
