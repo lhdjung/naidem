@@ -206,7 +206,7 @@ print_sort_both <- function(x) {
   n <- length(x)
   x <- sort(x[!is.na(x)])
   nna <- n - length(x)
-  na_all <- rep(x[NA_integer_], nna)
+  na_all <- rep(NA_real_, nna)
   print(c(na_all, x))
   print(c(x, na_all))
 }

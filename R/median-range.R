@@ -28,8 +28,9 @@
 #'   Like [`median2()`], this function is generic, so methods can be defined for
 #'   other classes. This documentation describes the default method.
 #'
-#' @return Vector of length 2 and the same type as `x` (never `NA`). The only
-#'   exception is `c(-Inf, Inf)` which is always a double vector. See details.
+#' @return Vector of length 2 (never `NA`). Its type is double if `x` is numeric
+#'   (double or integer) or if `c(-Inf, Inf)` is returned, which is always
+#'   double. Otherwise, it has the same type as `x`.
 #'
 #' @name median-range
 #'

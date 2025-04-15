@@ -1,15 +1,19 @@
-#' Drop-in `median()` replacement
+#' Drop-in replacement for `median()`
 #'
 #' @description `median2()` computes the sample median. By default, it works
 #'   like the standard [`median()`], with these exceptions:
 #'   - If one or more values are missing, `median2()` checks if the median can
-#'   be determined nevertheless. `median()` always returns `NA` in this case.
+#'   be determined nevertheless. `median()` always returns `NA` in this case,
+#'   but `median2()` only returns `NA` if the median is genuinely unknown.
 #'   - Non-numeric data require one of `even = "low"` and `even = "high"`. This
 #'   option doesn't exist in `median()`. It avoids "computing the mean" of the
 #'   two central values of sorted vectors with an even length when no such
 #'   operation exists, e.g., with strings.
+#'   - The return type is always double if the input vector is numeric (i.e.,
+#'   double or integer). This is consistent and predictable, regardless of the
+#'   length being even or odd.
 #'
-#' @param x Numeric or similar. Vector to search for its median.
+#' @param x Vector that can be ordered. It will be searched for its median.
 #' @param na.rm Logical. If set to `TRUE`, missing values are removed before
 #'   computation proceeds. Default is `FALSE`.
 #' @param na.rm.amount Numeric. Alternative to `na.rm` that only removes a
@@ -34,13 +38,9 @@
 #'   \href{https://lhdjung.github.io/naidem/articles/algorithm.html}{*Implementing
 #'   the algorithm*} for further details.
 
-#' @return Length-1 vector of the same type as `x`. The only exception occurs if
-#'   `x` is logical or integer and its length is even, in which case the return
-#'   value is double.
+#' @return Length-1 vector of type double if the input is numeric (double or
+#'   integer), and the same type as `x` otherwise.
 #'
-#'   The output is `NA` (of the same type as `x`) if and only if the median
-#'   can't be determined because of missing values, or if there are no values.
-
 #' @export
 #'
 #' @author Lukas Jung, R Core Team
@@ -84,10 +84,11 @@ median2.default <- function(x, na.rm = FALSE, na.rm.amount = 0,
                             even = c("mean", "low", "high"), ...) {
   na.rm.from <- match.arg(na.rm.from)
   even <- match.arg(even)
+  x_is_numeric <- is.numeric(x)
   if (is.data.frame(x))
     stop("need numeric data or similar")
   # Prevent even-length problems
-  if (even == "mean" && !is.numeric(x)) {
+  if (even == "mean" && !x_is_numeric) {
     error_non_numeric_mean(x)
   }
   # The user may choose to ignore any number of missing values (see the utils.R
@@ -112,23 +113,39 @@ median2.default <- function(x, na.rm = FALSE, na.rm.amount = 0,
     } else {
       (n + 1L:2L) %/% 2L
     }
-    # Check for non-positive indices:
+    # Check for non-positive indices. If `nna` is too high, return a missing
+    # value. It has type double if the input is numeric, and the type of `x`
+    # otherwise. This logic is repeated at all points in the function where a
+    # value may be returned.
     if (any(nna >= half)) {
+      if (x_is_numeric) {
+        return(NA_real_)
+      }
       return(x[NA_integer_])
     }
     # Check for equality with offset value(s); see
     # https://lhdjung.github.io/naidem/articles/algorithm.html for details:
-    if (isTRUE(all(near(x[half - nna], x[half])))) {
-      return(x[half[1L]])
+    out <- if (isTRUE(all(near(x[half - nna], x[half])))) {
+      x[half[1L]]
+    } else {
+      x[NA_integer_]
     }
-    return(x[NA_integer_])
+    # Same pattern as the early returns above
+    if (x_is_numeric) {
+      return(as.numeric(out))
+    }
+    return(out)
   }
   ### END of key part
   n <- length(x)
-  if (n == 0L)
+  if (n == 0L) {
+    if (x_is_numeric) {
+      return(NA_real_)
+    }
     return(x[NA_integer_])
+  }
   half <- (n + 1L)%/%2L
-  if (n%%2L == 1L) {
+  out <- if (n%%2L == 1L) {
     sort(x, partial = half)[half]
   } else {
     # In keeping with the original base R code, `x` is reduced
@@ -140,6 +157,11 @@ median2.default <- function(x, na.rm = FALSE, na.rm.amount = 0,
       "low"  = x[1L],
       "high" = x[2L]
     )
+  }
+  if (x_is_numeric) {
+    as.numeric(out)
+  } else {
+    out
   }
 }
 

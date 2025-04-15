@@ -3,7 +3,7 @@ median_print <- function(x) {
   n <- length(x)
   x <- sort(x[!is.na(x)])
   nna <- n - length(x)
-  na_all <- rep(x[NA_integer_], nna)
+  na_all <- rep(NA_real_, nna)
 
   xstr <- as.character(x)
   nchar_max <- max(
