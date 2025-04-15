@@ -3,7 +3,7 @@
 \name{median2}
 \alias{median2}
 \alias{median2.default}
-\title{Drop-in \code{median()} replacement}
+\title{Drop-in replacement for \code{median()}}
 \usage{
 median2(
   x,
@@ -24,7 +24,7 @@ median2(
 )
 }
 \arguments{
-\item{x}{Numeric or similar. Vector to search for its median.}
+\item{x}{Vector that can be ordered. It will be searched for its median.}
 
 \item{na.rm}{Logical. If set to \code{TRUE}, missing values are removed before
 computation proceeds. Default is \code{FALSE}.}
@@ -36,27 +36,33 @@ specified number of missing values. Default is \code{0}.}
 \code{x} should missing values be removed? Options are \code{"first"}, \code{"last"}, and
 \code{"random"}. Default is \code{"first"}.}
 
-\item{even}{String. What to do if \code{x} has an even length and contains no
+\item{even}{String. What to return if \code{x} has an even length and contains no
 missing values (or they were removed). The default, \code{"mean"}, averages the
-two central values, \code{"low"} returns the lower central value, and \code{"high"}
-returns the higher one.}
+two central values of the sorted vector, \code{"low"} returns the lower central
+value, and \code{"high"} returns the higher one.}
 
 \item{...}{Optional further arguments for methods. Not used in the default
 method.}
 }
 \value{
-Length-1 vector of the same type as \code{x}. The only exception occurs if
-\code{x} is logical or integer and its length is even, in which case the return
-value is double.
-
-The output is \code{NA} (of the same type as \code{x}) if and only if the median
-can't be determined because of missing values, or if there are no values.
+Length-1 vector of type double if the input is numeric (double or
+integer), and the same type as \code{x} otherwise.
 }
 \description{
 \code{median2()} computes the sample median. By default, it works
-like the standard \code{\link[=median]{median()}} unless one or more values are missing:
-\code{median()} always returns \code{NA} in this case, but \code{median2()} checks if the
-median can be determined nevertheless.
+like the standard \code{\link[=median]{median()}}, with these exceptions:
+\itemize{
+\item If one or more values are missing, \code{median2()} checks if the median can
+be determined nevertheless. \code{median()} always returns \code{NA} in this case,
+but \code{median2()} only returns \code{NA} if the median is genuinely unknown.
+\item Non-numeric data require one of \code{even = "low"} and \code{even = "high"}. This
+option doesn't exist in \code{median()}. It avoids "computing the mean" of the
+two central values of sorted vectors with an even length when no such
+operation exists, e.g., with strings.
+\item The return type is always double if the input vector is numeric (i.e.,
+double or integer). This is consistent and predictable, regardless of the
+length being even or odd.
+}
 }
 \details{
 \code{median2()} is a generic function, so new methods can be defined for

@@ -20,8 +20,9 @@ like \code{needs_prep} in \code{\link[=median_count_tolerable]{median_count_tole
 number of missing values.}
 }
 \value{
-Vector of length 2 and the same type as \code{x} (never \code{NA}). The only
-exception is \code{c(-Inf, Inf)} which is always a double vector. See details.
+Vector of length 2 (never \code{NA}). Its type is double if \code{x} is numeric
+(double or integer) or if \code{c(-Inf, Inf)} is returned, which is always
+double. Otherwise, it has the same type as \code{x}.
 }
 \description{
 \code{median_range()} computes the minimal and maximal possible
