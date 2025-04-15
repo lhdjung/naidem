@@ -60,3 +60,29 @@ test_that("`median_range()` works correctly with `x17`", {
   expect_equal(median_range(x17), c(-Inf, Inf))
   expect_equal(median_range(c(x17, NA)), c(-Inf, Inf))
 })
+
+test_that("the return type is double for non-`NA` vectors", {
+  expect_equal(typeof(median_range(x1)), "double")
+  expect_equal(typeof(median_range(x2)), "double")
+  expect_equal(typeof(median_range(x4)), "double")
+  expect_equal(typeof(median_range(x5)), "double")
+  expect_equal(typeof(median_range(x6)), "double")
+  expect_equal(typeof(median_range(x8)), "double")
+
+  expect_equal(typeof(median_range(as.integer(x1))), "double")
+  expect_equal(typeof(median_range(as.integer(x2))), "double")
+  expect_equal(typeof(median_range(as.integer(x4))), "double")
+})
+
+test_that("non-numeric input is an error by default", {
+  expect_error(median_range(letters))
+  expect_error(median_range(factor(1:5)))
+  expect_error(median_range(as.Date("2010-01-01")))
+})
+
+test_that("non-numeric input is not an error with non-default `even`", {
+  expect_no_error(median_range(letters, even = "low"))
+  expect_no_error(median_range(factor(1:5), even = "high"))
+  expect_no_error(median_range(as.Date("2010-01-01"), even = "low"))
+})
+
