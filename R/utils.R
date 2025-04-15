@@ -142,3 +142,13 @@ error_non_numeric_mean <- function(x) {
   )
 }
 
+
+as_factor_sequence <- function(term) {
+  if (any(data$term == "")) {
+    index_rows <- as.character(seq_along(term))
+    empty <- term == ""
+    term[empty] <- index_rows[empty]
+  }
+  factor(term, levels = term)
+}
+

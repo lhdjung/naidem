@@ -78,14 +78,9 @@ median_plot <- function(data,
     stop("needs output of `median_table()`.")
   }
 
-  # Replace any empty "term" sample names by index numbers
-  if (any(data$term == "")) {
-    index_rows <- as.character(seq_len(nrow(data)))
-    term_new <- data$term
-    empty <- term_new == ""
-    term_new[empty] <- index_rows[empty]
-    data$term <- factor(term_new, levels = term_new)
-  }
+  # Replace any empty "term" sample names by index numbers, and convert the
+  # column to factor for consistent order
+  data$term <- as_factor_sequence(data$term)
 
   # To mark median estimates that are not confined to a range
   range_is_inf <- is.infinite(data$min)
