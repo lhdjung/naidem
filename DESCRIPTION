@@ -25,7 +25,7 @@ BugReports: https://github.com/lhdjung/naidem/issues
 Collate: 
     'median-count-tolerable.R'
     'median-plot-col.R'
-    'median-plot.R'
+    'median-plot-estimate.R'
     'median-print.R'
     'median-range.R'
     'median2.R'
