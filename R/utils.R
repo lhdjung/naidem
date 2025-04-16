@@ -143,6 +143,9 @@ error_non_numeric_mean <- function(x) {
 }
 
 
+# This takes `data$term` as an argument, where `data` is a data frame returned
+# by `median_table()`. It fills any empty strings by an index number and returns
+# `term` as a factor, which is useful for plots to keep the data in order.
 as_factor_sequence <- function(term) {
   if (any(term == "")) {
     index_rows <- as.character(seq_along(term))
