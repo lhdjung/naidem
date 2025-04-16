@@ -6,12 +6,14 @@
 #'
 #' @inheritParams median_plot_errorbar
 #'
-#' @param point_size Numeric. Size of the "ring of certainty" half circle.
-#'   Default is `5`.
 #' @param bar_alpha Numeric. Opacity of the bars. Default is `0.4`.
 #' @param bar_color_na,bar_color_all Strings. Colors of the bars representing
 #'   the number of missing values that had to be ignored as a share of all
 #'   missing values (`_na`) or of the entire sample (`_all`).
+#' @param ring_color String. Color of any "ring of certainty" half circle.
+#'   Default is `"black"`.
+#' @param ring_size Numeric. Size of any "ring of certainty" half circle.
+#'   Default is `8`.
 #'
 #' @section Visual guide (default colors):
 #' - Orange bars show the share of missing values that had to be ignored as a
@@ -58,7 +60,8 @@ median_plot_col <- function(data,
                             bar_alpha = 0.4,
                             bar_color_na = "red",
                             bar_color_all = "blue",
-                            point_size = 5) {
+                            ring_color = "black",
+                            ring_size = 8) {
 
   if (!inherits(data, "median_table")) {
     stop("needs output of `median_table()`.")
@@ -84,7 +87,8 @@ median_plot_col <- function(data,
     ggplot2::geom_point(
       ggplot2::aes(y = .data$rate_ignored_na),
       shape = 1,
-      size  = point_size,
+      color = ring_color,
+      size  = ring_size,
       data  = data[data$certainty, ]
     ) +
 
