@@ -30,7 +30,9 @@
 #' @importFrom rlang .data
 #' @export
 #'
-#' @seealso [`median_plot_errorbar()`]
+#' @seealso
+#' - [`median_plot_errorbar()`] for an alternative visualization.
+#' - [`median_table()`] for the basis of these plots.
 #'
 #' @examples
 #' # Example data:
