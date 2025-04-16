@@ -13,7 +13,7 @@
 #'   the number of missing values that had to be ignored as a share of all
 #'   missing values (`_na`) or of the entire sample (`_all`).
 #'
-#' @section Visual guide: With default colors:
+#' @section Visual guide (default colors):
 #' - Orange bars show the share of missing values that had to be ignored as a
 #'   share of all missing values.
 #' - Purple bars show the same but as a share of *all* values, missing or not.
