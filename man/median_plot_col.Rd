@@ -9,7 +9,8 @@ median_plot_col(
   bar_alpha = 0.4,
   bar_color_na = "red",
   bar_color_all = "blue",
-  point_size = 5
+  ring_color = "black",
+  ring_size = 8
 )
 }
 \arguments{
@@ -21,8 +22,11 @@ median_plot_col(
 the number of missing values that had to be ignored as a share of all
 missing values (\verb{_na}) or of the entire sample (\verb{_all}).}
 
-\item{point_size}{Numeric. Size of the "ring of certainty" half circle.
-Default is \code{5}.}
+\item{ring_color}{String. Color of any "ring of certainty" half circle.
+Default is \code{"black"}.}
+
+\item{ring_size}{Numeric. Size of any "ring of certainty" half circle.
+Default is \code{8}.}
 }
 \value{
 A ggplot object.
@@ -32,8 +36,8 @@ A ggplot object.
 \code{\link[=median_table]{median_table()}}. It shows the rates of missing values that had to be
 ignored to estimate the median of the remaining values.
 }
-\section{Visual guide}{
- With default colors:
+\section{Visual guide (default colors)}{
+
 \itemize{
 \item Orange bars show the share of missing values that had to be ignored as a
 share of all missing values.
@@ -70,5 +74,8 @@ data
 median_plot_col(data)
 }
 \seealso{
-\code{\link[=median_plot_errorbar]{median_plot_errorbar()}}
+\itemize{
+\item \code{\link[=median_plot_errorbar]{median_plot_errorbar()}} for an alternative visualization.
+\item \code{\link[=median_table]{median_table()}} for the basis of these plots.
+}
 }
