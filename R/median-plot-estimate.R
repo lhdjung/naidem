@@ -94,7 +94,7 @@ median_plot_errorbar <- function(
   data$term <- as_factor_sequence(data$term)
 
   # To mark median estimates that are not confined to a range
-  range_is_inf <- is.infinite(data$min)
+  range_is_inf <- is.infinite(data$lower)
 
   # Versions of ggplot2 before 3.4.0 have the `size` aesthetic instead of the
   # more modern `linewidth`...
@@ -106,7 +106,7 @@ median_plot_errorbar <- function(
 
   # ...so the geom where `size` / `linewidth` will be used is pre-assigned...
   geom_uncertainty_bars <- ggplot2::geom_errorbar(
-    mapping = ggplot2::aes(ymin = .data$min, ymax = .data$max),
+    mapping = ggplot2::aes(ymin = .data$lower, ymax = .data$upper),
     width = bar_width,
     color = line_color
   )
@@ -181,7 +181,7 @@ median_plot_pointrange <- function(
   data$term <- as_factor_sequence(data$term)
 
   # To mark median estimates that are not confined to a range
-  range_is_inf <- is.infinite(data$min)
+  range_is_inf <- is.infinite(data$lower)
 
   # Versions of ggplot2 before 3.4.0 have the `size` aesthetic instead of the
   # more modern `linewidth`...
@@ -193,7 +193,7 @@ median_plot_pointrange <- function(
 
   # ...so the geom where `size` / `linewidth` will be used is pre-assigned...
   geom_uncertainty_range <- ggplot2::geom_pointrange(
-    mapping = ggplot2::aes(ymin = .data$min, ymax = .data$max),
+    mapping = ggplot2::aes(ymin = .data$lower, ymax = .data$upper),
     shape = ifelse(range_is_inf, 11, 19),
     size  = ifelse(range_is_inf, point_size + 2, point_size),
     # size  = point_size,

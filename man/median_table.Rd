@@ -23,8 +23,8 @@ Data frame with these columns:
 necessary.
 \item \code{certainty}: \code{TRUE} if the corresponding estimate is certain to be the
 true median, and \code{FALSE} if this is unclear due to missing values.
-\item \code{min}, \code{max}: Lower and upper bounds of the median. Equal if \code{certainty}
-is \code{TRUE} because in that case, the precise value is known.
+\item \code{lower}, \code{upper}: Bounds of the median. Equal if \code{certainty} is \code{TRUE}
+because in that case, the precise value is known.
 \item \code{na_ignored}: the number of missing values that had to be ignored to
 arrive at the estimate.
 \item \code{na_total}: the total number of missing values.
@@ -67,8 +67,8 @@ median_table(iris[1:4])
 \itemize{
 \item \code{\link[=median_count_tolerable]{median_count_tolerable()}} for the logic of preserving as many \code{NA}s
 as possible.
-\item \code{\link[=median_range]{median_range()}} for the \code{min} and \code{max} columns; the lower and upper
-bounds of an uncertain median.
+\item \code{\link[=median_range]{median_range()}} for the \code{lower} and \code{upper} columns; the bounds of an
+uncertain median.
 \item \code{\link[=median_plot_errorbar]{median_plot_errorbar()}} and \code{\link[=median_plot_col]{median_plot_col()}} for follow-up
 visualizations.
 }

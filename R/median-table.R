@@ -20,8 +20,8 @@
 #' @seealso
 #'   - [`median_count_tolerable()`] for the logic of preserving as many `NA`s
 #' as possible.
-#'   - [`median_range()`] for the `min` and `max` columns; the lower and upper
-#' bounds of an uncertain median.
+#'   - [`median_range()`] for the `lower` and `upper` columns; the bounds of an
+#' uncertain median.
 #'   - [`median_plot_errorbar()`] and [`median_plot_col()`] for follow-up
 #' visualizations.
 #'
@@ -31,8 +31,8 @@
 #'   necessary.
 #'   - `certainty`: `TRUE` if the corresponding estimate is certain to be the
 #'   true median, and `FALSE` if this is unclear due to missing values.
-#'   - `min`, `max`: Lower and upper bounds of the median. Equal if `certainty`
-#'   is `TRUE` because in that case, the precise value is known.
+#'   - `lower`, `upper`: Bounds of the median. Equal if `certainty` is `TRUE`
+#'   because in that case, the precise value is known.
 #'   - `na_ignored`: the number of missing values that had to be ignored to
 #'   arrive at the estimate.
 #'   - `na_total`: the total number of missing values.
@@ -80,8 +80,8 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
 
   # These others will also be output columns. At present, they should be integer
   # vectors just like `estimate`, so they can be initialized like this:
-  min_vec <- estimate
-  max_vec <- estimate
+  lower <- estimate
+  upper <- estimate
   na_ignored <- estimate
   na_total <- estimate
   sum_total <- estimate
@@ -111,8 +111,8 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
       nna = nna_current
     )
 
-    min_vec[[i]] <- range_current[1L]
-    max_vec[[i]] <- range_current[2L]
+    lower[[i]] <- range_current[1L]
+    upper[[i]] <- range_current[2L]
   }
 
   # As a purely mechanical consequence of the `na_ignored` integer vector,
@@ -142,9 +142,8 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
       term = term,
       estimate = estimate,
       certainty = certainty,
-      # Names of these two are different for safety:
-      min = min_vec,
-      max = max_vec,
+      lower = lower,
+      upper = upper,
       na_ignored = na_ignored,
       na_total = na_total,
       rate_ignored_na = rate_ignored_na,
@@ -156,3 +155,4 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
   )
 
 }
+
