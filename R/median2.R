@@ -1,19 +1,21 @@
 #' Drop-in replacement for `median()`
 #'
 #' @description `median2()` computes the sample median. By default, it works
-#'   like the standard [`median()`], with these exceptions:
+#'   like [`median()`] from base R, with these exceptions:
 #'   - If one or more values are missing, `median2()` checks if the median can
 #'   be determined nevertheless. `median()` always returns `NA` in this case,
 #'   but `median2()` only returns `NA` if the median is genuinely unknown.
-#'   - Non-numeric data require one of `even = "low"` and `even = "high"`. This
-#'   option doesn't exist in `median()`. It avoids "computing the mean" of the
-#'   two central values of sorted vectors with an even length when no such
-#'   operation exists, e.g., with strings.
+#'   - Non-numeric data, including dates and factors, require one of
+#'   `even = "low"` and `even = "high"`. This option doesn't exist in
+#'   `median()`. It avoids "computing the mean" of the two central values of
+#'   sorted vectors with an even length when no such operation exists, e.g.,
+#'   with strings.
 #'   - The return type is always double if the input vector is numeric (i.e.,
 #'   double or integer). This is consistent and predictable, regardless of the
 #'   length being even or odd.
 #'
-#' @param x Vector that can be ordered. It will be searched for its median.
+#' @param x Vector that can be ordered using [`sort()`]. It will be searched for
+#'   its median.
 #' @param na.rm Logical. If set to `TRUE`, missing values are removed before
 #'   computation proceeds. Default is `FALSE`.
 #' @param na.rm.amount Numeric. Alternative to `na.rm` that only removes a
@@ -47,7 +49,7 @@
 #'
 #' @examples
 #' # If no values are missing,
-#' # it works like `median()`:
+#' # it works mostly like `median()`:
 #' median(1:4)
 #' median2(1:4)
 #'
@@ -72,9 +74,7 @@ median2 <- function(x, na.rm = FALSE, na.rm.amount = 0,
 }
 
 
-# Some of this code is copied from `stats::median.default()`. The default method
-# for `median2()` is only different from that for `stats::median()` if one or
-# more values are missing from `x`.
+# Some of this code is copied from `stats::median.default()`.
 
 #' @name median2
 #' @export

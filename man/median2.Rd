@@ -24,7 +24,8 @@ median2(
 )
 }
 \arguments{
-\item{x}{Vector that can be ordered. It will be searched for its median.}
+\item{x}{Vector that can be ordered using \code{\link[=sort]{sort()}}. It will be searched for
+its median.}
 
 \item{na.rm}{Logical. If set to \code{TRUE}, missing values are removed before
 computation proceeds. Default is \code{FALSE}.}
@@ -50,15 +51,16 @@ integer), and the same type as \code{x} otherwise.
 }
 \description{
 \code{median2()} computes the sample median. By default, it works
-like the standard \code{\link[=median]{median()}}, with these exceptions:
+like \code{\link[=median]{median()}} from base R, with these exceptions:
 \itemize{
 \item If one or more values are missing, \code{median2()} checks if the median can
 be determined nevertheless. \code{median()} always returns \code{NA} in this case,
 but \code{median2()} only returns \code{NA} if the median is genuinely unknown.
-\item Non-numeric data require one of \code{even = "low"} and \code{even = "high"}. This
-option doesn't exist in \code{median()}. It avoids "computing the mean" of the
-two central values of sorted vectors with an even length when no such
-operation exists, e.g., with strings.
+\item Non-numeric data, including dates and factors, require one of
+\code{even = "low"} and \code{even = "high"}. This option doesn't exist in
+\code{median()}. It avoids "computing the mean" of the two central values of
+sorted vectors with an even length when no such operation exists, e.g.,
+with strings.
 \item The return type is always double if the input vector is numeric (i.e.,
 double or integer). This is consistent and predictable, regardless of the
 length being even or odd.
@@ -77,7 +79,7 @@ the algorithm}} for further details.
 }
 \examples{
 # If no values are missing,
-# it works like `median()`:
+# it works mostly like `median()`:
 median(1:4)
 median2(1:4)
 
