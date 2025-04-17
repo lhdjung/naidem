@@ -58,12 +58,14 @@
 #' median_plot_col(data)
 
 
-median_plot_col <- function(data,
-                            bar_alpha = 0.4,
-                            bar_color_na = "red",
-                            bar_color_all = "blue",
-                            ring_color = "black",
-                            ring_size = 8) {
+median_plot_col <- function(
+    data,
+    bar_alpha = 0.4,
+    bar_color_na = "red",
+    bar_color_all = "blue",
+    ring_color = "black",
+    ring_size = 8
+  ) {
 
   if (!inherits(data, "median_table")) {
     stop("needs output of `median_table()`.")

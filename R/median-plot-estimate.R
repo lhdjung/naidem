@@ -76,12 +76,14 @@
 # line_width <- 0.35
 
 
-median_plot_errorbar <- function(data,
-                                 point_color = line_color,
-                                 point_size = 2,
-                                 line_color = "black",
-                                 line_width = 0.5,
-                                 bar_width = 0.9) {
+median_plot_errorbar <- function(
+    data,
+    point_color = line_color,
+    point_size = 2,
+    line_color = "black",
+    line_width = 0.5,
+    bar_width = 0.9
+  ) {
 
   if (!inherits(data, "median_table")) {
     stop("needs output of `median_table()`.")
@@ -162,11 +164,13 @@ median_plot_errorbar <- function(data,
 #' @rdname median-plot-estimate
 #' @export
 
-median_plot_pointrange <- function(data,
-                                   point_color = line_color,
-                                   point_size = 2,
-                                   line_color = "black",
-                                   line_width = 0.5) {
+median_plot_pointrange <- function(
+    data,
+    point_color = line_color,
+    point_size = 2,
+    line_color = "black",
+    line_width = 0.5
+  ) {
 
   if (!inherits(data, "median_table")) {
     stop("needs output of `median_table()`.")

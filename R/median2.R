@@ -67,9 +67,14 @@
 #' # ...or too many unique values:
 #' median2(c(0, 1, 2, 3, NA))
 
-median2 <- function(x, na.rm = FALSE, na.rm.amount = 0,
-                    na.rm.from = c("first", "last", "random"),
-                    even = c("mean", "low", "high"), ...) {
+median2 <- function(
+    x,
+    na.rm = FALSE,
+    na.rm.amount = 0,
+    na.rm.from = c("first", "last", "random"),
+    even = c("mean", "low", "high"),
+    ...
+  ) {
   UseMethod("median2")
 }
 
@@ -79,9 +84,14 @@ median2 <- function(x, na.rm = FALSE, na.rm.amount = 0,
 #' @name median2
 #' @export
 
-median2.default <- function(x, na.rm = FALSE, na.rm.amount = 0,
-                            na.rm.from = c("first", "last", "random"),
-                            even = c("mean", "low", "high"), ...) {
+median2.default <- function(
+    x,
+    na.rm = FALSE,
+    na.rm.amount = 0,
+    na.rm.from = c("first", "last", "random"),
+    even = c("mean", "low", "high"),
+    ...
+  ) {
   na.rm.from <- match.arg(na.rm.from)
   even <- match.arg(even)
   x_is_numeric <- is.numeric(x)

@@ -49,10 +49,12 @@
 #' median_range(c(7, 7, 8, 9, NA, NA, NA, NA))
 
 
-median_range <- function(x,
-                         na.rm.amount = 0,
-                         even = c("mean", "low", "high"),
-                         nna = NULL) {
+median_range <- function(
+    x,
+    na.rm.amount = 0,
+    even = c("mean", "low", "high"),
+    nna = NULL
+  ) {
   UseMethod("median_range")
 }
 
@@ -60,10 +62,12 @@ median_range <- function(x,
 #' @name median-range
 #' @export
 
-median_range.default <- function(x,
-                                 na.rm.amount = 0,
-                                 even = c("mean", "low", "high"),
-                                 nna = NULL) {
+median_range.default <- function(
+    x,
+    na.rm.amount = 0,
+    even = c("mean", "low", "high"),
+    nna = NULL
+  ) {
   # As in `median2.default()`:
   even <- match.arg(even)
   n <- length(x)
