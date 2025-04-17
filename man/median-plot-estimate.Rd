@@ -8,39 +8,38 @@
 \usage{
 median_plot_errorbar(
   data,
-  point_color = bar_color,
+  point_color = line_color,
   point_size = 2,
+  line_color = "black",
   line_width = 0.5,
-  bar_color = "black",
   bar_width = 0.9
 )
 
 median_plot_pointrange(
   data,
-  point_color = bar_color,
+  point_color = line_color,
   point_size = 2,
-  line_width = 0.5,
-  bar_color = "black",
-  bar_width = 0.9
+  line_color = "black",
+  line_width = 0.5
 )
 }
 \arguments{
 \item{data}{Data frame returned by \code{\link[=median_table]{median_table()}}.}
 
 \item{point_color}{String (length 1). Color of the estimate points, including
-any "ring of certainty". By default, the same as \code{bar_color}.}
+any "ring of certainty". By default, the same as \code{line_color}.}
 
 \item{point_size}{Numeric. Size of the median estimate points. Default is
 \code{2}.}
 
+\item{line_color}{String (length 1). Color of the error bars. Default is
+\code{"black"}.}
+
 \item{line_width}{Numeric (length 1). Width of the error bar lines. Default
 is \code{0.5}.}
 
-\item{bar_color}{String (length 1). Color of the error bars. Default is
-\code{"black"}.}
-
-\item{bar_width}{Numeric (length 1). Extension of the horizontal bars.
-Default is \code{0.9}.}
+\item{bar_width}{Numeric (length 1). Only used in \code{median_plot_errorbar()}.
+Extension of the horizontal bars. Default is \code{0.9}.}
 }
 \value{
 A ggplot object.

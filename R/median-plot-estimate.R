@@ -23,13 +23,13 @@
 #' @param point_size Numeric. Size of the median estimate points. Default is
 #'   `2`.
 #' @param point_color String (length 1). Color of the estimate points, including
-#'   any "ring of certainty". By default, the same as `bar_color`.
+#'   any "ring of certainty". By default, the same as `line_color`.
 #' @param line_width Numeric (length 1). Width of the error bar lines. Default
 #'   is `0.5`.
-#' @param bar_width Numeric (length 1). Extension of the horizontal bars.
-#'   Default is `0.9`.
-#' @param bar_color String (length 1). Color of the error bars. Default is
+#' @param line_color String (length 1). Color of the error bars. Default is
 #'   `"black"`.
+#' @param bar_width Numeric (length 1). Only used in `median_plot_errorbar()`.
+#'   Extension of the horizontal bars. Default is `0.9`.
 #'
 #' @returns A ggplot object.
 #'
@@ -77,10 +77,10 @@
 
 
 median_plot_errorbar <- function(data,
-                                 point_color = bar_color,
+                                 point_color = line_color,
                                  point_size = 2,
+                                 line_color = "black",
                                  line_width = 0.5,
-                                 bar_color = "black",
                                  bar_width = 0.9) {
 
   if (!inherits(data, "median_table")) {
@@ -106,13 +106,14 @@ median_plot_errorbar <- function(data,
   geom_uncertainty_bars <- ggplot2::geom_errorbar(
     mapping = ggplot2::aes(ymin = .data$min, ymax = .data$max),
     width = bar_width,
-    color = bar_color
+    color = line_color
   )
 
   # ...and the aesthetic with the correct name is added to the geom. Unlike most
   # R functions, this helper modifies in place, so no assignment is needed.
   aes_add(
-    field = geom_uncertainty_bars[["aes_params"]],
+    geom = geom_uncertainty_bars,
+    field = "aes_params",
     aes_name = linewidth_name,
     aes_value = line_width
   )
@@ -162,11 +163,10 @@ median_plot_errorbar <- function(data,
 #' @export
 
 median_plot_pointrange <- function(data,
-                                   point_color = bar_color,
+                                   point_color = line_color,
                                    point_size = 2,
-                                   line_width = 0.5,
-                                   bar_color = "black",
-                                   bar_width = 0.9) {
+                                   line_color = "black",
+                                   line_width = 0.5) {
 
   if (!inherits(data, "median_table")) {
     stop("needs output of `median_table()`.")
@@ -193,14 +193,15 @@ median_plot_pointrange <- function(data,
     shape = ifelse(range_is_inf, 11, 19),
     size  = ifelse(range_is_inf, point_size + 2, point_size),
     # size  = point_size,
-    color = bar_color,
+    color = line_color,
     fatten = 0.75
   )
 
   # ...and the aesthetic with the correct name is added to the geom. Unlike most
   # R functions, this helper modifies in place, so no assignment is needed.
   aes_add(
-    field = geom_uncertainty_range[["aes_params"]],
+    geom = geom_uncertainty_range,
+    field = "aes_params",
     aes_name = linewidth_name,
     aes_value = line_width
   )
