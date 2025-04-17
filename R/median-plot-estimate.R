@@ -112,8 +112,7 @@ median_plot_errorbar <- function(data,
   # ...and the aesthetic with the correct name is added to the geom. Unlike most
   # R functions, this helper modifies in place, so no assignment is needed.
   aes_add(
-    geom = geom_uncertainty_bars,
-    field = "aes_params",
+    field = geom_uncertainty_bars[["aes_params"]],
     aes_name = linewidth_name,
     aes_value = line_width
   )
@@ -201,8 +200,7 @@ median_plot_pointrange <- function(data,
   # ...and the aesthetic with the correct name is added to the geom. Unlike most
   # R functions, this helper modifies in place, so no assignment is needed.
   aes_add(
-    geom = geom_uncertainty_range,
-    field = "aes_params",
+    field = geom_uncertainty_range[["aes_params"]],
     aes_name = linewidth_name,
     aes_value = line_width
   )
