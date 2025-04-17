@@ -37,6 +37,7 @@
 #' @export
 #'
 #' @rdname median-plot-estimate
+#' @name median-plot-estimate
 #'
 #' @examples
 #' # Example data:

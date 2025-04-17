@@ -4,7 +4,7 @@
 #'   [`median_table()`]. It shows the rates of missing values that had to be
 #'   ignored to estimate the median of the remaining values.
 #'
-#' @inheritParams median_plot_errorbar
+#' @inheritParams median-plot-estimate
 #'
 #' @param bar_alpha Numeric. Opacity of the bars. Default is `0.4`.
 #' @param bar_color_na,bar_color_all Strings. Colors of the bars representing
