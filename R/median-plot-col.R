@@ -75,8 +75,6 @@ median_plot_col <- function(
   # column to factor for consistent order
   data$term <- as_factor_sequence(data$term)
 
-  data$rate_ignored_na[is.nan(data$rate_ignored_na)] <- 0
-
 
   # Build the plot
   ggplot2::ggplot(data, ggplot2::aes(x = .data$term)) +
@@ -84,7 +82,7 @@ median_plot_col <- function(
     # Draw the bars. Add black bars in between -- it has the same extension as
     # the smaller ones (proportion of all values) but adds contrast.
     ggplot2::geom_col(ggplot2::aes(y = .data$rate_ignored_sum), fill = bar_color_all, alpha = bar_alpha) +
-    ggplot2::geom_col(ggplot2::aes(y = .data$rate_ignored_sum), fill = "black",       alpha = bar_alpha) +
+    # ggplot2::geom_col(ggplot2::aes(y = .data$rate_ignored_sum), fill = "black",       alpha = bar_alpha) +
     ggplot2::geom_col(ggplot2::aes(y = .data$rate_ignored_na),  fill = bar_color_na,  alpha = bar_alpha) +
 
     # "Ring of certainty" -- just a half circle here

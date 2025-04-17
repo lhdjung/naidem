@@ -124,6 +124,10 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
   rate_ignored_na  <- na_ignored / na_total
   rate_ignored_sum <- na_ignored / sum_total
 
+  # This can turn up as `NaN` because of division by zero, but that still means
+  # no `NA`s had to be ignored.
+  rate_ignored_na[is.nan(rate_ignored_na)] <- 0
+
   # Record any names of `x` elements. If there are none, just empty strings.
   term <- names(x)
 
