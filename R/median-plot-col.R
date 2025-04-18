@@ -60,11 +60,12 @@
 
 median_plot_col <- function(
     data,
-    bar_alpha = 0.4,
-    bar_color_na = "red",
-    bar_color_all = "blue",
+    bar_alpha = 0.8,
+    bar_color_na = "#F77774",
+    bar_color_all = "#747DF7",
     ring_color = "black",
-    ring_size = 8
+    ring_size = 8,
+    show_legend = TRUE
   ) {
 
   if (!inherits(data, "median_table")) {
@@ -77,6 +78,8 @@ median_plot_col <- function(
 
   nrow_data <- nrow(data)
 
+  # Similarly to `tidyr::pivot_longer()`, create more combinations of row values
+  # but without depending on tidyr
   data_stacked <- tibble::tibble(
     term = rep(data$term, times = 2),
     certainty = rep(data$certainty, times = 2),
@@ -89,6 +92,15 @@ median_plot_col <- function(
       rep("na",  nrow_data)
     )
   )
+
+  # Prepare to remove the legend if it is not desired by the user or if the
+  # medians of all samples are known, and therefore, there are no bars and no
+  # need for a legend to explain them.
+  legend_position <- if (!show_legend || all(data$certainty)) {
+    "none"
+  } else {
+    "right"
+  }
 
 
   # Build the stacked bar chart
@@ -131,7 +143,8 @@ median_plot_col <- function(
     ) +
     ggplot2::theme(
       panel.grid.major.x = ggplot2::element_blank(),
-      panel.grid.minor.x = ggplot2::element_blank()
+      panel.grid.minor.x = ggplot2::element_blank(),
+      legend.position = legend_position
     ) +
     ggplot2::labs(
       x = "Sample",
