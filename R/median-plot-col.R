@@ -14,11 +14,16 @@
 #'   Default is `"black"`.
 #' @param ring_size Numeric. Size of any "ring of certainty" half circle.
 #'   Default is `8`.
+#' @param show_ring Logical. Should samples with a known median be marked by a
+#'   "ring of certainty" half circle? Default is `TRUE`.
+#' @param show_legend Logical. Should a legend be displayed? Default is `TRUE`.
+#'   Note: there is no legend if there are no bars.
 #'
-#' @section Visual guide (default colors):
-#' - Orange bars show the share of missing values that had to be ignored as a
-#'   share of all missing values.
-#' - Purple bars show the same but as a share of *all* values, missing or not.
+#' @section Visual guide (default):
+#' - Red bars show the share of missing values that had to be ignored as a share
+#'   of all missing values.
+#' - Blue bars show the same but as a share of *all* values, missing or not.
+#'   They cover part of the blue bars; both types of bars start at zero.
 #' - The y-axis is fixed between 0 and 1 for a consistent display of
 #'   proportions.
 #' - Samples without any bar do not require ignoring any `NA`s, so the median is

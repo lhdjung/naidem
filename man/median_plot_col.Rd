@@ -6,11 +6,13 @@
 \usage{
 median_plot_col(
   data,
-  bar_alpha = 0.4,
-  bar_color_na = "red",
-  bar_color_all = "blue",
+  bar_alpha = 0.8,
+  bar_color_na = "#F77774",
+  bar_color_all = "#747DF7",
   ring_color = "black",
-  ring_size = 8
+  ring_size = 8,
+  show_ring = TRUE,
+  show_legend = TRUE
 )
 }
 \arguments{
@@ -27,6 +29,12 @@ Default is \code{"black"}.}
 
 \item{ring_size}{Numeric. Size of any "ring of certainty" half circle.
 Default is \code{8}.}
+
+\item{show_ring}{Logical. Should samples with a known median be marked by a
+"ring of certainty" half circle? Default is \code{TRUE}.}
+
+\item{show_legend}{Logical. Should a legend be displayed? Default is \code{TRUE}.
+Note: there is no legend if there are no bars.}
 }
 \value{
 A ggplot object.
@@ -36,12 +44,13 @@ A ggplot object.
 \code{\link[=median_table]{median_table()}}. It shows the rates of missing values that had to be
 ignored to estimate the median of the remaining values.
 }
-\section{Visual guide (default colors)}{
+\section{Visual guide (default)}{
 
 \itemize{
-\item Orange bars show the share of missing values that had to be ignored as a
-share of all missing values.
-\item Purple bars show the same but as a share of \emph{all} values, missing or not.
+\item Red bars show the share of missing values that had to be ignored as a share
+of all missing values.
+\item Blue bars show the same but as a share of \emph{all} values, missing or not.
+They cover part of the blue bars; both types of bars start at zero.
 \item The y-axis is fixed between 0 and 1 for a consistent display of
 proportions.
 \item Samples without any bar do not require ignoring any \code{NA}s, so the median is
