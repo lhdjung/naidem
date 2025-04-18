@@ -65,6 +65,7 @@ median_plot_col <- function(
     bar_color_all = "#747DF7",
     ring_color = "black",
     ring_size = 8,
+    show_ring = TRUE,
     show_legend = TRUE
   ) {
 
@@ -123,7 +124,11 @@ median_plot_col <- function(
       color = ring_color,
       size  = ring_size,
       show.legend = FALSE,
-      data  = data_stacked[data_stacked$certainty, ]
+      data = if (show_ring) {
+        data_stacked[data_stacked$certainty, ]
+      } else {
+        data_stacked[FALSE, ]
+      }
     ) +
 
     # Scale with custom colors for the bars
