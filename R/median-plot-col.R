@@ -75,21 +75,52 @@ median_plot_col <- function(
   # column to factor for consistent order
   data$term <- as_factor_sequence(data$term)
 
+  nrow_data <- nrow(data)
 
-  # Build the plot
-  ggplot2::ggplot(data, ggplot2::aes(x = .data$term)) +
+  data_stacked <- tibble::tibble(
+    term = rep(data$term, times = 2),
+    certainty = rep(data$certainty, times = 2),
+    value = c(
+      data$rate_ignored_sum,
+      data$rate_ignored_na - data$rate_ignored_sum
+    ),
+    category = c(
+      rep("sum", nrow_data),
+      rep("na",  nrow_data)
+    )
+  )
 
-    # Bars -- first `_sum`, then `_na`
-    ggplot2::geom_col(ggplot2::aes(y = .data$rate_ignored_sum), fill = bar_color_all, alpha = bar_alpha) +
-    ggplot2::geom_col(ggplot2::aes(y = .data$rate_ignored_na),  fill = bar_color_na,  alpha = bar_alpha) +
+
+  # Build the stacked bar chart
+  ggplot2::ggplot(
+    data = data_stacked,
+    mapping = ggplot2::aes(
+      x    = .data$term,
+      y    = .data$value,
+      fill = .data$category
+    )
+  ) +
+
+    # Bars
+    ggplot2::geom_col(alpha = bar_alpha) +
 
     # "Ring of certainty" -- just a half circle here
     ggplot2::geom_point(
-      ggplot2::aes(y = .data$rate_ignored_na),
+      ggplot2::aes(y = .data$value),
       shape = 1,
       color = ring_color,
       size  = ring_size,
-      data  = data[data$certainty, ]
+      data  = data_stacked[data_stacked$certainty, ]
+    ) +
+
+    # Scale with custom colors for the bars
+    ggplot2::scale_fill_manual(
+      "Ignored NAs as\na proportion of:",
+      labels = c("NAs", "All values"),
+      values = c(
+        sum = bar_color_all,
+        na  = bar_color_na
+      )
     ) +
 
     # All the rest
