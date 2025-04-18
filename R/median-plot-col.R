@@ -110,6 +110,7 @@ median_plot_col <- function(
       shape = 1,
       color = ring_color,
       size  = ring_size,
+      show.legend = FALSE,
       data  = data_stacked[data_stacked$certainty, ]
     ) +
 
