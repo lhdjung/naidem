@@ -86,17 +86,21 @@ median_plot_col <- function(
 
   # Similarly to `tidyr::pivot_longer()`, create more combinations of row values
   # but without depending on tidyr
-  data_stacked <- tibble::tibble(
-    term = rep(data$term, times = 2),
-    certainty = rep(data$certainty, times = 2),
-    value = c(
-      data$rate_ignored_sum,
-      data$rate_ignored_na - data$rate_ignored_sum
+  data_stacked <- tibble::new_tibble(
+    x = list(
+      term = rep(data$term, 2),
+      certainty = rep(data$certainty, 2),
+      value = c(
+        data$rate_ignored_sum,
+        data$rate_ignored_na - data$rate_ignored_sum
+      ),
+      category = c(
+        rep("sum", nrow_data),
+        rep("na",  nrow_data)
+      )
     ),
-    category = c(
-      rep("sum", nrow_data),
-      rep("na",  nrow_data)
-    )
+    nrow = 2L * nrow_data,
+    class = NULL
   )
 
   # Prepare to remove the legend if it is not desired by the user or if the
