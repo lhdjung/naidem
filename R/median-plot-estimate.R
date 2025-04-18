@@ -97,14 +97,8 @@ median_plot_errorbar <- function(
   range_is_inf <- is.infinite(data$lower)
 
   # Versions of ggplot2 before 3.4.0 have the `size` aesthetic instead of the
-  # more modern `linewidth`...
-  linewidth_name <- if (utils::packageVersion("ggplot2") < "3.4.0") {
-    "size"
-  } else {
-    "linewidth"
-  }
-
-  # ...so the geom where `size` / `linewidth` will be used is pre-assigned...
+  # more modern `linewidth`, so the geom where `size` / `linewidth` will be used
+  # is pre-assigned...
   geom_uncertainty_bars <- ggplot2::geom_errorbar(
     mapping = ggplot2::aes(ymin = .data$lower, ymax = .data$upper),
     width = bar_width,
@@ -116,7 +110,7 @@ median_plot_errorbar <- function(
   aes_add(
     geom = geom_uncertainty_bars,
     field = "aes_params",
-    aes_name = linewidth_name,
+    aes_name = get_linewidth_name(),
     aes_value = line_width
   )
 
@@ -184,14 +178,8 @@ median_plot_pointrange <- function(
   range_is_inf <- is.infinite(data$lower)
 
   # Versions of ggplot2 before 3.4.0 have the `size` aesthetic instead of the
-  # more modern `linewidth`...
-  linewidth_name <- if (utils::packageVersion("ggplot2") < "3.4.0") {
-    "size"
-  } else {
-    "linewidth"
-  }
-
-  # ...so the geom where `size` / `linewidth` will be used is pre-assigned...
+  # more modern `linewidth`, so the geom where `size` / `linewidth` will be used
+  # is pre-assigned...
   geom_uncertainty_range <- ggplot2::geom_pointrange(
     mapping = ggplot2::aes(ymin = .data$lower, ymax = .data$upper),
     shape = ifelse(range_is_inf, 11, 19),
@@ -206,7 +194,7 @@ median_plot_pointrange <- function(
   aes_add(
     geom = geom_uncertainty_range,
     field = "aes_params",
-    aes_name = linewidth_name,
+    aes_name = get_linewidth_name(),
     aes_value = line_width
   )
 

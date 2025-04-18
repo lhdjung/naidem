@@ -155,3 +155,17 @@ as_factor_sequence <- function(term) {
   factor(term, levels = term)
 }
 
+
+# Versions of ggplot2 before 3.4.0 have the `size` aesthetic instead of
+# `linewidth`. This helper checks which name is needed on the user's system.
+# Copied from an MIT-licensed repo:
+# https://github.com/lhdjung/moder/blob/8bc72738f2a4ab7eb38f9a5c617dfee40f2eee83/R/utils.R
+get_linewidth_name <- function() {
+  if (utils::packageVersion("ggplot2") < "3.4.0") {
+    "size"
+  } else {
+    "linewidth"
+  }
+}
+
+
