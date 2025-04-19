@@ -63,3 +63,13 @@ test_that("non-numeric input is not an error with non-default `even`", {
   expect_no_error(median2(as.Date("2010-01-01"), even = "low"))
 })
 
+test_that("non-numeric input leads to correct output", {
+  expect_equal(median2(letters, even = "low"), "m")
+  expect_equal(median2(letters, even = "high"), "n")
+  expect_equal(median2(factor(1:5), even = "high"), factor(3, levels = 1:5))
+  expect_equal(
+    median2(as.Date(c("2010-01-01", "2010-01-02", "2010-01-05")), even = "low"),
+    as.Date("2010-01-02")
+  )
+})
+

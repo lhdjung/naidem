@@ -98,7 +98,7 @@ median2.default <- function(
   if (is.data.frame(x))
     stop("need numeric data or similar")
   # Prevent even-length problems
-  if (even == "mean" && !x_is_numeric) {
+  if (!x_is_numeric && even == "mean") {
     error_non_numeric_mean(x)
   }
   # The user may choose to ignore any number of missing values (see the utils.R
@@ -135,16 +135,19 @@ median2.default <- function(
     }
     # Check for equality with offset value(s); see
     # https://lhdjung.github.io/naidem/articles/algorithm.html for details:
-    out <- if (isTRUE(all(near(x[half - nna], x[half])))) {
-      x[half[1L]]
-    } else {
-      x[NA_integer_]
-    }
-    # Same pattern as the early returns above
     if (x_is_numeric) {
-      return(as.numeric(out))
+      if (isTRUE(all(near(x[half - nna], x[half])))) {
+        return(as.numeric(x[half[1L]]))
+      }
+      return(NA_real_)
     }
-    return(out)
+    # Non-numeric data can safely be compared using `==`, and their result
+    # doesn't need to be coerced to numeric:
+    if (x[half - nna] == x[half]) {
+      return(x[half[1L]])
+    } else {
+      return(x[NA_integer_])
+    }
   }
   ### END of key part
   n <- length(x)
