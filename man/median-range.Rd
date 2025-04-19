@@ -29,7 +29,7 @@ double. Otherwise, it has the same type as \code{x}.
 median values. This is helpful if \code{\link[=median2]{median2()}} returns \code{NA}: the median
 can't be determined, but at least it might have lower and upper bounds.
 
-It is used within \code{\link[=median_table]{median_table()}} to compute the \code{min} and \code{max}
+It is used within \code{\link[=median_table]{median_table()}} to compute the \code{lower} and \code{upper}
 columns.
 }
 \details{

@@ -1,8 +1,8 @@
 #' Visualize median estimate uncertainty
 #'
 #' @description `median_plot_errorbar()` visualizes the results of
-#'   [`median_table()`]. It shows the `min` and `max` median bounds using error
-#'   bars. Median estimates are displayed as points.
+#'   [`median_table()`]. It shows the `lower` and `upper` median bounds using
+#'   error bars. Median estimates are displayed as points.
 #'
 #'   `median_plot_pointrange()` is a variant that uses simple lines instead of
 #'   error bars.
@@ -124,7 +124,8 @@ median_plot_errorbar <- function(
     )
   ) +
 
-    # Min and max "errorbars" -- drawing them first to make the points go on top
+    # Lower and upper "errorbars" -- drawing them first to make the points go on
+    # top (in terms of layers)
     geom_uncertainty_bars +
 
     # Point estimate
@@ -208,7 +209,8 @@ median_plot_pointrange <- function(
     )
   ) +
 
-    # Min and max "errorbars" -- drawing them first to make the points go on top
+    # Lower and upper "errorbars" -- drawing them first to make the points go on
+    # top (in terms of layers)
     geom_uncertainty_range +
 
     # "Ring of certainty"

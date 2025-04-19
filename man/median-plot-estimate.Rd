@@ -46,8 +46,8 @@ A ggplot object.
 }
 \description{
 \code{median_plot_errorbar()} visualizes the results of
-\code{\link[=median_table]{median_table()}}. It shows the \code{min} and \code{max} median bounds using error
-bars. Median estimates are displayed as points.
+\code{\link[=median_table]{median_table()}}. It shows the \code{lower} and \code{upper} median bounds using
+error bars. Median estimates are displayed as points.
 
 \code{median_plot_pointrange()} is a variant that uses simple lines instead of
 error bars.

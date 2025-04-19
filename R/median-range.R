@@ -4,7 +4,7 @@
 #'   median values. This is helpful if [`median2()`] returns `NA`: the median
 #'   can't be determined, but at least it might have lower and upper bounds.
 #'
-#'   It is used within [`median_table()`] to compute the `min` and `max`
+#'   It is used within [`median_table()`] to compute the `lower` and `upper`
 #'   columns.
 #'
 #' @param x Numeric or similar. Vector to search for its possible medians.
