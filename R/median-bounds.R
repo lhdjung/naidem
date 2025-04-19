@@ -8,6 +8,8 @@
 #'   columns.
 #'
 #' @param x Numeric or similar. Vector to search for its possible medians.
+#' @param x Vector that can be ordered using [`sort()`]. It will be searched for
+#'   its possible medians.
 #' @param na.rm.amount,even Passed on to [`median2()`].
 #' @param nna Integer. Ignore unless the function is used as a helper. It is
 #'   like `needs_prep` in [`median_count_tolerable()`] except it can submit the
@@ -33,7 +35,7 @@
 #'   (double or integer) or if `c(-Inf, Inf)` is returned, which is always
 #'   double. Otherwise, it has the same type as `x`.
 #'
-#' @name median-range
+#' @name median-bounds
 #'
 #' @export
 #'
@@ -59,7 +61,7 @@ median_bounds <- function(
 }
 
 
-#' @name median-range
+#' @name median-bounds
 #' @export
 
 median_bounds.default <- function(
