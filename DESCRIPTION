@@ -23,11 +23,11 @@ URL: https://github.com/lhdjung/naidem,
     https://lhdjung.github.io/naidem/
 BugReports: https://github.com/lhdjung/naidem/issues
 Collate: 
+    'median-bounds.R'
     'median-count-tolerable.R'
     'median-plot-col.R'
     'median-plot-estimate.R'
     'median-print.R'
-    'median-range.R'
     'median2.R'
     'median-table.R'
     'utils.R'

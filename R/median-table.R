@@ -44,7 +44,7 @@
 #'
 #' @export
 #'
-#' @include median2.R median-range.R
+#' @include median2.R median-bounds.R
 #'
 #' @examples
 #' median_table(c(5, 23, 5, NA, 5, NA))
