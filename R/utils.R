@@ -70,6 +70,16 @@ near <- function(x, y) {
 }
 
 
+# Like `dplyr::near()` but able to handle non-numeric data, as well
+near_or_equal <- function(x, y) {
+  if (is.numeric(x)) {
+    abs(x - y) < .Machine$double.eps^0.5
+  } else {
+    x == y
+  }
+}
+
+
 # # Test function below with:
 # geom <- geom_uncertainty_bars
 # field <- "aes_params"

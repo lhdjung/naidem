@@ -75,10 +75,11 @@ median_count_tolerable <- function(x, needs_prep = TRUE) {
     half_upper <- half_lower + 1L
     # In case of two unequal central values, even just a single `NA` can shift
     # the median, so none of them are tolerable. This can only occur with an
-    # even number of known values. The `near()` function is like `==` except it
+    # even number of known values. `near_or_equal()` is like `==` except it
     # ignores spurious differences that arise due to floating point errors.
-    # E.g., `0.1 + 0.2 == 0.3` is `FALSE` but `near(0.1 + 0.2, 0.3)` is `TRUE`.
-    if (!near(x[half_lower], x[half_upper])) {
+    # E.g., `0.1 + 0.2 == 0.3` is `FALSE` but `near_or_equal(0.1 + 0.2, 0.3)` is
+    # `TRUE`.
+    if (!near_or_equal(x[half_lower], x[half_upper])) {
       return(0L)
     }
     # With an odd number of known values, there is only one central index for
@@ -114,10 +115,8 @@ median_count_tolerable <- function(x, needs_prep = TRUE) {
   # that `x[half_lower]` will first be compared to the first value to its left,
   # then the next value on the left, and so on.
   steps_left <- count_central_steps(
-    near(
-      x[half_lower],
-      x[rev(seq_len(half_lower - 1L))]
-    )
+    center = x[half_lower],
+    path = x[rev(seq_len(half_lower - 1L))]
   )
 
   # -- For the right arm, start at the first value to the right of the upper
@@ -126,10 +125,8 @@ median_count_tolerable <- function(x, needs_prep = TRUE) {
   # to the values to its right, until a different value is found. See the docs
   # for `count_central_steps()` below this function.
   steps_right <- count_central_steps(
-    near(
-      x[half_upper],
-      x[(half_upper + 1L):n_known]
-    )
+    center = x[half_upper],
+    path = x[(half_upper + 1L):n_known]
   )
 
   # Calculate the maximal number of `NA`s that can be tolerated -- i.e., that
@@ -170,31 +167,32 @@ median_count_tolerable <- function(x, needs_prep = TRUE) {
 #'   outward (i.e., left or right) where the value is still the same as the
 #'   central value. Finally, it returns the number of these steps.
 #'
-#' @details `FALSE` is matched against `test_path` to find the index of the
-#'   first value that is not equal to the central value. `1L` is subtracted from
+#' @details `FALSE` is matched against the logical test result from `center` out
+#'   towards `path`. It will find the index of the first value that is not equal
+#'   to the central value, unless all are equal to it. `1L` is subtracted from
 #'   this index to get the number of steps where the value found is still equal.
 #'
-#'   `n_steps` is `NA_integer_` if and only if `test_path` does not contain any
-#'   `FALSE` elements (see `?match`). The only possible reason is that
-#'   `test_path` only contains `TRUE` values: the case where it contains no
-#'   values at all is ruled out by the check for `n_known < 3L`. But even if it
-#'   was not, the number of steps outward where the central value is still
-#'   encountered is equal to the number of values in `test_path` in any case:
+#'   `n_steps` is `NA_integer_` if and only if the `near_or_equal()` comparison
+#'   does not yield any `FALSE` elements (see `?match`). The only possible
+#'   reason is that the comparison only contains `TRUE` values: the case where
+#'   it contains no values at all is ruled out by the check for `n_known < 3L`,
+#'   and any `NA`s were removed beforehand. In any case without `NA`s, the
+#'   length of `path` would be correct:
 #'
 #'   - Zero values, zero matching steps.
 #'   - All values are `TRUE`, so all of them are matching steps.
 #'
-#' @param test_path Logical vector resulting from the `near()` comparison
-#'   between one of the two (lower and upper) central values and the rest of the
-#'   (lower or upper) half of the sorted distribution.
+#' @param center Lower or upper central value of the sorted vector.
+#' @param path The lower or upper half of the sorted vector (apart from the
+#'   center, of course).
 #'
 #' @return Integer (length 1). Never `NA`.
 #'
 #' @noRd
-count_central_steps <- function(test_path) {
-  n_steps <- match(FALSE, test_path) - 1L
+count_central_steps <- function(center, path) {
+  n_steps <- match(FALSE, near_or_equal(center, path)) - 1L
   if (is.na(n_steps)) {
-    length(test_path)
+    length(path)
   } else {
     n_steps
   }

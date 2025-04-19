@@ -16,3 +16,7 @@ test_that("`median_count_tolerable()` returns correct values for even length", {
   expect_equal(median_count_tolerable(c(1, 2, 2, NA)), 0L)
 })
 
+test_that("`median_count_tolerable()` handles non-numeric data correctly", {
+  expect_equal(median_count_tolerable(c("a", "b", "b", "b")), 1L)
+  expect_equal(median_count_tolerable(c("a", "b", "b")), 0L)
+})
