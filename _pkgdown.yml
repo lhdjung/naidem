@@ -20,6 +20,6 @@ reference:
   - median_is_determinate
 - title: Possible medians
 - contents:
-  - median_range
+  - median_bounds
   - median_table
   - median_count_na_ignore

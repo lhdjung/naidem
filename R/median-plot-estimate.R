@@ -17,7 +17,7 @@
 #' - If no bounds can be found for a sample because of too many missing
 #'   values, the error bars span the height of the plot, and the point is a
 #'   hexagram. The median is particularly uncertain in this case because it
-#'   cannot even be confined to a range. See [`median_range()`].
+#'   cannot even be confined to a range. See [`median_bounds()`].
 #'
 #' @param data Data frame returned by [`median_table()`].
 #' @param point_size Numeric. Size of the median estimate points. Default is

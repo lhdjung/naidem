@@ -20,7 +20,7 @@
 #' @seealso
 #'   - [`median_count_tolerable()`] for the logic of preserving as many `NA`s
 #' as possible.
-#'   - [`median_range()`] for the `lower` and `upper` columns; the bounds of an
+#'   - [`median_bounds()`] for the `lower` and `upper` columns; the bounds of an
 #' uncertain median.
 #'   - [`median_plot_errorbar()`] and [`median_plot_col()`] for follow-up
 #' visualizations.
@@ -105,7 +105,7 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
     na_ignored[[i]] <- max(0L, nna_current - nna_tolerable)
     na_total[[i]] <- nna_current
 
-    range_current <- median_range(
+    range_current <- median_bounds(
       x = x_known_current,
       even = even,
       nna = nna_current

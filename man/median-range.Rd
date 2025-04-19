@@ -2,13 +2,13 @@
 % Please edit documentation in R/median-range.R
 \name{median-range}
 \alias{median-range}
-\alias{median_range}
-\alias{median_range.default}
+\alias{median_bounds}
+\alias{median_bounds.default}
 \title{Bounds on an unknown median}
 \usage{
-median_range(x, na.rm.amount = 0, even = c("mean", "low", "high"), nna = NULL)
+median_bounds(x, na.rm.amount = 0, even = c("mean", "low", "high"), nna = NULL)
 
-\method{median_range}{default}(x, na.rm.amount = 0, even = c("mean", "low", "high"), nna = NULL)
+\method{median_bounds}{default}(x, na.rm.amount = 0, even = c("mean", "low", "high"), nna = NULL)
 }
 \arguments{
 \item{x}{Numeric or similar. Vector to search for its possible medians.}
@@ -25,7 +25,7 @@ Vector of length 2 (never \code{NA}). Its type is double if \code{x} is numeric
 double. Otherwise, it has the same type as \code{x}.
 }
 \description{
-\code{median_range()} computes the minimal and maximal possible
+\code{median_bounds()} computes the minimal and maximal possible
 median values. This is helpful if \code{\link[=median2]{median2()}} returns \code{NA}: the median
 can't be determined, but at least it might have lower and upper bounds.
 
@@ -35,7 +35,7 @@ columns.
 \details{
 Two edge cases may occur:
 \itemize{
-\item If the median can be precisely determined, \code{median_range()} returns two
+\item If the median can be precisely determined, \code{median_bounds()} returns two
 identical values. This is the same case in which \code{\link[=median2]{median2()}} would return
 a non-\code{NA} value, and \code{\link[=median_plot_errorbar]{median_plot_errorbar()}} would show a "ring of
 certainty".
@@ -53,11 +53,11 @@ other classes. This documentation describes the default method.
 \examples{
 # Lower and upper bounds can be found,
 # even though the precise median is unknown:
-median_range(c(7, 7, 8, 9, NA))
-median_range(c(7, 7, 7, 8, 9, 9, NA, NA))
+median_bounds(c(7, 7, 8, 9, NA))
+median_bounds(c(7, 7, 7, 8, 9, 9, NA, NA))
 
 # Too many missing values, so there is no finite range:
-median_range(c(7, 7, 8, 9, NA, NA, NA, NA))
+median_bounds(c(7, 7, 8, 9, NA, NA, NA, NA))
 }
 \author{
 Lukas Jung, R Core Team

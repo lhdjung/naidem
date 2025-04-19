@@ -1,6 +1,6 @@
 #' Bounds on an unknown median
 #'
-#' @description `median_range()` computes the minimal and maximal possible
+#' @description `median_bounds()` computes the minimal and maximal possible
 #'   median values. This is helpful if [`median2()`] returns `NA`: the median
 #'   can't be determined, but at least it might have lower and upper bounds.
 #'
@@ -15,7 +15,7 @@
 #'
 #' @details Two edge cases may occur:
 #'
-#'   - If the median can be precisely determined, `median_range()` returns two
+#'   - If the median can be precisely determined, `median_bounds()` returns two
 #'   identical values. This is the same case in which [`median2()`] would return
 #'   a non-`NA` value, and [`median_plot_errorbar()`] would show a "ring of
 #'   certainty".
@@ -42,27 +42,27 @@
 #' @examples
 #' # Lower and upper bounds can be found,
 #' # even though the precise median is unknown:
-#' median_range(c(7, 7, 8, 9, NA))
-#' median_range(c(7, 7, 7, 8, 9, 9, NA, NA))
+#' median_bounds(c(7, 7, 8, 9, NA))
+#' median_bounds(c(7, 7, 7, 8, 9, 9, NA, NA))
 #'
 #' # Too many missing values, so there is no finite range:
-#' median_range(c(7, 7, 8, 9, NA, NA, NA, NA))
+#' median_bounds(c(7, 7, 8, 9, NA, NA, NA, NA))
 
 
-median_range <- function(
+median_bounds <- function(
     x,
     na.rm.amount = 0,
     even = c("mean", "low", "high"),
     nna = NULL
   ) {
-  UseMethod("median_range")
+  UseMethod("median_bounds")
 }
 
 
 #' @name median-range
 #' @export
 
-median_range.default <- function(
+median_bounds.default <- function(
     x,
     na.rm.amount = 0,
     even = c("mean", "low", "high"),

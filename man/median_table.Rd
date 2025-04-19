@@ -67,7 +67,7 @@ median_table(iris[1:4])
 \itemize{
 \item \code{\link[=median_count_tolerable]{median_count_tolerable()}} for the logic of preserving as many \code{NA}s
 as possible.
-\item \code{\link[=median_range]{median_range()}} for the \code{lower} and \code{upper} columns; the bounds of an
+\item \code{\link[=median_bounds]{median_bounds()}} for the \code{lower} and \code{upper} columns; the bounds of an
 uncertain median.
 \item \code{\link[=median_plot_errorbar]{median_plot_errorbar()}} and \code{\link[=median_plot_col]{median_plot_col()}} for follow-up
 visualizations.
