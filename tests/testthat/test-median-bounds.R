@@ -16,30 +16,30 @@ test_that("`median_bounds()` works correctly with `x12`", {
   expect_equal(median_bounds(c(x12, NA)), c(7, 9))
   expect_equal(median_bounds(c(x12, rep(NA, 2))), c(7, 9))
   expect_equal(median_bounds(c(x12, rep(NA, 3))), c(7, 9))
-  expect_equal(median_bounds(c(x12, rep(NA, 4))), c(-Inf, Inf))
-  expect_equal(median_bounds(c(x12, rep(NA, 5))), c(-Inf, Inf))
+  expect_equal(median_bounds(c(x12, rep(NA, 4))), c(NA_real_, NA_real_))
+  expect_equal(median_bounds(c(x12, rep(NA, 5))), c(NA_real_, NA_real_))
 })
 
 test_that("`median_bounds()` works correctly with `x13`", {
   expect_equal(median_bounds(x13), c(7, 7.5))
   expect_equal(median_bounds(c(x13, NA)), c(7, 8))
-  expect_equal(median_bounds(c(x13, rep(NA, 2))), c(-Inf, Inf))
-  expect_equal(median_bounds(c(x13, rep(NA, 3))), c(-Inf, Inf))
+  expect_equal(median_bounds(c(x13, rep(NA, 2))), c(NA_real_, NA_real_))
+  expect_equal(median_bounds(c(x13, rep(NA, 3))), c(NA_real_, NA_real_))
 })
 
 test_that("`median_bounds()` works correctly with `x14`", {
   expect_equal(median_bounds(x14), c(7, 8))
   expect_equal(median_bounds(c(x14, NA)), c(7, 8.5))
   expect_equal(median_bounds(c(x14, rep(NA, 2))), c(7, 9))
-  expect_equal(median_bounds(c(x14, rep(NA, 3))), c(-Inf, Inf))
+  expect_equal(median_bounds(c(x14, rep(NA, 3))), c(NA_real_, NA_real_))
 })
 
 test_that("`median_bounds()` works correctly with `x15`", {
   expect_equal(median_bounds(x15), c(7, 9))
   expect_equal(median_bounds(c(x15, NA)), c(6.5, 9))
   expect_equal(median_bounds(c(x15, rep(NA, 2))), c(6, 9))
-  expect_equal(median_bounds(c(x15, rep(NA, 3))), c(-Inf, Inf))
-  expect_equal(median_bounds(c(x15, rep(NA, 4))), c(-Inf, Inf))
+  expect_equal(median_bounds(c(x15, rep(NA, 3))), c(NA_real_, NA_real_))
+  expect_equal(median_bounds(c(x15, rep(NA, 4))), c(NA_real_, NA_real_))
   expect_equal(median_bounds(c(x15, 5)), c(6.5, 8))
   expect_equal(median_bounds(c(x15, 5), even = "low"), c(6, 7))
   expect_equal(median_bounds(c(x15, 5), even = "high"), c(7, 9))
@@ -52,13 +52,13 @@ test_that("`median_bounds()` works correctly with `x16`", {
   expect_equal(median_bounds(c(x16, rep(NA, 3))), c(2, 5))
   expect_equal(median_bounds(c(x16, rep(NA, 4))), c(1.5, 7))
   expect_equal(median_bounds(c(x16, rep(NA, 5))), c(1, 9))
-  expect_equal(median_bounds(c(x16, rep(NA, 6))), c(-Inf, Inf))
-  expect_equal(median_bounds(c(x16, rep(NA, 7))), c(-Inf, Inf))
+  expect_equal(median_bounds(c(x16, rep(NA, 6))), c(NA_real_, NA_real_))
+  expect_equal(median_bounds(c(x16, rep(NA, 7))), c(NA_real_, NA_real_))
 })
 
 test_that("`median_bounds()` works correctly with `x17`", {
-  expect_equal(median_bounds(x17), c(-Inf, Inf))
-  expect_equal(median_bounds(c(x17, NA)), c(-Inf, Inf))
+  expect_equal(median_bounds(x17), c(NA_real_, NA_real_))
+  expect_equal(median_bounds(c(x17, NA)), c(NA_real_, NA_real_))
 })
 
 test_that("the return type is double for non-`NA` vectors", {

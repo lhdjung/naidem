@@ -24,16 +24,22 @@
 #'   - If the number of missing values is so high that a continuous array of
 #'   them could extend from the start or end of `x` into the median position,
 #'   the data do not constrict the median to fall in between any finite bounds.
-#'   The function will then return `c(-Inf, Inf)` because such an array of `NA`s
-#'   would act as a tunnel to negative or positive infinity, enabling the median
-#'   to assume indefinitely low or high values.
+#'   The function will then return `c(NA, NA)` (of the appropriate type) because
+#'   such an array of `NA`s would act as a tunnel to negative or positive
+#'   infinity, enabling the median to assume indefinitely low or high values.
+#'
+#'   In the second case, `c(NA, NA)` means there are no bounds, not that
+#'   existing bounds are unknown. This is unfortunate but necessary: although
+#'   `c(-Inf, Inf)` would be more appropriate conceptually, it is always of type
+#'   double, so it would lead to coercion bugs when combined with non-numeric
+#'   data, which is possible in [`median_table()`]. To illustrate, try `c("abc",
+#'   Inf)`.
 #'
 #'   Like [`median2()`], this function is generic, so methods can be defined for
 #'   other classes. This documentation describes the default method.
 #'
-#' @return Vector of length 2 (never `NA`). Its type is double if `x` is numeric
-#'   (double or integer) or if `c(-Inf, Inf)` is returned, which is always
-#'   double. Otherwise, it has the same type as `x`.
+#' @return Vector of length 2. Its type is double if `x` is numeric (double or
+#'   integer). Otherwise, it has the same type as `x`.
 #'
 #' @name median-bounds
 #'
@@ -72,11 +78,12 @@ median_bounds.default <- function(
   ) {
   # As in `median2.default()`:
   even <- match.arg(even)
+  x_is_numeric <- is.numeric(x)
   n <- length(x)
   # This is also checked in `median2()`. It is only needed because one early
   # return below would otherwise make it possible that a call with wrong
   # arguments would silently pass through without reaching a `median2()` call.
-  if (even == "mean" && !is.numeric(x)) {
+  if (!x_is_numeric && even == "mean") {
     error_non_numeric_mean(x)
   }
   # The `nna` argument here follows the same basic idea as `needs_prep` in
@@ -101,11 +108,15 @@ median_bounds.default <- function(
   # be determined by `median2()`.
   # -- If the number of missing values is so high that the `NA`s would extend
   # into the median position if all of them were either at the start or the end,
-  # the data do not constrict the bounds to any finite values. See details.
+  # the data do not constrict the bounds to any finite values. For type safety,
+  # however, `NA`s need to be returned instead of `Inf`s. See details.
   if (nna == 0L) {
     return(rep(median2(x, even = even), times = 2L))
   } else if (any(nna >= half)) {
-    return(c(-Inf, Inf))
+    if (x_is_numeric) {
+      return(c(NA_real_, NA_real_))
+    }
+    return(rep(x[NA_integer_], 2))
   }
   # Compute the bounds by checking what the median would be if all `NA`s were
   # positioned at the start or the end of `x`. This implementation creates such

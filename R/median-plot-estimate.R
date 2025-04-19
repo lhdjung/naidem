@@ -94,7 +94,10 @@ median_plot_errorbar <- function(
   data$term <- as_factor_sequence(data$term)
 
   # To mark median estimates that are not confined to a range
-  range_is_inf <- is.infinite(data$lower)
+  range_is_inf <- is.na(data$lower)
+
+  data$lower[range_is_inf] <- -Inf
+  data$upper[range_is_inf] <- Inf
 
   # Versions of ggplot2 before 3.4.0 have the `size` aesthetic instead of the
   # more modern `linewidth`, so the geom where `size` / `linewidth` will be used
@@ -176,7 +179,10 @@ median_plot_pointrange <- function(
   data$term <- as_factor_sequence(data$term)
 
   # To mark median estimates that are not confined to a range
-  range_is_inf <- is.infinite(data$lower)
+  range_is_inf <- is.na(data$lower)
+
+  data$lower[range_is_inf] <- -Inf
+  data$upper[range_is_inf] <- Inf
 
   # Versions of ggplot2 before 3.4.0 have the `size` aesthetic instead of the
   # more modern `linewidth`, so the geom where `size` / `linewidth` will be used

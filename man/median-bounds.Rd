@@ -21,9 +21,8 @@ like \code{needs_prep} in \code{\link[=median_count_tolerable]{median_count_tole
 number of missing values.}
 }
 \value{
-Vector of length 2 (never \code{NA}). Its type is double if \code{x} is numeric
-(double or integer) or if \code{c(-Inf, Inf)} is returned, which is always
-double. Otherwise, it has the same type as \code{x}.
+Vector of length 2. Its type is double if \code{x} is numeric (double or
+integer). Otherwise, it has the same type as \code{x}.
 }
 \description{
 \code{median_bounds()} computes the minimal and maximal possible
@@ -43,10 +42,16 @@ certainty".
 \item If the number of missing values is so high that a continuous array of
 them could extend from the start or end of \code{x} into the median position,
 the data do not constrict the median to fall in between any finite bounds.
-The function will then return \code{c(-Inf, Inf)} because such an array of \code{NA}s
-would act as a tunnel to negative or positive infinity, enabling the median
-to assume indefinitely low or high values.
+The function will then return \code{c(NA, NA)} (of the appropriate type) because
+such an array of \code{NA}s would act as a tunnel to negative or positive
+infinity, enabling the median to assume indefinitely low or high values.
 }
+
+In the second case, \code{c(NA, NA)} means there are no bounds, not that
+existing bounds are unknown. This is unfortunate but necessary: although
+\code{c(-Inf, Inf)} would be more appropriate conceptually, it is always of type
+double, so it would lead to coercion bugs when combined with non-numeric
+data, which is possible in \code{\link[=median_table]{median_table()}}. To illustrate, try \code{c("abc", Inf)}.
 
 Like \code{\link[=median2]{median2()}}, this function is generic, so methods can be defined for
 other classes. This documentation describes the default method.
