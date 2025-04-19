@@ -143,11 +143,10 @@ median2.default <- function(
     }
     # Non-numeric data can safely be compared using `==`, and their result
     # doesn't need to be coerced to numeric:
-    if (x[half - nna] == x[half]) {
+    if (isTRUE(all(x[half - nna] == x[half]))) {
       return(x[half[1L]])
-    } else {
-      return(x[NA_integer_])
     }
+    return(x[NA_integer_])
   }
   ### END of key part
   n <- length(x)
