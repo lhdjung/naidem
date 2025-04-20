@@ -5,13 +5,19 @@
 
 <!-- badges: start -->
 <!-- badges: end -->
+<!-- -->
 
 The goal of naidem is to compute the median in a way that handles
-missing values properly: returning `NA` if and only if the median can’t
-be determined from the data. Its source code has no dependencies.
+missing values properly: checking whether `NA`s render the median
+unknown and quantifying uncertainty arising from them. It contains:
 
-Use `median2()` as a drop-in replacement for `median()`. Except for
-handling missing values, it works like `median()` by default.
+- `median2()` as a drop-in replacement for `median()`. It returns `NA`
+  if and only if the median can’t be determined from the data.
+- `median_table()` to quantify uncertainty around a median estimate. It
+  only ignores as many `NA`s as needed, not simply all of them. The
+  output includes the lower and upper bounds of the median, how many
+  `NA`s had to be ignored, etc.
+- `median_plot_errorbar()` and other follow-up visualizations.
 
 ## Installation
 
@@ -27,84 +33,77 @@ remotes::install_github("lhdjung/naidem")
 library(naidem)
 ```
 
-Why and how to use naidem:
-
-### The problem
-
 Base R’s `median()` function returns `NA` whenever the input vector
 contains one or more `NA`s. In many cases, missing values do make it
 impossible to compute the median. Yet some distributions have a clear
 median even so:
 
 ``` r
-x1 <- c(6, 7, 7, 7, NA)
-median(x1)
+alpha <- c(3, 4, 4, 5, NA, NA)
+beta <- c(6, 7, 7, 7, NA)
+
+median(alpha)
+#> [1] NA
+median(beta)
 #> [1] NA
 ```
 
-The actual median is 7, irrespective of the true value behind `NA`.
-
-### The solution
-
-Use naidem’s `median2()` instead. This function will return the median
-whenever it can be determined:
+The actual median of `beta` is 7, irrespective of the true value behind
+`NA`. Use `median2()` to distinguish between these cases:
 
 ``` r
-median2(x1)
+median2(alpha)
+#> [1] NA
+median2(beta)
 #> [1] 7
 ```
 
-If the median really is unclear, both functions return `NA`:
-
-``` r
-x2 <- c(3, 4, 4, 5, NA, NA)
-median(x2)
-#> [1] NA
-median2(x2)
-#> [1] NA
-```
-
 Compare this to `NA^0`, which returns `1` even though `NA^2` returns
-`NA`. If the exponent is 0, the result is the same for all possible
-bases. The same is sometimes true for the median. Therefore,
-implementations should check for this case and return the median if and
-only if it can be determined. This also makes `NA` more meaningful when
-it is returned: users can be sure that the median really is unknown.
-
-See [*Implementing the
+`NA`. This also makes `NA` more meaningful when it is returned: users
+can be sure that the median really is unknown. See [*Implementing the
 algorithm*](https://lhdjung.github.io/naidem/articles/algorithm.html)
 for more information on naidem’s solution.
 
-### Possible medians
-
-What to do if the median really is unknown, like above? `median_range()`
-will attempt to narrow it down to its minimal and maximal possible
-medians:
+What to do if the median really is unknown, like above? Call
+`median_table()` to get a sense of the uncertainty around the median of
+the known values:
 
 ``` r
-median_range(x2)
-#> [1] 3.5 4.5
+df1 <- median_table(list(alpha = alpha, beta = beta))
+df1
+#> # A tibble: 2 × 10
+#>   term  estimate certainty lower upper na_ignored na_total rate_ignored_na
+#>   <chr>    <dbl> <lgl>     <dbl> <dbl>      <int>    <int>           <dbl>
+#> 1 alpha        4 FALSE       3.5   4.5          1        2             0.5
+#> 2 beta         7 TRUE        7     7            0        1             0  
+#> # ℹ 2 more variables: sum_total <int>, rate_ignored_sum <dbl>
 ```
 
-However, `median_table()` is even more informative. It estimates the
-median while only ignoring as many missing values as absolutely
-necessary. This balances the need for knowledge about the central
-tendency with its degree of uncertainty.
+Visualize the lower and upper bounds of the median estimate using
+`median_plot_errorbar()`:
 
 ``` r
-x1
-#> [1]  6  7  7  7 NA
-x2
-#> [1]  3  4  4  5 NA NA
-
-median_table(list(x1, x2))
-#> # A tibble: 2 × 7
-#>   estimate certainty na_ignored na_total rate_ignored_na sum_total
-#>      <dbl> <lgl>          <int>    <int>           <dbl>     <int>
-#> 1        7 TRUE               0        1             0           5
-#> 2        4 FALSE              1        2             0.5         6
-#> # ℹ 1 more variable: rate_ignored_sum <dbl>
+median_plot_errorbar(df1)
 ```
+
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="75%" />
+
+The precise value of `alpha` is unknown, but it is bound to fall between
+the bars. Since the median of `beta` is known, its bars are not
+expanded, and it is marked as certain by a ring around its point.
+
+Also, `median_table()` counts how many missing values need to be ignored
+to determine the median of the remaining values. This balances the need
+for knowledge about the central tendency with an appreciation of its
+uncertainty.
+
+Make it apparent with `median_plot_col()`:
+
+``` r
+median_plot_col(df1)
+```
+
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="75%" />
 
 ## About this package
 
