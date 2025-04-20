@@ -179,3 +179,31 @@ get_linewidth_name <- function() {
 }
 
 
+# Error if `x` contains both numeric and non-numeric vectors. If not caught by
+# such a check, this could lead to all kinds of automatic, silent coercion bugs.
+# Copied from an MIT-licensed repo:
+# https://github.com/lhdjung/moder/blob/a2ec5f876bbe7fdd17e82d8206dab0bc84299ce2/R/utils.R
+check_numeric_types_mixed <- function(x) {
+
+  types <- vapply(x, typeof, character(1))
+  type_is_numeric <- types %in% c("double", "integer")
+
+  if (any(type_is_numeric) && !all(type_is_numeric)) {
+    numeric1 <- which(type_is_numeric)[1]
+    non_numeric_1 <- which(!type_is_numeric)[1]
+    numeric1_type <- types[numeric1]
+    non_numeric1_type <- types[non_numeric_1]
+    cli::cli_abort(
+      message = c(
+        "Mixing numeric and non-numeric data is not allowed.",
+        "x" = "Numeric type: {numeric1_type} (index {numeric1})",
+        "x" = "Non-numeric type: {non_numeric1_type} (index {non_numeric_1})"
+      ),
+      call = rlang::caller_call()
+    )
+  }
+
+}
+
+
+
