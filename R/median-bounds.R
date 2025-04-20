@@ -119,18 +119,15 @@ median_bounds.default <- function(
     return(rep(x[NA_integer_], 2))
   }
   # Compute the bounds by checking what the median would be if all `NA`s were
-  # positioned at the start or the end of `x`. This implementation creates such
-  # hypothetical extreme values that stand in for the `NA`s by subtracting `1`
-  # from the lowest known value and adding it to the greatest known value,
-  # although any other positive number would do.
+  # positioned at the start or the end of `x`.
   bound_lower <- median2(
-    x = c(rep(x[[1L]] - 1, times = nna), x),
+    x = c(rep(x[[1L]], times = nna), x),
     na.rm = FALSE,
     na.rm.amount = na.rm.amount,
     even = even
   )
   bound_upper <- median2(
-    x = c(x, rep(x[[length(x)]] + 1, times = nna)),
+    x = c(x, rep(x[[length(x)]], times = nna)),
     na.rm = FALSE,
     na.rm.amount = na.rm.amount,
     even = even

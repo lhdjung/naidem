@@ -86,3 +86,14 @@ test_that("non-numeric input is not an error with non-default `even`", {
   expect_no_error(median_bounds(as.Date("2010-01-01"), even = "low"))
 })
 
+test_that("`median_bounds()` works correctly with non-numeric input with `NA`s", {
+  expect_equal(median_bounds(c("a", "b", "c", rep(NA, 2)), even = "low"), c("a", "c"))
+  expect_equal(median_bounds(c(factor(1:5), NA), even = "low"), c(2, 3))
+  expect_equal(median_bounds(c(factor(1:5), NA), even = "high"), c(3, 4))
+  expect_equal(
+    median_bounds(as.Date(c("2010-01-01", "2010-01-02", NA)), even = "low"),
+    c(as.Date("2010-01-01"), as.Date("2010-01-02"))
+  )
+})
+
+
