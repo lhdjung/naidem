@@ -17,9 +17,12 @@ reference:
 - title: Actual median
 - contents:
   - median2
-  - median_is_determinate
 - title: Possible medians
 - contents:
   - median_bounds
   - median_table
-  - median_count_na_ignore
+  - median_count_tolerable
+- title: Visualization
+- contents:
+  - median-plot-estimate
+  - median_plot_col
