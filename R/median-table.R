@@ -72,7 +72,7 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
   }
 
   # Error if `x` contains both numeric and non-numeric vectors:
-  check_numeric_types_mixed(x)
+  check_types_consistent(x)
 
   # Initialize the two most important output vectors. They will be columns of
   # the output data frame. Note that `estimate` is integer in case all values
