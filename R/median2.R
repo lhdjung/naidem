@@ -8,8 +8,8 @@
 #'   - Non-numeric data, including dates and factors, require one of
 #'   `even = "low"` and `even = "high"`. This option doesn't exist in
 #'   `median()`. It avoids "computing the mean" of the two central values of
-#'   sorted vectors with an even length when no such operation exists, e.g.,
-#'   with strings.
+#'   sorted vectors with an even length when no such operation is possible,
+#'   e.g., with strings.
 #'   - The return type is always double if the input vector is numeric (i.e.,
 #'   double or integer). This is consistent and predictable, regardless of the
 #'   length being even or odd.
@@ -26,7 +26,8 @@
 #' @param even String. What to return if `x` has an even length and contains no
 #'   missing values (or they were removed). The default, `"mean"`, averages the
 #'   two central values of the sorted vector, `"low"` returns the lower central
-#'   value, and `"high"` returns the higher one.
+#'   value, and `"high"` returns the higher one. Note that `"mean"` is only
+#'   allowed is `x` is numeric.
 #' @param ... Optional further arguments for methods. Not used in the default
 #'   method.
 #'
@@ -40,8 +41,9 @@
 #'   \href{https://lhdjung.github.io/naidem/articles/algorithm.html}{*Implementing
 #'   the algorithm*} for further details.
 
-#' @return Length-1 vector of type double if the input is numeric (double or
-#'   integer), and the same type as `x` otherwise.
+#' @return Length-1 vector of type double if the input is numeric, and the same
+#'   type as `x` otherwise. This is tested by [`is.numeric()`], so factors and
+#'   dates do not count as numeric.
 #'
 #' @export
 #'
