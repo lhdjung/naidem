@@ -95,6 +95,13 @@ aes_add <- function(geom, field, aes_name, aes_value) {
 }
 
 
+# Keep record of corner case classes that are built on top of numeric types but
+# don't put their values on the number line
+get_trigger_classes <- function() {
+  c("Date", "factor")
+}
+
+
 # Throw an error if `median2()` or a function that called it took a non-numeric
 # `x` argument but failed to override the `even = "mean"` default. In the
 # even-length scenario, such a function would compute the mean of the two
@@ -109,7 +116,7 @@ error_non_numeric_mean <- function(x) {
   # identifying why `x` is not the right kind of object here. In the future,
   # this could possibly be extended to other classes.
   data_label <- NULL
-  trigger_classes <- c("Date", "factor")
+  trigger_classes <- get_trigger_classes()
   for (trigger in trigger_classes) {
     if (inherits(x, trigger)) {
       data_label <- tolower(paste0(trigger, "s"))
@@ -182,22 +189,85 @@ get_linewidth_name <- function() {
 # Error if `x` contains both numeric and non-numeric vectors. If not caught by
 # such a check, this could lead to all kinds of automatic, silent coercion bugs.
 # Copied from an MIT-licensed repo:
-# https://github.com/lhdjung/moder/blob/a2ec5f876bbe7fdd17e82d8206dab0bc84299ce2/R/utils.R
-check_numeric_types_mixed <- function(x) {
+# https://github.com/lhdjung/moder/blob/59490e3eb585dff83584810b4ca5c759a55adb45/R/utils.R
+check_types_consistent <- function(x) {
+
+  x_is_numeric <- vapply(x, is.numeric, logical(1))
+
+  if (all(x_is_numeric)) {
+    return(invisible(NULL))
+  }
 
   types <- vapply(x, typeof, character(1))
-  type_is_numeric <- types %in% c("double", "integer")
 
-  if (any(type_is_numeric) && !all(type_is_numeric)) {
-    numeric1 <- which(type_is_numeric)[1]
-    non_numeric_1 <- which(!type_is_numeric)[1]
+  # Given that not all elements are numeric, no element can be numeric or there
+  # will be coercion bugs and incompatible scales. Similarly, all elements must
+  # have the same (non-numeric) type.
+  some_are_numeric <- any(x_is_numeric)
+  some_are_unequal <- !all(types == types[1])
+
+  if (!any(some_are_numeric, some_are_unequal)) {
+    return(invisible(NULL))
+  }
+
+  # Demonstrate my knowledge that factor and date are not, in fact, types
+  info_type <- NULL
+  type_classes <- get_type_classes()
+
+  # First type that is different from the very first type
+  index_type_diff1 <- which(types != types[1])[1]
+  type_diff1 <- types[index_type_diff1]
+
+  # Record the presence of any type-like class (date, factor) and replace the
+  # corresponding type by that class. With a factor, for example, the misleading
+  # "integer" is replaced by "factor".
+  for (tc in type_classes) {
+    if (inherits(x[[1]], tc)) {
+      info_type <- c(info_type, tc)
+      types[1] <- tc
+    }
+    if (inherits(x[[index_type_diff1]], tc)) {
+      info_type <- c(info_type, tc)
+      types[index_type_diff1] <- tc
+    }
+  }
+
+  # Tell the user that dates and factors are effectively types of their own
+  msg_type <- if (is.null(info_type)) {
+    NULL
+  } else {
+    type_types <- if (length(info_type) == 1) "a type" else "types"
+    info_type <- paste(info_type, collapse = " and ")
+    paste("Pragmatically counting", info_type, "as", type_types, "here.")
+  }
+
+  # Some numeric, though not all: mixing types not allowed
+  if (some_are_numeric) {
+    numeric1 <- which(x_is_numeric)[1]
+    non_numeric_1 <- which(!x_is_numeric)[1]
     numeric1_type <- types[numeric1]
     non_numeric1_type <- types[non_numeric_1]
     cli::cli_abort(
       message = c(
         "Mixing numeric and non-numeric data is not allowed.",
         "x" = "Numeric type: {numeric1_type} (index {numeric1})",
-        "x" = "Non-numeric type: {non_numeric1_type} (index {non_numeric_1})"
+        "x" = "Non-numeric type: {non_numeric1_type} (index {non_numeric_1})",
+        "i" = msg_type
+      ),
+      call = rlang::caller_call()
+    )
+  }
+
+  # No numeric, but different non-numeric types: mixing types not allowed.
+  # Currently, the condition is necessarily true at this point, but that may
+  # change with further conditions; hence the explicit check.
+  if (some_are_unequal) {
+    cli::cli_abort(
+      message = c(
+        "Mixing different types of non-numeric data is not allowed.",
+        "x" = "Contains type {types[1]} (index 1).",
+        "x" = "But also type {type_diff1} (index {index_type_diff1}).",
+        "i" = msg_type
       ),
       call = rlang::caller_call()
     )
