@@ -97,7 +97,7 @@ aes_add <- function(geom, field, aes_name, aes_value) {
 
 # Keep record of corner case classes that are built on top of numeric types but
 # don't put their values on the number line
-get_trigger_classes <- function() {
+get_type_classes <- function() {
   c("Date", "factor")
 }
 
@@ -116,10 +116,10 @@ error_non_numeric_mean <- function(x) {
   # identifying why `x` is not the right kind of object here. In the future,
   # this could possibly be extended to other classes.
   data_label <- NULL
-  trigger_classes <- get_trigger_classes()
-  for (trigger in trigger_classes) {
-    if (inherits(x, trigger)) {
-      data_label <- tolower(paste0(trigger, "s"))
+  type_classes <- get_type_classes()
+  for (type in type_classes) {
+    if (inherits(x, type)) {
+      data_label <- tolower(paste0(type, "s"))
       break
     }
   }
