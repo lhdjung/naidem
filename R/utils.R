@@ -64,12 +64,6 @@ decrease_na_amount <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
 }
 
 
-# Adapted from `dplyr::near()`
-near <- function(x, y) {
-  abs(x - y) < .Machine$double.eps^0.5
-}
-
-
 # Like `dplyr::near()` but able to handle non-numeric data, as well
 near_or_equal <- function(x, y) {
   if (is.numeric(x)) {

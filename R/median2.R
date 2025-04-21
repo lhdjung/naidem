@@ -136,19 +136,18 @@ median2.default <- function(
       return(x[NA_integer_])
     }
     # Check for equality with offset value(s); see
-    # https://lhdjung.github.io/naidem/articles/algorithm.html for details:
+    # https://lhdjung.github.io/naidem/articles/algorithm.html for details.
+    # Also, note that `near_or_equal()` is a variant of `dplyr::near()` that
+    # compares non-numeric data using `==`.
+    out <- if (isTRUE(all(near_or_equal(x[half - nna], x[half])))) {
+      x[half[1L]]
+    } else {
+      x[NA_integer_]
+    }
     if (x_is_numeric) {
-      if (isTRUE(all(near(x[half - nna], x[half])))) {
-        return(as.numeric(x[half[1L]]))
-      }
-      return(NA_real_)
+      return(as.numeric(out))
     }
-    # Non-numeric data can safely be compared using `==`, and their result
-    # doesn't need to be coerced to numeric:
-    if (isTRUE(all(x[half - nna] == x[half]))) {
-      return(x[half[1L]])
-    }
-    return(x[NA_integer_])
+    return(out)
   }
   ### END of key part
   n <- length(x)
