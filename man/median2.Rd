@@ -41,7 +41,7 @@ specified number of missing values. Default is \code{0}.}
 missing values (or they were removed). The default, \code{"mean"}, averages the
 two central values of the sorted vector, \code{"low"} returns the lower central
 value, and \code{"high"} returns the higher one. Note that \code{"mean"} is only
-allowed is \code{x} is numeric.}
+allowed if \code{x} is numeric.}
 
 \item{...}{Optional further arguments for methods. Not used in the default
 method.}

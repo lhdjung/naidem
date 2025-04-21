@@ -27,7 +27,7 @@
 #'   missing values (or they were removed). The default, `"mean"`, averages the
 #'   two central values of the sorted vector, `"low"` returns the lower central
 #'   value, and `"high"` returns the higher one. Note that `"mean"` is only
-#'   allowed is `x` is numeric.
+#'   allowed if `x` is numeric.
 #' @param ... Optional further arguments for methods. Not used in the default
 #'   method.
 #'
