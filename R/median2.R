@@ -165,6 +165,9 @@ median2.default <- function(
   n <- length(x)
 
   if (n == 0L) {
+    if (is.null(x)) {
+      return(NULL)
+    }
     if (x_is_numeric) {
       return(NA_real_)
     }
