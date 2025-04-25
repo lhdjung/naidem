@@ -96,28 +96,36 @@ median2.default <- function(
     even = c("mean", "low", "high"),
     ...
   ) {
+
   # Validate arguments
-  if (is.data.frame(x)) {
+  if (is.list(x)) {
     cli::cli_abort("Need data that can be ordered using `sort()`.")
   }
   na.rm.from <- rlang::arg_match(na.rm.from)
   even <- rlang::arg_match(even)
+
   x_is_numeric <- is.numeric(x)
+
   # Prevent even-length problems
   if (!x_is_numeric && even == "mean") {
     error_non_numeric_mean(x)
   }
+
   # The user may choose to ignore any number of missing values (see the utils.R
   # file for the `decrease_na_amount()` helper function):
   if (na.rm.amount != 0) {
     x <- decrease_na_amount(x, na.rm, na.rm.amount, na.rm.from)
   }
-  if (length(names(x)))
+
+  # Remove any names
+  if (length(names(x))) {
     names(x) <- NULL
-  if (na.rm)
+  }
+
+  # Handle missing values
+  if (na.rm) {
     x <- x[!is.na(x)]
-  ### START of key part
-  else if (anyNA(x)) {
+  } else if (anyNA(x)) {
     # Using an `n` variable for consistency with the older code at the bottom:
     n <- length(x)
     x <- sort(x[!is.na(x)])
@@ -153,15 +161,18 @@ median2.default <- function(
     }
     return(out)
   }
-  ### END of key part
+
   n <- length(x)
+
   if (n == 0L) {
     if (x_is_numeric) {
       return(NA_real_)
     }
     return(x[NA_integer_])
   }
+
   half <- (n + 1L)%/%2L
+
   out <- if (n%%2L == 1L) {
     sort(x, partial = half)[half]
   } else {
@@ -175,10 +186,12 @@ median2.default <- function(
       "high" = x[2L]
     )
   }
+
   if (x_is_numeric) {
     as.numeric(out)
   } else {
     out
   }
+
 }
 
