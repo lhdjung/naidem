@@ -58,11 +58,13 @@ like \code{\link[=median]{median()}} from base R, with these exceptions:
 \item If one or more values are missing, \code{median2()} checks if the median can
 be determined nevertheless. \code{median()} always returns \code{NA} in this case,
 but \code{median2()} only returns \code{NA} if the median is genuinely unknown.
-\item Non-numeric data, including dates and factors, require one of
-\code{even = "low"} and \code{even = "high"}. This option doesn't exist in
-\code{median()}. It avoids "computing the mean" of the two central values of
-sorted vectors with an even length when no such operation is possible,
-e.g., with strings.
+\item You can opt to only ignore a certain number of missing values using the
+\code{na.rm.amount} and \code{na.rm.from} arguments.
+\item Factors and all other data that can be ordered by \code{\link[=sort]{sort()}} are allowed.
+However, non-numeric data, including dates and factors, require one of
+\code{even = "low"} and \code{even = "high"}. This avoids "computing the mean" of the
+two central values of sorted vectors with an even length when no such
+operation is possible, e.g., with strings.
 \item The return type is always double if the input vector is numeric (i.e.,
 double or integer). This is consistent and predictable, regardless of the
 length being even or odd.

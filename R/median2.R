@@ -5,11 +5,13 @@
 #'   - If one or more values are missing, `median2()` checks if the median can
 #'   be determined nevertheless. `median()` always returns `NA` in this case,
 #'   but `median2()` only returns `NA` if the median is genuinely unknown.
-#'   - Non-numeric data, including dates and factors, require one of
-#'   `even = "low"` and `even = "high"`. This option doesn't exist in
-#'   `median()`. It avoids "computing the mean" of the two central values of
-#'   sorted vectors with an even length when no such operation is possible,
-#'   e.g., with strings.
+#'   - You can opt to only ignore a certain number of missing values using the
+#'   `na.rm.amount` and `na.rm.from` arguments.
+#'   - Factors and all other data that can be ordered by [`sort()`] are allowed.
+#'   However, non-numeric data, including dates and factors, require one of
+#'   `even = "low"` and `even = "high"`. This avoids "computing the mean" of the
+#'   two central values of sorted vectors with an even length when no such
+#'   operation is possible, e.g., with strings.
 #'   - The return type is always double if the input vector is numeric (i.e.,
 #'   double or integer). This is consistent and predictable, regardless of the
 #'   length being even or odd.
@@ -94,11 +96,13 @@ median2.default <- function(
     even = c("mean", "low", "high"),
     ...
   ) {
-  na.rm.from <- match.arg(na.rm.from)
-  even <- match.arg(even)
+  # Validate arguments
+  if (is.data.frame(x)) {
+    cli::cli_abort("Need data that can be ordered using `sort()`.")
+  }
+  na.rm.from <- rlang::arg_match(na.rm.from)
+  even <- rlang::arg_match(even)
   x_is_numeric <- is.numeric(x)
-  if (is.data.frame(x))
-    stop("need numeric data or similar")
   # Prevent even-length problems
   if (!x_is_numeric && even == "mean") {
     error_non_numeric_mean(x)
