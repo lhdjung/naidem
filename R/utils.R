@@ -208,23 +208,21 @@ check_types_consistent <- function(x) {
   info_type <- NULL
   type_classes <- get_type_classes()
 
-  # First type that is different from the very first type
-  index_type_diff1 <- which(types != types[1])[1]
-  type_diff1 <- types[index_type_diff1]
-
   # Record the presence of any type-like class (date, factor) and replace the
   # corresponding type by that class. With a factor, for example, the misleading
   # "integer" is replaced by "factor".
   for (tc in type_classes) {
-    if (inherits(x[[1]], tc)) {
-      info_type <- c(info_type, tc)
-      types[1] <- tc
-    }
-    if (inherits(x[[index_type_diff1]], tc)) {
-      info_type <- c(info_type, tc)
-      types[index_type_diff1] <- tc
+    for (i in seq_along(x)) {
+      if (inherits(x[[i]], tc)) {
+        info_type <- c(info_type, tc)
+        types[i] <- tc
+      }
     }
   }
+
+  # First type that is different from the very first type
+  index_type_diff1 <- which(types != types[1])[1]
+  type_diff1 <- types[index_type_diff1]
 
   # Tell the user that dates and factors are effectively types of their own
   msg_type <- if (is.null(info_type)) {
