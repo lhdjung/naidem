@@ -13,13 +13,13 @@ is_whole_number <- function(x, tolerance = .Machine$double.eps^0.5) {
 }
 
 
-# This helper handles the `na.rm.amount` argument in the proper mode functions:
-# `mode_first()`, `mode_all()`, and `mode_single()`. It removes a number of
-# missing values from `x` equal to `na.rm.amount`, then returns `x`. Notes:
+# This helper handles the `na.rm.amount` argument in `median2()`. It removes a
+# number of missing values from `x` equal to `na.rm.amount`, then returns `x`.
+# Notes:
 # -- The specification of `na.rm.from` should be checked by the calling
 # function, like `na.rm.from <- match.arg(na.rm.from)`.
 # -- For efficiency, `remove_some_na()` should only be called under very
-# specific conditions, as in `mode_first()` etc.
+# specific conditions, as in in `median2()`.
 remove_some_na <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
   # Check for misspecifications of the calling function's arguments:
   if (na.rm) {
