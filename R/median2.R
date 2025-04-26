@@ -112,9 +112,9 @@ median2.default <- function(
   }
 
   # The user may choose to ignore any number of missing values (see the utils.R
-  # file for the `decrease_na_amount()` helper function):
+  # file for the `remove_some_na()` helper function):
   if (na.rm.amount != 0) {
-    x <- decrease_na_amount(x, na.rm, na.rm.amount, na.rm.from)
+    x <- remove_some_na(x, na.rm, na.rm.amount, na.rm.from)
   }
 
   # Remove any names

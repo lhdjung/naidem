@@ -18,9 +18,9 @@ is_whole_number <- function(x, tolerance = .Machine$double.eps^0.5) {
 # missing values from `x` equal to `na.rm.amount`, then returns `x`. Notes:
 # -- The specification of `na.rm.from` should be checked by the calling
 # function, like `na.rm.from <- match.arg(na.rm.from)`.
-# -- For efficiency, `decrease_na_amount()` should only be called under very
+# -- For efficiency, `remove_some_na()` should only be called under very
 # specific conditions, as in `mode_first()` etc.
-decrease_na_amount <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
+remove_some_na <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
   # Check for misspecifications of the calling function's arguments:
   if (na.rm) {
     stop(paste(
