@@ -10,32 +10,64 @@ vec1 <- list(
 
 vec2 <- iris[1:4]
 
-vec1_exp <- tibble::tibble(
-  term = c("a", "b", "c", "d"),
-  estimate = c(8, 1, 4, 24),
-  certainty = c(TRUE, FALSE, FALSE, FALSE),
-  na_ignored = c(0L, 1L, 3L, 1L),
-  na_total = c(0L, 1L, 4L, 1L),
-  rate_ignored_na = c(NaN, 1, 0.75, 1),
-  sum_total = c(15L, 3L, 6L, 4L),
-  rate_ignored_sum = c(0, 0.3333333333333333, 0.5, 0.25),
+vec3 <- rep(NA_real_, 10)
+
+
+# Expected results --------------------------------------------------------
+
+vec1_exp <- structure(
+  tibble::tibble(
+    term = c("a", "b", "c", "d"),
+    estimate = c(8, 1, 4, 24),
+    certainty = rep(c(TRUE, FALSE), each = 2L),
+    lower = c(8, 1, NA_real_, 13.5),
+    upper = c(8, 1, NA_real_, 60),
+    na_ignored = c(0L, 0L, 3L, 1L),
+    na_total = c(0L, 1L, 4L, 1L),
+    rate_ignored_na = c(0, 0, 0.75, 1),
+    sum_total = c(15L, 3L, 6L, 4L),
+    rate_ignored_sum = c(0, 0, 0.5, 0.25),
+  ),
+  class = c("median_table", "tbl_df", "tbl", "data.frame")
 )
 
-vec2_exp <- tibble::tibble(
-  term = c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width"),
-  estimate = c(5.8, 3, 4.35, 1.3),
-  certainty = rep(TRUE, 4L),
-  na_ignored = integer(4),
-  na_total = integer(4),
-  rate_ignored_na = rep(NaN, 4L),
-  sum_total = rep(150L, 4L),
-  rate_ignored_sum = numeric(4),
+vec2_exp <- structure(
+  tibble::tibble(
+    term = c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width"),
+    estimate = c(5.8, 3, 4.35, 1.3),
+    certainty = TRUE,
+    lower = c(5.8, 3, 4.35, 1.3),
+    upper = c(5.8, 3, 4.35, 1.3),
+    na_ignored = 0L,
+    na_total = 0L,
+    rate_ignored_na = numeric(4),
+    sum_total = 150L,
+    rate_ignored_sum = 0,
+  ),
+  class = c("median_table", "tbl_df", "tbl", "data.frame")
+)
+
+vec3_exp <- structure(
+  tibble::tibble(
+    term = "",
+    estimate = NA_real_,
+    certainty = FALSE,
+    lower = NA_real_,
+    upper = NA_real_,
+    na_ignored = 10L,
+    na_total = 10L,
+    rate_ignored_na = 1,
+    sum_total = 10L,
+    rate_ignored_sum = 1,
+  ),
+  class = c("median_table", "tbl_df", "tbl", "data.frame")
 )
 
 
 # Testing -----------------------------------------------------------------
 
-test_that("`median_df()` works correctly", {
-  expect_equal(median_df(vec1), vec1_exp)
-  expect_equal(median_df(vec2), vec2_exp)
+test_that("`median_table()` works correctly", {
+  expect_equal(median_table(vec1), vec1_exp)
+  expect_equal(median_table(vec2), vec2_exp)
+  expect_equal(median_table(vec3), vec3_exp)
 })

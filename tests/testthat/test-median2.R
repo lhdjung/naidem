@@ -1,18 +1,4 @@
 
-# Test vectors:
-x1  <- c(0, 1, 1, 1, NA)
-x2  <- c(1, 1, NA)
-x3  <- c(1, 2, NA)
-x4  <- c(0, 0, NA, 0, 0)
-x5  <- c(1, 1, 1, 1, NA, NA)
-x6  <- c(1, 1, 1, 1, NA, NA, NA)
-x7  <- c(1, 1, 1, 1, NA, NA, NA, NA)
-x8  <- iris$Sepal.Length
-x9  <- c(5.6, 5.7, 5.9, 6, 6.1, 6.3, 6.4, 6.6, 6.7, NA)
-x10 <- c(6.1, 6.3, 5.9, 6, 6.1, 6.3, 6.4, 6.6, 6.7, NA, NA, NA, NA)
-x11 <- c(7, 7, 7, 8, NA, NA)
-
-
 test_that("the default method returns non-`NA` values when it should", {
   expect_equal(median2(x1), 1)
   expect_equal(median2(x2), 1)
@@ -28,6 +14,19 @@ test_that("the default method returns `NA` when it should", {
   expect_equal(median2(x9 ), NA_real_)
   expect_equal(median2(x10), NA_real_)
   expect_equal(median2(x11), NA_real_)
+})
+
+test_that("the return type is double for non-`NA` vectors", {
+  expect_equal(typeof(median2(x1)), "double")
+  expect_equal(typeof(median2(x2)), "double")
+  expect_equal(typeof(median2(x4)), "double")
+  expect_equal(typeof(median2(x5)), "double")
+  expect_equal(typeof(median2(x6)), "double")
+  expect_equal(typeof(median2(x8)), "double")
+
+  expect_equal(typeof(median2(as.integer(x1))), "double")
+  expect_equal(typeof(median2(as.integer(x2))), "double")
+  expect_equal(typeof(median2(as.integer(x4))), "double")
 })
 
 test_that("`na.rm.amount` can make the default method return non-`NA` values", {
@@ -50,5 +49,27 @@ test_that("specifying both `na.rm = TRUE` and `na.rm.amount` is an error
           (but `na.rm = FALSE` with `na.rm.amount` specified is not)", {
   expect_error(median2(x1, na.rm = TRUE, na.rm.amount = 5))
   expect_no_error(median2(x1, na.rm = FALSE, na.rm.amount = 5))
+})
+
+test_that("non-numeric input is an error by default", {
+  expect_error(median2(letters))
+  expect_error(median2(factor(1:5)))
+  expect_error(median2(as.Date("2010-01-01")))
+})
+
+test_that("non-numeric input is not an error with non-default `even`", {
+  expect_no_error(median2(letters, even = "low"))
+  expect_no_error(median2(factor(1:5), even = "high"))
+  expect_no_error(median2(as.Date("2010-01-01"), even = "low"))
+})
+
+test_that("non-numeric input leads to correct output", {
+  expect_equal(median2(letters, even = "low"), "m")
+  expect_equal(median2(letters, even = "high"), "n")
+  expect_equal(median2(factor(1:5), even = "high"), factor(3, levels = 1:5))
+  expect_equal(
+    median2(as.Date(c("2010-01-01", "2010-01-02", "2010-01-05")), even = "low"),
+    as.Date("2010-01-02")
+  )
 })
 

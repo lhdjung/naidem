@@ -3,13 +3,13 @@
 \name{median2}
 \alias{median2}
 \alias{median2.default}
-\title{Median with missing values analysis}
+\title{Drop-in replacement for \code{median()}}
 \usage{
 median2(
   x,
   na.rm = FALSE,
   na.rm.amount = 0,
-  na.rm.from = c("start", "end", "random"),
+  na.rm.from = c("first", "last", "random"),
   even = c("mean", "low", "high"),
   ...
 )
@@ -24,7 +24,8 @@ median2(
 )
 }
 \arguments{
-\item{x}{Numeric or similar. Vector to search for its median.}
+\item{x}{Vector that can be ordered using \code{\link[=sort]{sort()}}. It will be searched for
+its median.}
 
 \item{na.rm}{Logical. If set to \code{TRUE}, missing values are removed before
 computation proceeds. Default is \code{FALSE}.}
@@ -36,28 +37,38 @@ specified number of missing values. Default is \code{0}.}
 \code{x} should missing values be removed? Options are \code{"first"}, \code{"last"}, and
 \code{"random"}. Default is \code{"first"}.}
 
-\item{even}{Character. What to do if \code{x} has an even length and contains no
+\item{even}{String. What to return if \code{x} has an even length and contains no
 missing values (or they were removed). The default, \code{"mean"}, averages the
-two central values, \code{"low"} returns the lower central value, and \code{"high"}
-returns the higher one.}
+two central values of the sorted vector, \code{"low"} returns the lower central
+value, and \code{"high"} returns the higher one. Note that \code{"mean"} is only
+allowed if \code{x} is numeric.}
 
 \item{...}{Optional further arguments for methods. Not used in the default
 method.}
 }
 \value{
-Length-1 vector of the same type as \code{x}. The only exception occurs if
-\code{x} is logical or integer and its length is even, in which case the return
-value is double.
-
-The output is \code{NA} (of the same type as \code{x}) if and only if the median
-can't be determined because of missing values, or if there are no values.
+Length-1 vector of type double if the input is numeric, and the same
+type as \code{x} otherwise. This is tested by \code{\link[=is.numeric]{is.numeric()}}, so factors and
+dates do not count as numeric.
 }
 \description{
-Compute the sample median.
-
-By default, \code{median2()} works like the standard \code{\link[=median]{median()}} unless one or
-more values are missing: \code{median()} always returns \code{NA} in this case, but
-\code{median2()} checks if the median can be determined nevertheless.
+\code{median2()} computes the sample median. By default, it works
+like \code{\link[=median]{median()}} from base R, with these exceptions:
+\itemize{
+\item If one or more values are missing, \code{median2()} checks if the median can
+be determined nevertheless. \code{median()} always returns \code{NA} in this case,
+but \code{median2()} only returns \code{NA} if the median is genuinely unknown.
+\item You can opt to only ignore a certain number of missing values using the
+\code{na.rm.amount} and \code{na.rm.from} arguments.
+\item Factors and all other data that can be ordered by \code{\link[=sort]{sort()}} are allowed.
+However, non-numeric data, including dates and factors, require one of
+\code{even = "low"} and \code{even = "high"}. This avoids "computing the mean" of the
+two central values of sorted vectors with an even length when no such
+operation is possible, e.g., with strings.
+\item The return type is always double if the input vector is numeric (i.e.,
+double or integer). This is consistent and predictable, regardless of the
+length being even or odd.
+}
 }
 \details{
 \code{median2()} is a generic function, so new methods can be defined for
@@ -72,9 +83,10 @@ the algorithm}} for further details.
 }
 \examples{
 # If no values are missing,
-# it works like `median()`:
+# it works mostly like `median()`:
 median(1:4)
 median2(1:4)
+
 median(c(1:3, 100, 1000))
 median2(c(1:3, 100, 1000))
 
