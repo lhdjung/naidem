@@ -1,11 +1,10 @@
-pandoc: 2.19.2
-pkgdown: 2.0.7
+pandoc: 3.1.11
+pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
   algorithm: algorithm.html
   proof: proof.html
-last_built: 2023-12-01T14:50Z
+last_built: 2025-04-29T19:46Z
 urls:
   reference: https://lhdjung.github.io/naidem/reference
   article: https://lhdjung.github.io/naidem/articles
-

@@ -5,65 +5,49 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="naidem">
 <title>Implementing the algorithm • naidem</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Implementing the algorithm">
-<meta property="og:description" content="naidem">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Implementing the algorithm">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">naidem</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/algorithm.html">Implementing the algorithm</a>
-    <a class="dropdown-item" href="../articles/proof.html">Proving the algorithm</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/algorithm.html">Implementing the algorithm</a></li>
+    <li><a class="dropdown-item" href="../articles/proof.html">Proving the algorithm</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/lhdjung/naidem/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/lhdjung/naidem/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -72,88 +56,87 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Implementing the algorithm</h1>
+
+      <h1>Implementing the algorithm</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/lhdjung/naidem/blob/HEAD/vignettes/algorithm.Rmd" class="external-link"><code>vignettes/algorithm.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/lhdjung/naidem/blob/master/vignettes/algorithm.Rmd" class="external-link"><code>vignettes/algorithm.Rmd</code></a></small>
       <div class="d-none name"><code>algorithm.Rmd</code></div>
     </div>
 
     
     
 <p>Follow these steps to implement naidem’s median algorithm in another
-language. It is tailored to numeric distributions in which some values
-are missing. For a proof, see <a href="https://lhdjung.github.io/naidem/articles/proof.html"><em>Proving
+language. It is tailored to numeric arrays in which some values are
+missing. For a proof, see <a href="https://lhdjung.github.io/naidem/articles/proof.html"><em>Proving
 the algorithm</em></a>.</p>
-<p>This article uses pseudo-code to present two distinct algorithms for
-distributions of odd and even length (i.e., number of values). The R
-implementation, i.e., the default method for <code><a href="../reference/median2.html">median2()</a></code>,
-condenses both into one. That is because vectorization in R allows for
-code that deemphasizes the difference in length. Other languages may
-need more explicit distinctions. However, it is of course possible to
-combine the two algorithms into a single one that first checks whether
-the length is even or odd.</p>
-<p>Below, <code>x</code> is the input distribution.
-<code>length(d)</code> computes the number of values in a distribution
-<code>d</code>, <code>sort(d)</code> is a sorting algorithm,
-<code>keep_missing(d)</code> returns all missing values in
-<code>d</code> (but no known values), and <code>keep_known(d)</code> is
-the opposite. <code>NA</code> denotes a single missing value. Unlike R,
-these algorithms use zero-indexing. Step 1 of the algorithm for odd
-lengths is therefore equivalent to integer division for such
-distributions.</p>
+<p>This article uses pseudo-code to present two distinct sub-algorithms
+for arrays of odd and even length (i.e., number of values). Then, it
+explains the algorithm as a whole. Finally, it discusses the R
+implementation in naidem.</p>
+<p>Below, <code>x</code> is the input array. <code>length(a)</code>
+computes the number of values in an array <code>a</code>,
+<code>sort(a)</code> is a sorting algorithm, and
+<code>keep_known(a)</code> returns all known values in <code>a</code>
+(but no missing values). <code>NA</code> denotes a single missing value.
+Unlike R, this algorithm uses zero-indexing. Step 4 of the sub-algorithm
+for odd lengths is therefore equivalent to integer division for such
+arrays.</p>
 <div class="section level2">
-<h2 id="for-odd-length-distributions">For odd-length distributions<a class="anchor" aria-label="anchor" href="#for-odd-length-distributions"></a>
+<h2 id="median-pseudo-code">Median pseudo-code<a class="anchor" aria-label="anchor" href="#median-pseudo-code"></a>
 </h2>
-<pre eval="FALSE"><code># 1. Determine the central index of `x`.
-half := length(x) / 2 - 0.5
+<pre eval="FALSE"><code># 1. Count the elements of `x`.
+n := length(x)
 
-# 2. Count the missing values in `x`.
-nna := length(keep_missing(x))
-
-# 3. If the offset index is negative,
-# the median cannot be determined.
-if nna &gt; half:
-   return NA
-
-# 4. Remove all missing values from `x`, then sort `x`.
+# 2. Sort `x` after removing missing values from it.
 x := sort(keep_known(x))
 
-# 5. Check values at two specific indices for equality.
-# If they are equal, return the central `x` value, i.e.,
-# the median. If they are not equal, return a missing value.
-if x[half - nna] == x[half]:
-   return x[half]
-else:
-   return NA</code></pre>
-</div>
-<div class="section level2">
-<h2 id="for-even-length-distributions">For even-length distributions<a class="anchor" aria-label="anchor" href="#for-even-length-distributions"></a>
-</h2>
-<pre eval="FALSE"><code># 1. Determine the upper central index of `x`.
-half_2 := length(x) / 2
+# 3. Infer the number of missing values.
+nna := n - length(x)
 
-# 2. Determine the lower central index.
-half_1 := half_2 - 1
-
-# 3. Count the missing values in `x`.
-nna := length(keep_missing(x))
-
-# 4. Neither offset index can be negative.
-# If any is, the median cannot be determined.
-if nna &gt; half_1:
+# For odd-length arrays:
+if n mod 2 == 1:
+   
+   # 4. Determine the central index of `x` (including missing values).
+   half := n / 2 - 0.5
+   
+   # 5. If the missing values could potentially form a block
+   # that starts at one end and extends into the central position,
+   # the median is uncertain.
+   if nna &gt; half:
+      return NA
+   
+   # 6. Check values at two specific indices for equality.
+   # If they are equal, return the central `x` value,
+   # which is the median in this case.
+   if x[half - nna] == x[half]:
+      return x[half]
+   
+   # 7. If they are not equal, return a missing value.
    return NA
-
-# 5. Remove all missing values from `x`, then sort `x`.
-x := sort(keep_known(x))
-
-# 6. Check whether both pairs are equal.
-# If they are, return the mean of the central
-# values (which is equal to both members of the pair).
-# If one or both are not equal, return a missing value.
-if x[half_1 - nna] == x[half_1] &amp;&amp; x[half_2 - nna] == x[half_2]:
-   return x[half_1]
+   
+# For even-length arrays:
 else:
+   
+   # 4a. Determine the upper central index of `x`.
+   half_2 := n / 2
+   
+   # 4b. Determine the lower central index.
+   half_1 := half_2 - 1
+   
+   # 5. If the missing values could potentially form a block
+   # that starts at one end and extends into either central position,
+   # the median is uncertain.
+   if nna &gt; half_1:
+      return NA
+   
+   # 6. Check whether both pairs are equal.
+   # If they are, return the mean of the two central
+   # values (which is equal to each member of the pair).
+   if x[half_1 - nna] == x[half_1] &amp;&amp; x[half_2 - nna] == x[half_2]:
+      return x[half_1]
+   
+   # 7. If one or both are not equal, return a missing value.
    return NA</code></pre>
 </div>
 <div class="section level2">
@@ -161,11 +144,11 @@ else:
 </h2>
 <p>Missing values may or may not make it impossible to determine the
 median. Implementations of the median should check whether they do for
-any given distribution, instead of simply assuming that they do every
+any given input, rather than simply assuming that they do every
 time.</p>
-<p>The algorithms check whether the putative median can be changed by a
-shift due to missing values. If so, the median depends on the position
-of the missing values in the sorted distribution — and thus, on their
+<p>The algorithm checks whether the putative median can be changed by a
+shift due to missing values. If so, the median depends on the positions
+of the missing elements within the sorted array — and thus, on their
 values. Since these are unknown, the median cannot be determined.
 However, if the median remains the same after the shift, it is
 indifferent to the missing values: the median is identical for all
@@ -174,88 +157,109 @@ the algorithm</em></a> for details.</p>
 <p>Subtraction is used for the shift because <code>x</code> is still
 indexed at <code>half</code> (the midpoint of the input <code>x</code>)
 even though all missing values were already removed from <code>x</code>
-by that point. Therefore, <code>x[half]</code> is not actually the
+by that point. Therefore, <code>x[half]</code> is not necessarily the
 midpoint of <code>x</code>. The maximum possible number of steps by
-which missing values can shift the median is <code>nna</code>, so this
-number is subtracted.</p>
-<p>It is generally easier to determine the median for distributions of
-an odd length. The same is true when missing values are present. The
-even-length algorithm operates with two central indices instead of one
-because even-length distributions don’t have a single central value. The
+which missing values can shift the median is the total number of missing
+values (<code>nna</code>), so this quantity is subtracted.</p>
+<p>In practice, it might be important to use a “safe” comparison in step
+6. Exact equality is too high of a bar for floating-point numbers
+because there can be spurious differences between them. For example,
+<code>0.1 + 0.2 == 0.3</code> is false for deep technical reasons that
+have no place in this context, so we need functions that disregard such
+artifacts. However, this problem does not occur when comparing integers,
+so testing for exact equality is safe in this case.</p>
+<p>Median algorithms are generally more simple for arrays of an odd
+length. This includes cases where missing values are present. The
+even-length sub-algorithm operates with two central indices instead of
+one because even-length arrays do not have a single central value. The
 algorithm needs to compare <code>x</code> at each of these indices with
-the respective index offset by the number of missing values. In this
-way, it effectively checks whether the pair of <code>x</code> values at
-the central indices in the offset case is equal to the pair without the
+the respective value offset by <code>nna</code>. In this way, it
+effectively checks whether the pair of <code>x</code> values at the
+central indices in the offset case is equal to the pair without the
 offset. If so, the two values are the same, so there is no need to
-compute the average.</p>
-<p>The algorithms return <code>NA</code> if any offset central index is
-negative, i.e., if <code>half(_1) - nna &lt; 0</code>. (This is step 3
-for odd lengths and step 4 for even lengths. The pseudo-code in the
-algorithm is more efficient.) In the even-length case, only
+compute the average, and <code>x[half_1]</code> is returned.</p>
+<p>In step 5, both sub-algorithms return <code>NA</code> if
+<code>nna</code> is greater than <code>half</code> or
+<code>half_1</code>, respectively. In the even-length case, only
 <code>half_1</code> needs to be tested because it is less than
-<code>half_2</code>, so it is negative whenever <code>half_2</code> is.
-Why return <code>NA</code> here? The median is never known in such
-cases, and indices must not be negative when testing for equality in the
-final condition. Negative indices are not well defined, and programming
-languages such as R and Python would handle them in unintended ways.</p>
+<code>half_2</code>, so it is less than <code>nna</code> whenever
+<code>half_2</code> is. Why return <code>NA</code> here? Imagine an
+uninterrupted sequence of missing values at the start or end of the
+array. If it extends into the central position(s), at least one central
+value is missing. This case cannot be ruled out, so the median is
+unknown. Furthermore, not returning here would allow for negative
+indices in step 6.</p>
 <p>As an aside, <code><a href="../reference/median2.html">median2()</a></code> has an <code>even</code> argument
 that allows users to opt for the value just above or below the median if
-the length of the distribution is even. This has no effect if
-<code>x</code> contains any missing values: If the median can be
-determined in this case, it is equal to both values around it.</p>
+the length of the array is even. This has no effect if <code>x</code>
+contains any missing values: if the median can be determined in this
+case, it is equal to both values around it.</p>
 </div>
 <div class="section level2">
 <h2 id="r-details">R details<a class="anchor" aria-label="anchor" href="#r-details"></a>
 </h2>
-<p>The R implementation in naidem is more succinct than the pseudo-code,
-combining both partial algorithms into one. This plays into the
-strengths of R, but it does make the code look a little different from
-the above. Again, note that the pseudo-code uses zero-indexing but R
-uses one-indexing. This is why <code>any(nna + 1L &gt; half)</code>
-checks for non-positive indices in general, not just for negative
-ones.</p>
-<p>The final condition is wrapped into <code>isTRUE(all(.))</code>, so
-that <code><a href="https://rdrr.io/r/base/all.html" class="external-link">all()</a></code> reduces two logical test results to one if the
-input has an even length. If any comparison between the possible median
-values returns either <code>NA</code> or <code>FALSE</code>, the
-<code><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE()</a></code> wrapping returns <code>FALSE</code> and the
-function returns <code>NA</code> because the median cannot be determined
-with certainty.</p>
-<p><code><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE()</a></code> will only return <code>TRUE</code> if both
-comparisons do. Recall that the <code>half</code> object is either
-length 1 (the index of the median of an odd-length distribution) or 2
-(the indices of the two values right above and below the median of an
-even-length distribution). If the median can be determined in the
-even-length scenario, it is <a href="https://lhdjung.github.io/naidem/articles/proof.html#proof-of-step-6">equal
+<p>The R implementation in <code><a href="../reference/median2.html">naidem::median2()</a></code> is more
+succinct than the pseudo-code, condensing much of the two sub-algorithms
+into one. This is because vectorization in R allows for code that
+de-emphasizes the difference in length. Such elegant code plays into the
+strengths of R, but it does look a little different from the above. R
+connoisseurs are asked for patience with more pedestrian languages that
+might need more explicit instructions.</p>
+<p>Again, note that the pseudo-code uses zero-indexing but R uses
+one-indexing. This is why <code>nna &gt;= half</code> in
+<code><a href="../reference/median2.html">median2()</a></code> casts a broader net than
+<code>nna &gt; half</code> here.</p>
+<p>The offset comparison <code>near(x[half - nna], x[half])</code> is
+wrapped into <code>isTRUE(all(.))</code>, so that <code><a href="https://rdrr.io/r/base/all.html" class="external-link">all()</a></code>
+reduces two logical test results to one if the input has an even length.
+(More on <code>near()</code> below.) If any comparison between the
+possible median values returns either <code>NA</code> or
+<code>FALSE</code>, the <code><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE()</a></code> wrapping returns
+<code>FALSE</code> and the function returns <code>NA</code> because the
+median cannot be determined with certainty.</p>
+<p><code><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE()</a></code> will only return <code>TRUE</code> if all
+comparisons do. Their number is either 1 or 2: recall that the
+<code>half</code> object is either length 1 (the index of the median of
+an odd-length vector) or 2 (the indices of the two values right above
+and below the median of an even-length vector). If the median can be
+determined in the even-length scenario, it is <a href="https://lhdjung.github.io/naidem/articles/proof.html#proof-of-step-6">equal
 to both values around it</a>. This is why the function returns
 <code>x[half[1L]]</code>, i.e., the first of these two values. For an
-odd-length distribution, the index is redundant because
-<code>half[1L]</code> equals <code>half</code>. Thus,
-<code>x[half[1L]]</code> is the correct return value in both cases in
-which the median can be determined.</p>
+odd-length vector, the index is redundant because <code>half[1L]</code>
+equals <code>half</code>. Thus, <code>x[half[1L]]</code> is the correct
+return value whenever the median can be determined, regardless of the
+length of the vector.</p>
+<p>Note the use of <code>near()</code>, which was adapted from
+<code>dplyr::near()</code> but without depending on dplyr. Consistent
+with the explanation above, <code>near()</code> compares two numeric
+vectors while disregarding any spurious floating-point differences that
+<code>==</code> would take seriously (see also <a href="https://r4ds.hadley.nz/logicals.html#sec-fp-comparison" class="external-link"><em>R for
+Data Science</em> on this point</a>). So
+<code>near(0.1 + 0.2, 0.3)</code> is <code>TRUE</code> even though
+<code>0.1 + 0.2 == 0.3</code> is <code>FALSE</code>. Nevertheless,
+<code>==</code> is used elsewhere in <code><a href="../reference/median2.html">median2()</a></code> when
+comparing integers, where there is no such problem.</p>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p>
-<p>Developed by Lukas Jung.</p>
+  <p>Developed by Lukas Jung.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>
