@@ -1,0 +1,94 @@
+---
+title: "Analysis of random numbers using naidem"
+output: html_document
+date: "2025-04-29"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+devtools::load_all(".")
+```
+
+This document contains simulations of the share of missing values that need to be ignored to arrive at a median estimate of the remaining values, as well as the uncertainty which the missing values introduce with respect to that estimate.
+
+Key parameters here include the SD when generating random numbers and the number of decimal places to which these numbers are rounded. For the latter, I chose 2 although that might not be too common in raw data. If `digits` is set to 0 instead (corresponding to Likert-type scales), the diagrams look quite different.
+
+```{r}
+library(naidem)
+library(ggplot2)
+library(magrittr)
+theme_set(theme_minimal(base_size = 12))
+```
+
+Choose sample size and number of digits to which the values will be rounded.
+```{r}
+n <- 10e5
+digits <- 2
+```
+
+Only relevant if using uniform distribution instead of normal:
+```{r}
+value_min <- 0
+value_max <- 50
+```
+
+Varying sequence of proportions of missing values:
+```{r}
+share_na_all <- seq(from = 0, to = 1, by = 0.05)
+```
+
+Sanity checks:
+```{r}
+stopifnot(min(share_na_all) >= 0)
+stopifnot(max(share_na_all) <= 1)
+```
+
+List to store result vectors:
+```{r}
+out_all <- vector("list", length(share_na_all))
+```
+
+Loop over the proportions of missing values. For each proportion, generate random normally distributed values, round them, add missing values, and store them in the list. The proportions of known and missing values are defined by `share_na_all`.
+```{r}
+for (i in seq_along(share_na_all)) {
+  share_na <- share_na_all[i]
+  n_not_na <- n * (1 - share_na)
+
+  out_all[[i]] <- n_not_na %>%
+    # runif(value_min, value_max) %>%
+    rnorm(sd = 0.5) %>%
+    round(digits) %>%
+    c(rep(NA_real_, n * share_na))
+}
+```
+
+Run key naidem function to compute all the median-related statistics:
+```{r}
+df_out <- median_table(out_all)
+```
+
+Prepare the x-axes of the plots below:
+```{r}
+df_out$term <- as.character(share_na_all)
+x_label <- "Share of missing values (NA)"
+```
+
+Show the results:
+```{r}
+df_out
+```
+
+Barplot with shares of missing values that have to be ignored to find a median estimate of the remaining values:
+```{r}
+df_out %>%
+  median_plot_col() +
+  ggplot2::labs(x = x_label)
+```
+
+Errorbar plot of the median estimates with lower and upper bounds:
+```{r}
+df_out %>%
+  median_plot_errorbar() +
+  ggplot2::labs(x = x_label)
+```
+
