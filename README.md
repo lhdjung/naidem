@@ -97,7 +97,8 @@ to determine the median of the remaining values. This balances the need
 for knowledge about the central tendency with an appreciation of its
 uncertainty.
 
-Make it apparent with `median_plot_col()`:
+Make it apparent with `median_plot_col()`. No bars are shown for `beta`
+because its `NA` does not need to be ignored:
 
 ``` r
 median_plot_col(df1)
