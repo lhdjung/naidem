@@ -84,7 +84,7 @@ median_bounds.default <- function(
   # return below would otherwise make it possible that a call with wrong
   # arguments would silently pass through without reaching a `median2()` call.
   if (!x_is_numeric && even == "mean") {
-    error_non_numeric_mean(x)
+    stop_non_numeric_mean(x)
   }
   # The `nna` argument here follows the same basic idea as `needs_prep` in
   # `median_count_tolerable()`. However, it is integer instead of logical; and
@@ -92,7 +92,10 @@ median_bounds.default <- function(
   # was just the number of known values. Note: this requires `x` to no longer
   # have any `NA`s, and to be sorted!
   if (is.null(nna)) {
-    x <- sort(x[!is.na(x)])
+    tryCatch(
+      x <- sort(x[!is.na(x)]),
+      error = stop_sort_or_removing_na_failed
+    )
     nna <- n - length(x)
   } else {
     n <- n + nna

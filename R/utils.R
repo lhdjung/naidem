@@ -102,7 +102,7 @@ get_type_classes <- function() {
 # central values, which is only meaningful for numeric data. Therefore, the user
 # needs to explicitly choose the lower or the higher central value when taking
 # the median of non-numeric vectors, including logicals.
-error_non_numeric_mean <- function(x) {
+stop_non_numeric_mean <- function(x) {
   if (is.null(x)) {
     return(invisible(NULL))
   }
@@ -267,5 +267,20 @@ check_types_consistent <- function(x) {
 
 }
 
+
+# Error within `tryCatch()` if sorting a vector or removing missing values from
+# it failed, also displaying the original error.
+stop_sort_or_removing_na_failed <- function(cnd) {
+  cli::cli_abort(
+    message = c(
+      "Sorting the input or removing `NA`s failed.",
+      "i" = "If these actions make sense for your object type, \
+      you may implement a new `sort()` or `is.na()` method for it.",
+      "i" = "Original error:",
+      "x" = as.character(cnd)
+    ),
+    call = rlang::caller_call(4)
+  )
+}
 
 

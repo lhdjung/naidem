@@ -55,7 +55,10 @@ median_count_tolerable <- function(x, needs_prep = TRUE) {
   # the caller to skip this step. Note: this requires `x` to no longer have any
   # `NA`s, and to be sorted!
   if (needs_prep) {
-    x <- sort(x[!is.na(x)])
+    tryCatch(
+      x <- sort(x[!is.na(x)]),
+      error = stop_sort_or_removing_na_failed
+    )
   }
 
   # In case all values are missing, none of them are tolerable. This is

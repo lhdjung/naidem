@@ -97,10 +97,6 @@ median2.default <- function(
     ...
   ) {
 
-  # Validate arguments
-  if (is.list(x)) {
-    cli::cli_abort("Need data that can be ordered using `sort()`.")
-  }
   na.rm.from <- rlang::arg_match(na.rm.from)
   even <- rlang::arg_match(even)
 
@@ -108,7 +104,7 @@ median2.default <- function(
 
   # Prevent even-length problems
   if (!x_is_numeric && even == "mean") {
-    error_non_numeric_mean(x)
+    stop_non_numeric_mean(x)
   }
 
   # The user may choose to ignore any number of missing values (see the utils.R
@@ -122,13 +118,27 @@ median2.default <- function(
     names(x) <- NULL
   }
 
-  # Handle missing values
+  n <- length(x)
+
+  # Sort `x` after removing `NA`s from it. Throw a bespoke error if this fails.
+  # As `sort()` is generic, non-default methods might be able to deal with data
+  # types that might get caught by an inflexible check, causing a premature
+  # error -- mainly lists or data frames.
+  tryCatch(
+    x <- sort(x[!is.na(x)]),
+    error = stop_sort_or_removing_na_failed
+  )
+
+  # Missing values were removed above, so they are handled here indirectly:
+  # -- If the user opts to remove them, nothing more to do than set the count of
+  # all values to those of the remaining (= known) values.
+  # -- By default, missing values are handled using naidem's novel algorithm.
+  # Checking that any values are missing, here, simply means checking whether
+  # the number of original values (before removing `NA`s) is different from the
+  # number of remaining values.
   if (na.rm) {
-    x <- x[!is.na(x)]
-  } else if (anyNA(x)) {
-    # Using an `n` variable for consistency with the older code at the bottom:
     n <- length(x)
-    x <- sort(x[!is.na(x)])
+  } else if (n != length(x)) {
     nna <- n - length(x)
     # Central index or indices in `x`; length 1 if the length of `x` is odd,
     # length 2 if it is even:
@@ -161,8 +171,6 @@ median2.default <- function(
     }
     return(out)
   }
-
-  n <- length(x)
 
   if (n == 0L) {
     if (is.null(x)) {
