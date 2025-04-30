@@ -185,11 +185,11 @@ median2.default <- function(
   half <- (n + 1L)%/%2L
 
   out <- if (n%%2L == 1L) {
-    sort(x, partial = half)[half]
+    x[half]
   } else {
     # In keeping with the original base R code, `x` is reduced
     # to its values at the two central indices here:
-    x <- sort(x, partial = half + 0L:1L)[half + 0L:1L]
+    x <- x[half + 0L:1L]
     switch(
       even,
       "mean" = mean(x),
