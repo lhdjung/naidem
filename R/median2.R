@@ -120,13 +120,15 @@ median2.default <- function(
 
   n <- length(x)
 
-  # Sort `x` after removing `NA`s from it. Throw a bespoke error if this fails.
-  # As `sort()` is generic, non-default methods might be able to deal with data
-  # types that might get caught by an inflexible check, causing a premature
-  # error -- mainly lists or data frames.
+  # Remove `NA`s from `x`. Throw a bespoke error if this fails. Since `is.na()`
+  # is generic, non-default methods might be able to deal with data types that
+  # would otherwise get caught by an inflexible check as in
+  # `stats::median.default()`, causing a premature error. Subsetting may fail
+  # even if `is.na()` succeeds, but since subsetting and `is.na()` together
+  # constitute the operation of removing `NA`s, this should be fine.
   tryCatch(
-    x <- sort(x[!is.na(x)]),
-    error = stop_sort_or_removing_na_failed
+    x <- x[!is.na(x)],
+    error = stop_removing_na_failed
   )
 
   # Missing values were removed above, so they are handled here indirectly:
@@ -140,6 +142,10 @@ median2.default <- function(
     n <- length(x)
   } else if (n != length(x)) {
     nna <- n - length(x)
+    tryCatch(
+      x <- sort(x),
+      error = stop_sorting_failed
+    )
     # Central index or indices in `x`; length 1 if the length of `x` is odd,
     # length 2 if it is even:
     half <- if (n %% 2L == 1L) {
@@ -184,12 +190,17 @@ median2.default <- function(
 
   half <- (n + 1L)%/%2L
 
+  # Sort `x`, then reduce `x` to its values at the two central indices,
   out <- if (n%%2L == 1L) {
-    x[half]
+    tryCatch(
+      sort(x, partial = half)[half],
+      error = stop_sorting_failed
+    )
   } else {
-    # In keeping with the original base R code, `x` is reduced
-    # to its values at the two central indices here:
-    x <- x[half + 0L:1L]
+    tryCatch(
+      x <- sort(x, partial = half + 0L:1L)[half + 0L:1L],
+      error = stop_sorting_failed
+    )
     switch(
       even,
       "mean" = mean(x),

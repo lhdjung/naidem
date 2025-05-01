@@ -270,17 +270,43 @@ check_types_consistent <- function(x) {
 
 # Error within `tryCatch()` if sorting a vector or removing missing values from
 # it failed, also displaying the original error.
-stop_sort_or_removing_na_failed <- function(cnd) {
+stop_sort_or_removing_na_failed <- function(
+    cnd,
+    action = c("sort", "is.na", "either")
+  ) {
+  action <- rlang::arg_match(action)
+  fn_name <- switch(
+    action,
+    "sort" = "`sort()`",
+    "is.na" = "`is.na()`",
+    "either" = "`sort()` or `is.na()`"
+  )
+  desciption <- switch(
+    action,
+    "sort" = "Sorting the input",
+    "is.na" = "Removing `NA`s",
+    "either" = "Sorting the input or removing `NA`s"
+  )
+  this_these <- if (action == "either") "these actions" else "this action"
   cli::cli_abort(
     message = c(
-      "Sorting the input or removing `NA`s failed.",
-      "i" = "If these actions make sense for your object type, \
-      you may implement a new `sort()` or `is.na()` method for it.",
+      "{desciption} failed.",
+      "i" = "If {this_these} make sense for your object type, \
+      you may implement a new {fn_name} method for it.",
       "i" = "Original error:",
       "x" = as.character(cnd)
     ),
-    call = rlang::caller_call(4)
+    call = rlang::caller_call(5)
   )
 }
 
+
+stop_sorting_failed <- function(cnd) {
+  stop_sort_or_removing_na_failed(cnd, action = "sort")
+}
+
+
+stop_removing_na_failed <- function(cnd) {
+  stop_sort_or_removing_na_failed(cnd, action = "is.na")
+}
 
