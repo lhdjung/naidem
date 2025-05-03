@@ -180,13 +180,3 @@ count_central_steps <- function(center, path) {
   }
 }
 
-
-# For interactive use -- shows what the algorithm must be able to get behind:
-print_sort_both <- function(x) {
-  n <- length(x)
-  x <- sort(x[!is.na(x)])
-  nna <- n - length(x)
-  na_all <- rep(NA_real_, nna)
-  print(c(na_all, x))
-  print(c(x, na_all))
-}

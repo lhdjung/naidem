@@ -12,3 +12,14 @@ x8  <- iris$Sepal.Length
 x9  <- c(5.6, 5.7, 5.9, 6, 6.1, 6.3, 6.4, 6.6, 6.7, NA)
 x10 <- c(6.1, 6.3, 5.9, 6, 6.1, 6.3, 6.4, 6.6, 6.7, NA, NA, NA, NA)
 x11 <- c(7, 7, 7, 8, NA, NA)
+
+
+# For interactive use -- shows what the algorithm must be able to get behind:
+print_sort_both <- function(x) {
+  n <- length(x)
+  x <- sort(x[!is.na(x)])
+  nna <- n - length(x)
+  na_all <- rep(NA_real_, nna)
+  print(c(na_all, x))
+  print(c(x, na_all))
+}
