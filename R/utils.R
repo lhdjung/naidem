@@ -293,6 +293,13 @@ stop_data_invalid <- function(
     "is.na" = "Checking for `NA`s",
     "subsetting" = "Subsetting with `[`"
   )
+  # Adjust the name of the function that will be displayed at the top of the
+  # error message such that it's always a function exported from naidem:
+  n_frames <- 5
+  name_calling_fn <- as.character(rlang::caller_call(5)[1])
+  if (name_calling_fn == "sort_known_values") {
+    n_frames <- n_frames + 1
+  }
   cli::cli_abort(
     message = c(
       "{desciption} failed.",
@@ -301,7 +308,7 @@ stop_data_invalid <- function(
       "i" = "Original error:",
       "x" = as.character(cnd)
     ),
-    call = rlang::caller_call(5)
+    call = rlang::caller_call(n_frames)
   )
 }
 
@@ -310,4 +317,26 @@ stop_at_sort        <- function(cnd) stop_data_invalid(cnd, "sort")
 stop_at_na_check    <- function(cnd) stop_data_invalid(cnd, "is.na")
 stop_at_subsetting  <- function(cnd) stop_data_invalid(cnd, "subsetting")
 
+
+# Check for `NA`s, subset to remove them, and sort. At each step, carefully
+# check whether it works -- and thus, whether `x` behaves like an atomic vector.
+# If not, throw a bespoke error. This can't be used in `median2()` because it
+# always runs a full sort, which would be inefficient there.
+sort_known_values <- function(x) {
+  tryCatch(
+    x_is_na <- is.na(x),
+    error = stop_at_na_check
+  )
+  tryCatch(
+    x <- x[!x_is_na],
+    error = stop_at_subsetting
+  )
+  if (all(x_is_na)) {
+    return(x[0L])
+  }
+  tryCatch(
+    sort(x),
+    error = stop_at_sort
+  )
+}
 

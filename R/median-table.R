@@ -94,12 +94,7 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
   for (i in seq_len(nx)) {
 
     n_current <- length(x[[i]])
-
-    # Equivalent to indexing `[!is.na(x[[i]])]`:
-    tryCatch(
-      x_known_current <- sort(x[[i]], na.last = NA),
-      error = stop_data_invalid
-    )
+    x_known_current <- sort_known_values(x[[i]])
 
     nna_current <- n_current - length(x_known_current)
     sum_total[[i]] <- n_current

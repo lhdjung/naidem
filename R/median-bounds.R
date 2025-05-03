@@ -92,10 +92,7 @@ median_bounds.default <- function(
   # was just the number of known values. Note: this requires `x` to no longer
   # have any `NA`s, and to be sorted!
   if (is.null(nna)) {
-    tryCatch(
-      x <- sort(x[!is.na(x)]),
-      error = stop_data_invalid
-    )
+    x <- sort_known_values(x)
     nna <- n - length(x)
   } else {
     n <- n + nna
