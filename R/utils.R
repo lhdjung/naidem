@@ -21,6 +21,7 @@ is_whole_number <- function(x, tolerance = .Machine$double.eps^0.5) {
 # -- For efficiency, `remove_some_na()` should only be called under very
 # specific conditions, as in in `median2()`.
 remove_some_na <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
+
   # Check for misspecifications of the calling function's arguments:
   if (na.rm) {
     stop(paste(
@@ -28,15 +29,21 @@ remove_some_na <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
       "`na.rm.amount` only removes some number of them."
     ))
   }
-  amount_is_wrong <- length(na.rm.amount) != 1L ||
+
+  amount_is_wrong <-
+    length(na.rm.amount) != 1L ||
     !is_whole_number(na.rm.amount) ||
     na.rm.amount < 0
+
   if (amount_is_wrong) {
     stop("`na.rm.amount` must be a single whole, non-negative number.")
   }
+
   # Determine the indices of missing values in `x`:
   na_indices <- which(is.na(x))
 
+  # This is fine because `is.na()`, if successful, will always return something
+  # `which()` can work with. If it fails, it is only because of `is.na()`.
   tryCatch(
     na_indices <- which(is.na(x)),
     error = stop_at_na_check
@@ -54,6 +61,7 @@ remove_some_na <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
   } else if (length(na_indices) <= na.rm.amount) {
     return(x[-na_indices])
   }
+
   # Target the indices of those missings that should be ignored:
   na_indices_ignored <- switch(
     na.rm.from,
@@ -61,12 +69,14 @@ remove_some_na <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
     "last"   = utils::tail(na_indices, na.rm.amount),
     "random" = sample(na_indices, na.rm.amount)
   )
-  # If no `NA`s are to be ignored, `x` should be returned as it is:
+
+  # If no `NA`s are to be ignored, `x` is returned as it is. Otherwise, to
+  # ignore some `NA`s, exclude the values in question.
   if (length(na_indices_ignored) == 0L) {
-    return(x)
+    x
+  } else {
+    x[-na_indices_ignored]
   }
-  # Return `x`, excluding the values in question:
-  x[-na_indices_ignored]
 }
 
 
@@ -109,20 +119,25 @@ get_type_classes <- function() {
 # needs to explicitly choose the lower or the higher central value when taking
 # the median of non-numeric vectors, including logicals.
 stop_non_numeric_mean <- function(x) {
+
+  # `NULL` is fine because the calling function will be able to handle it.
   if (is.null(x)) {
     return(invisible(NULL))
   }
+
   # Date and factor are classes, not types, so they need special treatment when
   # identifying why `x` is not the right kind of object here. In the future,
   # this could possibly be extended to other classes.
   data_label <- NULL
   type_classes <- get_type_classes()
+
   for (type in type_classes) {
     if (inherits(x, type)) {
       data_label <- tolower(paste0(type, "s"))
       break
     }
   }
+
   # Otherwise, the type is the problem
   if (is.null(data_label)) {
     data_label <- typeof(x)
@@ -132,6 +147,7 @@ stop_non_numeric_mean <- function(x) {
       data_label <- paste0(data_label, "s")
     }
   }
+
   # Give a begrudging nod to traditional bool conversion
   hint_for_logicals <- if (is.logical(x)) {
     paste(
@@ -141,6 +157,7 @@ stop_non_numeric_mean <- function(x) {
   } else {
     NULL
   }
+
   # Throw a bespoke error that names the directly calling function -- such as
   # `median2.default()` -- as its source.
   cli::cli_abort(
@@ -164,10 +181,10 @@ stop_non_numeric_mean <- function(x) {
 # by `median_table()`. It fills any empty strings by an index number and returns
 # `term` as a factor, which is useful for plots to keep the data in order.
 as_factor_sequence <- function(term) {
-  if (any(term == "")) {
-    index_rows <- as.character(seq_along(term))
-    empty <- term == ""
-    term[empty] <- index_rows[empty]
+  empty <- term == ""
+  if (any(empty)) {
+    row_index <- as.character(seq_along(term))
+    term[empty] <- row_index[empty]
   }
   factor(term, levels = term)
 }
@@ -278,28 +295,34 @@ check_types_consistent <- function(x) {
 # it failed, also displaying the original error.
 stop_data_invalid <- function(
     cnd,
-    action = c("sort", "is.na", "subsetting")
+    action = c("sort", "is.na", "subsetting"),
+    frame_bump = NULL
   ) {
+
   action <- rlang::arg_match(action)
+
   fn_name <- switch(
     action,
     "sort" = "`sort()`",
     "is.na" = "`is.na()`",
     "subsetting" = "`[`"
   )
+
   desciption <- switch(
     action,
     "sort" = "Sorting the input",
     "is.na" = "Checking for `NA`s",
     "subsetting" = "Subsetting with `[`"
   )
+
   # Adjust the name of the function that will be displayed at the top of the
   # error message such that it's always a function exported from naidem:
   n_frames <- 5
-  name_calling_fn <- as.character(rlang::caller_call(5)[1])
-  if (name_calling_fn == "sort_known_values") {
-    n_frames <- n_frames + 1
+
+  if (!is.null(frame_bump)) {
+    n_frames <- n_frames + frame_bump
   }
+
   cli::cli_abort(
     message = c(
       "{desciption} failed.",
@@ -313,9 +336,13 @@ stop_data_invalid <- function(
 }
 
 
-stop_at_sort        <- function(cnd) stop_data_invalid(cnd, "sort")
+# These are called mainly is `median2()` but not in `sort_known_values()`
+# because this other helper increases the number of frames (the `1` there).
+# Conversely, these functions are meant to be called directly by the function
+# whose name will be shown in the error message.
 stop_at_na_check    <- function(cnd) stop_data_invalid(cnd, "is.na")
 stop_at_subsetting  <- function(cnd) stop_data_invalid(cnd, "subsetting")
+stop_at_sort        <- function(cnd) stop_data_invalid(cnd, "sort")
 
 
 # Check for `NA`s, subset to remove them, and sort. At each step, carefully
@@ -325,18 +352,18 @@ stop_at_subsetting  <- function(cnd) stop_data_invalid(cnd, "subsetting")
 sort_known_values <- function(x) {
   tryCatch(
     x_is_na <- is.na(x),
-    error = stop_at_na_check
+    error = function(cnd) stop_data_invalid(cnd, "is.na", 1)
   )
   tryCatch(
     x <- x[!x_is_na],
-    error = stop_at_subsetting
+    error = function(cnd) stop_data_invalid(cnd, "subsetting", 1)
   )
   if (all(x_is_na)) {
     return(x[0L])
   }
   tryCatch(
     sort(x),
-    error = stop_at_sort
+    error = function(cnd) stop_data_invalid(cnd, "sort", 1)
   )
 }
 
