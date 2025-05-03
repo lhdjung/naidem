@@ -155,7 +155,6 @@ median_plot_errorbar <- function(
       x = "Sample",
       y = "Median estimate"
     )
-
 }
 
 
@@ -236,6 +235,5 @@ median_plot_pointrange <- function(
       x = "Sample",
       y = "Median estimate"
     )
-
 }
 

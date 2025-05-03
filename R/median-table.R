@@ -157,6 +157,5 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
     nrow = nx,
     class = "median_table"
   )
-
 }
 

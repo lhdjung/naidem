@@ -227,6 +227,5 @@ median2.default <- function(
   } else {
     out
   }
-
 }
 
