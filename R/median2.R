@@ -127,13 +127,13 @@ median2.default <- function(
   # `stats::median.default()`, causing a premature error.
   tryCatch(
     x_is_na <- is.na(x),
-    error = stop_checking_na
+    error = stop_at_na_check
   )
 
   # Same but with subsetting
   tryCatch(
     x <- x[!x_is_na],
-    error = stop_subsetting
+    error = stop_at_subsetting
   )
 
   # The next step, sorting, doesn't work if all values are missing; and since
@@ -150,7 +150,7 @@ median2.default <- function(
   # Using `partial` for performance -- no need to run a full sort.
   tryCatch(
     sort(x, partial = 1L),
-    error = stop_sorting
+    error = stop_at_sort
   )
 
   # Missing values were removed above, so they are handled here indirectly:

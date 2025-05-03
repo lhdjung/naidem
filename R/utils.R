@@ -39,7 +39,7 @@ remove_some_na <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
 
   tryCatch(
     na_indices <- which(is.na(x)),
-    error = stop_checking_na
+    error = stop_at_na_check
   )
 
   # Special rules apply in edge cases:
@@ -306,8 +306,8 @@ stop_data_invalid <- function(
 }
 
 
-stop_sorting     <- function(cnd) stop_data_invalid(cnd, "sort")
-stop_checking_na <- function(cnd) stop_data_invalid(cnd, "is.na")
-stop_subsetting  <- function(cnd) stop_data_invalid(cnd, "subsetting")
+stop_at_sort        <- function(cnd) stop_data_invalid(cnd, "sort")
+stop_at_na_check    <- function(cnd) stop_data_invalid(cnd, "is.na")
+stop_at_subsetting  <- function(cnd) stop_data_invalid(cnd, "subsetting")
 
 
