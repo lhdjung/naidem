@@ -42,11 +42,6 @@
 #' median_count_tolerable(c(8, 9, NA))
 
 
-# x <- c(1, 7, 7, 7, 7, NA)
-# x <- c(6, 7, 7, 7, 7, NA)
-# x <- c(8, 8, 9, 9, NA, NA, NA)
-
-
 median_count_tolerable <- function(x, needs_prep = TRUE) {
 
   # When `median_count_tolerable()` is used as a helper, the calling function
@@ -129,31 +124,18 @@ median_count_tolerable <- function(x, needs_prep = TRUE) {
     path = x[(half_upper + 1L):n_known]
   )
 
-  # Calculate the maximal number of `NA`s that can be tolerated -- i.e., that
-  # don't need to be ignored -- when attempting to determine the median:
+  # The shorter of the two paths is the weakest link, so it determines how many
+  # `NA`s can be ignored. TODO: explain the factor of 2 here!
+  two_min <- 2L * min(steps_left, steps_right)
 
-  # NEW CONJECTURE: For even values of `n_known`, the correct solution is
-  # `min(steps_left, steps_right) * 2L + 1L` -- or without `+ 1L` if the
-  # `half_*` indices themselves count as central steps? Or just `min(...) + 1L`?
-  # Or perhaps it is `n_stable - 1L`, where  `n_stable` is the length of the
-  # stable region (i.e., the subarray of contiguous values that include the
-  # central value and are equal to it)?
-
-  # - 1, 1, 1, 2
-  # - 1, 1, 1, 1
-  # - 1, 1, 1, 1, 2, 2
-  # - 1, 2, 2, 3
-  # - 1, 1, 2, 2, 3, 3
-
-  # Note that (1, 2) and (1, 2, 3, 4) do NOT count -- the two central indices
-  # are unequal, so they would have been filtered out earlier!
-
+  # Even-length vectors have a stability bonus: at this point, the two central
+  # values are guaranteed to be equal, so there is at least one value in the
+  # central region that is the same as another one there.
   if (n_known_is_even) {
-    min(steps_left, steps_right) * 2L + 1L
+    two_min + 1L
   } else {
-    min(steps_left, steps_right) * 2L
+    two_min
   }
-
 }
 
 
