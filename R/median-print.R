@@ -3,7 +3,7 @@ median_print <- function(x) {
   n <- length(x)
   tryCatch(
     x <- sort(x[!is.na(x)]),
-    error = stop_sort_or_removing_na_failed
+    error = stop_data_invalid
   )
   nna <- n - length(x)
   na_all <- rep(NA_real_, nna)

@@ -98,7 +98,7 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
     # Equivalent to indexing `[!is.na(x[[i]])]`:
     tryCatch(
       x_known_current <- sort(x[[i]], na.last = NA),
-      error = stop_sort_or_removing_na_failed
+      error = stop_data_invalid
     )
 
     nna_current <- n_current - length(x_known_current)

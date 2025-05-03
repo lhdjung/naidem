@@ -94,7 +94,7 @@ median_bounds.default <- function(
   if (is.null(nna)) {
     tryCatch(
       x <- sort(x[!is.na(x)]),
-      error = stop_sort_or_removing_na_failed
+      error = stop_data_invalid
     )
     nna <- n - length(x)
   } else {

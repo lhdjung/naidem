@@ -36,6 +36,12 @@ remove_some_na <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
   }
   # Determine the indices of missing values in `x`:
   na_indices <- which(is.na(x))
+
+  tryCatch(
+    na_indices <- which(is.na(x)),
+    error = stop_checking_na
+  )
+
   # Special rules apply in edge cases:
   # -- Vectors without any `NA`s have nothing to remove, so they should be
   # returned as they are.
@@ -270,28 +276,27 @@ check_types_consistent <- function(x) {
 
 # Error within `tryCatch()` if sorting a vector or removing missing values from
 # it failed, also displaying the original error.
-stop_sort_or_removing_na_failed <- function(
+stop_data_invalid <- function(
     cnd,
-    action = c("sort", "is.na", "either")
+    action = c("sort", "is.na", "subsetting")
   ) {
   action <- rlang::arg_match(action)
   fn_name <- switch(
     action,
     "sort" = "`sort()`",
     "is.na" = "`is.na()`",
-    "either" = "`sort()` or `is.na()`"
+    "subsetting" = "`[`"
   )
   desciption <- switch(
     action,
     "sort" = "Sorting the input",
-    "is.na" = "Removing `NA`s",
-    "either" = "Sorting the input or removing `NA`s"
+    "is.na" = "Checking for `NA`s",
+    "subsetting" = "Subsetting with `[`"
   )
-  this_these <- if (action == "either") "these actions" else "this action"
   cli::cli_abort(
     message = c(
       "{desciption} failed.",
-      "i" = "If {this_these} make sense for your object type, \
+      "i" = "If this action makes sense for your object type, \
       you may implement a new {fn_name} method for it.",
       "i" = "Original error:",
       "x" = as.character(cnd)
@@ -301,12 +306,8 @@ stop_sort_or_removing_na_failed <- function(
 }
 
 
-stop_sorting_failed <- function(cnd) {
-  stop_sort_or_removing_na_failed(cnd, action = "sort")
-}
+stop_sorting     <- function(cnd) stop_data_invalid(cnd, "sort")
+stop_checking_na <- function(cnd) stop_data_invalid(cnd, "is.na")
+stop_subsetting  <- function(cnd) stop_data_invalid(cnd, "subsetting")
 
-
-stop_removing_na_failed <- function(cnd) {
-  stop_sort_or_removing_na_failed(cnd, action = "is.na")
-}
 
