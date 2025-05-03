@@ -97,18 +97,14 @@ median2.default <- function(
     ...
   ) {
 
-  # Validate arguments
-  if (is.list(x)) {
-    cli::cli_abort("Need data that can be ordered using `sort()`.")
-  }
   na.rm.from <- rlang::arg_match(na.rm.from)
   even <- rlang::arg_match(even)
 
   x_is_numeric <- is.numeric(x)
 
-  # Prevent even-length problems
+  # Check for even-length problems
   if (!x_is_numeric && even == "mean") {
-    error_non_numeric_mean(x)
+    stop_non_numeric_mean(x)
   }
 
   # The user may choose to ignore any number of missing values (see the utils.R
@@ -122,14 +118,53 @@ median2.default <- function(
     names(x) <- NULL
   }
 
-  # Handle missing values
+  # Count all values, including `NA`s
+  n <- length(x)
+
+  # Check `x` for `NA`s. Throw a bespoke error if this fails. Since `is.na()` is
+  # generic, non-default methods might be able to deal with data types that
+  # would otherwise get caught by an inflexible check as in
+  # `stats::median.default()`, causing a premature error.
+  tryCatch(
+    x_is_na <- is.na(x),
+    error = stop_at_na_check
+  )
+
+  # Same but with subsetting
+  tryCatch(
+    x <- x[!x_is_na],
+    error = stop_at_subsetting
+  )
+
+  # The next step, sorting, doesn't work if all values are missing; and since
+  # the result is already known in that case, return early here.
+  if (all(x_is_na)) {
+    if (x_is_numeric) {
+      return(NA_real_)
+    }
+    return(x[NA_integer_])
+  }
+
+  # Check if `x` can be sorted. Doing this once here means there is no need for
+  # multiple `tryCatch()` calls in later branches, which would be quite messy.
+  # Using `partial` for performance -- no need to run a full sort.
+  tryCatch(
+    sort(x, partial = 1L),
+    error = stop_at_sort
+  )
+
+  # Missing values were removed above, so they are handled here indirectly:
+  # -- If the user opts to remove them, nothing more to do than set the count of
+  # all values to those of the remaining (= known) values.
+  # -- By default, missing values are handled using naidem's novel algorithm.
+  # Checking that any values are missing, here, simply means checking whether
+  # the number of original values (before removing `NA`s) is different from the
+  # number of remaining values.
   if (na.rm) {
-    x <- x[!is.na(x)]
-  } else if (anyNA(x)) {
-    # Using an `n` variable for consistency with the older code at the bottom:
     n <- length(x)
-    x <- sort(x[!is.na(x)])
+  } else if (n != length(x)) {
     nna <- n - length(x)
+    x <- sort(x)
     # Central index or indices in `x`; length 1 if the length of `x` is odd,
     # length 2 if it is even:
     half <- if (n %% 2L == 1L) {
@@ -162,8 +197,6 @@ median2.default <- function(
     return(out)
   }
 
-  n <- length(x)
-
   if (n == 0L) {
     if (is.null(x)) {
       return(NULL)
@@ -176,11 +209,10 @@ median2.default <- function(
 
   half <- (n + 1L)%/%2L
 
+  # Sort `x`, then reduce `x` to its values at the two central indices,
   out <- if (n%%2L == 1L) {
     sort(x, partial = half)[half]
   } else {
-    # In keeping with the original base R code, `x` is reduced
-    # to its values at the two central indices here:
     x <- sort(x, partial = half + 0L:1L)[half + 0L:1L]
     switch(
       even,

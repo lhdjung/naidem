@@ -36,6 +36,12 @@ remove_some_na <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
   }
   # Determine the indices of missing values in `x`:
   na_indices <- which(is.na(x))
+
+  tryCatch(
+    na_indices <- which(is.na(x)),
+    error = stop_at_na_check
+  )
+
   # Special rules apply in edge cases:
   # -- Vectors without any `NA`s have nothing to remove, so they should be
   # returned as they are.
@@ -102,7 +108,7 @@ get_type_classes <- function() {
 # central values, which is only meaningful for numeric data. Therefore, the user
 # needs to explicitly choose the lower or the higher central value when taking
 # the median of non-numeric vectors, including logicals.
-error_non_numeric_mean <- function(x) {
+stop_non_numeric_mean <- function(x) {
   if (is.null(x)) {
     return(invisible(NULL))
   }
@@ -268,4 +274,69 @@ check_types_consistent <- function(x) {
 }
 
 
+# Error within `tryCatch()` if sorting a vector or removing missing values from
+# it failed, also displaying the original error.
+stop_data_invalid <- function(
+    cnd,
+    action = c("sort", "is.na", "subsetting")
+  ) {
+  action <- rlang::arg_match(action)
+  fn_name <- switch(
+    action,
+    "sort" = "`sort()`",
+    "is.na" = "`is.na()`",
+    "subsetting" = "`[`"
+  )
+  desciption <- switch(
+    action,
+    "sort" = "Sorting the input",
+    "is.na" = "Checking for `NA`s",
+    "subsetting" = "Subsetting with `[`"
+  )
+  # Adjust the name of the function that will be displayed at the top of the
+  # error message such that it's always a function exported from naidem:
+  n_frames <- 5
+  name_calling_fn <- as.character(rlang::caller_call(5)[1])
+  if (name_calling_fn == "sort_known_values") {
+    n_frames <- n_frames + 1
+  }
+  cli::cli_abort(
+    message = c(
+      "{desciption} failed.",
+      "i" = "If this action makes sense for your object type, \
+      you may implement a new {fn_name} method for it.",
+      "i" = "Original error:",
+      "x" = as.character(cnd)
+    ),
+    call = rlang::caller_call(n_frames)
+  )
+}
+
+
+stop_at_sort        <- function(cnd) stop_data_invalid(cnd, "sort")
+stop_at_na_check    <- function(cnd) stop_data_invalid(cnd, "is.na")
+stop_at_subsetting  <- function(cnd) stop_data_invalid(cnd, "subsetting")
+
+
+# Check for `NA`s, subset to remove them, and sort. At each step, carefully
+# check whether it works -- and thus, whether `x` behaves like an atomic vector.
+# If not, throw a bespoke error. This can't be used in `median2()` because it
+# always runs a full sort, which would be inefficient there.
+sort_known_values <- function(x) {
+  tryCatch(
+    x_is_na <- is.na(x),
+    error = stop_at_na_check
+  )
+  tryCatch(
+    x <- x[!x_is_na],
+    error = stop_at_subsetting
+  )
+  if (all(x_is_na)) {
+    return(x[0L])
+  }
+  tryCatch(
+    sort(x),
+    error = stop_at_sort
+  )
+}
 

@@ -1,7 +1,7 @@
 
 median_print <- function(x) {
   n <- length(x)
-  x <- sort(x[!is.na(x)])
+  x <- sort_known_values(x)
   nna <- n - length(x)
   na_all <- rep(NA_real_, nna)
 
