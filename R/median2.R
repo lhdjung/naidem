@@ -102,7 +102,7 @@ median2.default <- function(
 
   x_is_numeric <- is.numeric(x)
 
-  # Prevent even-length problems
+  # Check for even-length problems
   if (!x_is_numeric && even == "mean") {
     stop_non_numeric_mean(x)
   }
@@ -118,17 +118,39 @@ median2.default <- function(
     names(x) <- NULL
   }
 
+  # Count all values, including `NA`s
   n <- length(x)
 
-  # Remove `NA`s from `x`. Throw a bespoke error if this fails. Since `is.na()`
-  # is generic, non-default methods might be able to deal with data types that
+  # Check `x` for `NA`s. Throw a bespoke error if this fails. Since `is.na()` is
+  # generic, non-default methods might be able to deal with data types that
   # would otherwise get caught by an inflexible check as in
-  # `stats::median.default()`, causing a premature error. Subsetting may fail
-  # even if `is.na()` succeeds, but since subsetting and `is.na()` together
-  # constitute the operation of removing `NA`s, this should be fine.
+  # `stats::median.default()`, causing a premature error.
   tryCatch(
-    x <- x[!is.na(x)],
-    error = stop_removing_na_failed
+    x_is_na <- is.na(x),
+    error = stop_checking_na
+  )
+
+  # Same but with subsetting
+  tryCatch(
+    x <- x[!x_is_na],
+    error = stop_subsetting
+  )
+
+  # The next step, sorting, doesn't work if all values are missing; and since
+  # the result is already known in that case, return early here.
+  if (all(x_is_na)) {
+    if (x_is_numeric) {
+      return(NA_real_)
+    }
+    return(x[NA_integer_])
+  }
+
+  # Check if `x` can be sorted. Doing this once here means there is no need for
+  # multiple `tryCatch()` calls in later branches, which would be quite messy.
+  # Using `partial` for performance -- no need to run a full sort.
+  tryCatch(
+    sort(x, partial = 1L),
+    error = stop_sorting
   )
 
   # Missing values were removed above, so they are handled here indirectly:
@@ -142,10 +164,7 @@ median2.default <- function(
     n <- length(x)
   } else if (n != length(x)) {
     nna <- n - length(x)
-    tryCatch(
-      x <- sort(x),
-      error = stop_sorting_failed
-    )
+    x <- sort(x)
     # Central index or indices in `x`; length 1 if the length of `x` is odd,
     # length 2 if it is even:
     half <- if (n %% 2L == 1L) {
@@ -192,15 +211,9 @@ median2.default <- function(
 
   # Sort `x`, then reduce `x` to its values at the two central indices,
   out <- if (n%%2L == 1L) {
-    tryCatch(
-      sort(x, partial = half)[half],
-      error = stop_sorting_failed
-    )
+    sort(x, partial = half)[half]
   } else {
-    tryCatch(
-      x <- sort(x, partial = half + 0L:1L)[half + 0L:1L],
-      error = stop_sorting_failed
-    )
+    x <- sort(x, partial = half + 0L:1L)[half + 0L:1L]
     switch(
       even,
       "mean" = mean(x),
