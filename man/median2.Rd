@@ -55,26 +55,29 @@ dates do not count as numeric.
 \code{median2()} computes the sample median. By default, it works
 like \code{\link[=median]{median()}} from base R, with these exceptions:
 \itemize{
-\item If one or more values are missing, \code{median2()} checks if the median can
-be determined nevertheless. \code{median()} always returns \code{NA} in this case,
-but \code{median2()} only returns \code{NA} if the median is genuinely unknown.
+\item If some values are missing, \code{median2()} checks if the median can still
+be determined. \code{median()} always returns \code{NA} in this case, but \code{median2()}
+only returns \code{NA} if the median is genuinely unknown.
 \item You can opt to only ignore a certain number of missing values using the
 \code{na.rm.amount} and \code{na.rm.from} arguments.
-\item Factors and all other data that can be ordered by \code{\link[=sort]{sort()}} are allowed.
-However, non-numeric data, including dates and factors, require one of
-\code{even = "low"} and \code{even = "high"}. This avoids "computing the mean" of the
-two central values of sorted vectors with an even length when no such
-operation is possible, e.g., with strings.
+\item Strings, factors and all other data that can be ordered by \code{\link[=sort]{sort()}} are
+allowed. However, non-numeric data, including dates and factors, require
+one of \code{even = "low"} and \code{even = "high"}. This avoids "computing the mean"
+of the two central values of sorted vectors with an even length when no
+such operation is possible, e.g., with strings.
 \item The return type is always double if the input vector is numeric (i.e.,
-double or integer). This is consistent and predictable, regardless of the
-length being even or odd.
+double or integer), for both even and odd lengths.
 }
 }
 \details{
-\code{median2()} is a generic function, so new methods can be defined for
-it. As with \code{\link[stats:median]{stats::median()}} from base R, the default method described
-here should work for most classes for which a median is a reasonable
-concept (e.g., "\code{\link{Date}}").
+The main point of \code{median2()} is to handle missing values correctly.
+For the motivation behind the other differences from \code{\link[=median]{median()}}, see
+\href{https://design.tidyverse.org/out-type-stability.html#challenge-the-median}{\emph{Tidy design principles}}.
+
+\code{median2()} is a generic function, so new methods can be defined for it. As
+with \code{\link[stats:median]{stats::median()}} from base R, the default method described here
+should work for most classes for which a median is a reasonable concept
+(e.g., "\code{\link{Date}}").
 
 If a new method is necessary, please make sure it deals with missing values
 like the default method does. See

@@ -11,8 +11,8 @@
 #'   The function can also take a data frame (or another list) of numeric
 #'   vectors. It will then compute the median of each element.
 #'
-#' @param x Vector or list of vectors. Each vector needs to be numeric or
-#'   similar. Note that data frames are lists, so `x` can be a data frame.
+#' @param x Vector that can be ordered using [`sort()`], or a list of such
+#'   vectors; e.g., a data frame.
 #' @param even Passed on to [`median2()`].
 #' @param ... Optional further arguments for [`median2()`] methods. Not used in
 #'   its default method.
@@ -157,6 +157,5 @@ median_table <- function(x, even = c("mean", "low", "high"), ...) {
     nrow = nx,
     class = "median_table"
   )
-
 }
 

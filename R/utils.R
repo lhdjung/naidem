@@ -17,26 +17,32 @@ is_whole_number <- function(x, tolerance = .Machine$double.eps^0.5) {
 # number of missing values from `x` equal to `na.rm.amount`, then returns `x`.
 # Notes:
 # -- The specification of `na.rm.from` should be checked by the calling
-# function, like `na.rm.from <- match.arg(na.rm.from)`.
+# function, like `na.rm.from <- rlang::arg_match(na.rm.from)`.
 # -- For efficiency, `remove_some_na()` should only be called under very
 # specific conditions, as in in `median2()`.
 remove_some_na <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
+
   # Check for misspecifications of the calling function's arguments:
+  check_na_rm_amount(na.rm.amount, 2)
+
   if (na.rm) {
-    stop(paste(
-      "Conflicting instructions: `na.rm` removes all missing values,",
-      "`na.rm.amount` only removes some number of them."
-    ))
+    cli::cli_abort(
+      message = c(
+        "Conflicting arguments.",
+        "x" = "You chose `na.rm = TRUE` which removes all missing values.",
+        "x" = "But also `na.rm.amount = {na.rm.amount}` which only \
+        removes {na.rm.amount} of them."
+      ),
+      call = rlang::caller_env()
+    )
   }
-  amount_is_wrong <- length(na.rm.amount) != 1L ||
-    !is_whole_number(na.rm.amount) ||
-    na.rm.amount < 0
-  if (amount_is_wrong) {
-    stop("`na.rm.amount` must be a single whole, non-negative number.")
-  }
+
+
   # Determine the indices of missing values in `x`:
   na_indices <- which(is.na(x))
 
+  # This is fine because `is.na()`, if successful, will always return something
+  # `which()` can work with. If it fails, it is only because of `is.na()`.
   tryCatch(
     na_indices <- which(is.na(x)),
     error = stop_at_na_check
@@ -54,6 +60,7 @@ remove_some_na <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
   } else if (length(na_indices) <= na.rm.amount) {
     return(x[-na_indices])
   }
+
   # Target the indices of those missings that should be ignored:
   na_indices_ignored <- switch(
     na.rm.from,
@@ -61,12 +68,30 @@ remove_some_na <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
     "last"   = utils::tail(na_indices, na.rm.amount),
     "random" = sample(na_indices, na.rm.amount)
   )
-  # If no `NA`s are to be ignored, `x` should be returned as it is:
+
+  # If no `NA`s are to be ignored, `x` is returned as it is. Otherwise, to
+  # ignore some `NA`s, exclude the values in question.
   if (length(na_indices_ignored) == 0L) {
-    return(x)
+    x
+  } else {
+    x[-na_indices_ignored]
   }
-  # Return `x`, excluding the values in question:
-  x[-na_indices_ignored]
+}
+
+
+# Make sure `na.rm.amount` works as a count of missing values.
+check_na_rm_amount <- function(amount, n_frames = 1) {
+  if (
+    length(amount) == 1L &&
+    is_whole_number(amount) &&
+    amount >= 0
+  ) {
+    return(invisible(NULL))
+  }
+  cli::cli_abort(
+    message = "`na.rm.amount` must be a single whole, non-negative number.",
+    call = rlang::caller_env(n_frames)
+  )
 }
 
 
@@ -79,12 +104,6 @@ near_or_equal <- function(x, y) {
   }
 }
 
-
-# # Test function below with:
-# geom <- geom_uncertainty_bars
-# field <- "aes_params"
-# aes_name <- "linewidth"
-# aes_value <- 0.35
 
 # Copied from an MIT-licensed repo:
 # https://github.com/lhdjung/moder/blob/06195ed218b875a797b7175287cf3ff4c4b19350/R/utils.R
@@ -109,29 +128,34 @@ get_type_classes <- function() {
 # needs to explicitly choose the lower or the higher central value when taking
 # the median of non-numeric vectors, including logicals.
 stop_non_numeric_mean <- function(x) {
+
+  # `NULL` is fine because the calling function will be able to handle it.
   if (is.null(x)) {
     return(invisible(NULL))
   }
+
   # Date and factor are classes, not types, so they need special treatment when
   # identifying why `x` is not the right kind of object here. In the future,
   # this could possibly be extended to other classes.
   data_label <- NULL
   type_classes <- get_type_classes()
+
   for (type in type_classes) {
     if (inherits(x, type)) {
       data_label <- tolower(paste0(type, "s"))
       break
     }
   }
+
   # Otherwise, the type is the problem
   if (is.null(data_label)) {
-    data_label <- typeof(x)
-    if (rlang::is_vector(x)) {
-      data_label <- paste(data_label, "vectors")
+    data_label <- if (rlang::is_vector(x)) {
+      paste(typeof(x), "vectors")
     } else {
-      data_label <- paste0(data_label, "s")
+      paste0(typeof(x), "s")
     }
   }
+
   # Give a begrudging nod to traditional bool conversion
   hint_for_logicals <- if (is.logical(x)) {
     paste(
@@ -141,6 +165,7 @@ stop_non_numeric_mean <- function(x) {
   } else {
     NULL
   }
+
   # Throw a bespoke error that names the directly calling function -- such as
   # `median2.default()` -- as its source.
   cli::cli_abort(
@@ -155,7 +180,7 @@ stop_non_numeric_mean <- function(x) {
       `even = \"high\"` for the higher one.",
       "i" = hint_for_logicals
     ),
-    call = rlang::caller_call()
+    call = rlang::caller_env()
   )
 }
 
@@ -164,10 +189,10 @@ stop_non_numeric_mean <- function(x) {
 # by `median_table()`. It fills any empty strings by an index number and returns
 # `term` as a factor, which is useful for plots to keep the data in order.
 as_factor_sequence <- function(term) {
-  if (any(term == "")) {
-    index_rows <- as.character(seq_along(term))
-    empty <- term == ""
-    term[empty] <- index_rows[empty]
+  empty <- term == ""
+  if (any(empty)) {
+    row_index <- as.character(seq_along(term))
+    term[empty] <- row_index[empty]
   }
   factor(term, levels = term)
 }
@@ -218,12 +243,14 @@ check_types_consistent <- function(x) {
   # corresponding type by that class. With a factor, for example, the misleading
   # "integer" is replaced by "factor".
   for (tc in type_classes) {
+
     for (i in seq_along(x)) {
       if (inherits(x[[i]], tc)) {
         info_type <- c(info_type, tc)
         types[i] <- tc
       }
     }
+
   }
 
   # First type that is different from the very first type
@@ -239,21 +266,27 @@ check_types_consistent <- function(x) {
     paste("Pragmatically counting", info_type, "as", type_types, "here.")
   }
 
+  msg_header <- "Mixing numeric and non-numeric data is not allowed."
+
   # Some numeric, though not all: mixing types not allowed
   if (some_are_numeric) {
+
     numeric1 <- which(x_is_numeric)[1]
     non_numeric_1 <- which(!x_is_numeric)[1]
+
     numeric1_type <- types[numeric1]
     non_numeric1_type <- types[non_numeric_1]
+
     cli::cli_abort(
       message = c(
-        "Mixing numeric and non-numeric data is not allowed.",
+        msg_header,
         "x" = "Numeric type: {numeric1_type} (index {numeric1})",
         "x" = "Non-numeric type: {non_numeric1_type} (index {non_numeric_1})",
         "i" = msg_type
       ),
-      call = rlang::caller_call()
+      call = rlang::caller_env()
     )
+
   }
 
   # No numeric, but different non-numeric types: mixing types not allowed.
@@ -262,12 +295,12 @@ check_types_consistent <- function(x) {
   if (some_are_unequal) {
     cli::cli_abort(
       message = c(
-        "Mixing different types of non-numeric data is not allowed.",
+        msg_header,
         "x" = "Contains type {types[1]} (index 1).",
         "x" = "But also type {type_diff1} (index {index_type_diff1}).",
         "i" = msg_type
       ),
-      call = rlang::caller_call()
+      call = rlang::caller_env()
     )
   }
 
@@ -278,28 +311,26 @@ check_types_consistent <- function(x) {
 # it failed, also displaying the original error.
 stop_data_invalid <- function(
     cnd,
-    action = c("sort", "is.na", "subsetting")
+    action = c("sort", "is.na", "subsetting"),
+    n_frames = 5
   ) {
+
   action <- rlang::arg_match(action)
+
   fn_name <- switch(
     action,
     "sort" = "`sort()`",
     "is.na" = "`is.na()`",
     "subsetting" = "`[`"
   )
+
   desciption <- switch(
     action,
     "sort" = "Sorting the input",
     "is.na" = "Checking for `NA`s",
     "subsetting" = "Subsetting with `[`"
   )
-  # Adjust the name of the function that will be displayed at the top of the
-  # error message such that it's always a function exported from naidem:
-  n_frames <- 5
-  name_calling_fn <- as.character(rlang::caller_call(5)[1])
-  if (name_calling_fn == "sort_known_values") {
-    n_frames <- n_frames + 1
-  }
+
   cli::cli_abort(
     message = c(
       "{desciption} failed.",
@@ -308,14 +339,18 @@ stop_data_invalid <- function(
       "i" = "Original error:",
       "x" = as.character(cnd)
     ),
-    call = rlang::caller_call(n_frames)
+    call = rlang::caller_env(n_frames)
   )
 }
 
 
-stop_at_sort        <- function(cnd) stop_data_invalid(cnd, "sort")
-stop_at_na_check    <- function(cnd) stop_data_invalid(cnd, "is.na")
-stop_at_subsetting  <- function(cnd) stop_data_invalid(cnd, "subsetting")
+# These are called mainly is `median2()` but not in `sort_known_values()`
+# because this other helper increases the number of frames (the `6` there).
+# Conversely, these functions are meant to be called directly by the function
+# whose name will be shown in the error message.
+stop_at_na_check   <- function(cnd) stop_data_invalid(cnd, "is.na")
+stop_at_subsetting <- function(cnd) stop_data_invalid(cnd, "subsetting")
+stop_at_sort       <- function(cnd) stop_data_invalid(cnd, "sort")
 
 
 # Check for `NA`s, subset to remove them, and sort. At each step, carefully
@@ -325,18 +360,18 @@ stop_at_subsetting  <- function(cnd) stop_data_invalid(cnd, "subsetting")
 sort_known_values <- function(x) {
   tryCatch(
     x_is_na <- is.na(x),
-    error = stop_at_na_check
+    error = function(cnd) stop_data_invalid(cnd, "is.na", 6)
   )
   tryCatch(
     x <- x[!x_is_na],
-    error = stop_at_subsetting
+    error = function(cnd) stop_data_invalid(cnd, "subsetting", 6)
   )
   if (all(x_is_na)) {
     return(x[0L])
   }
   tryCatch(
     sort(x),
-    error = stop_at_sort
+    error = function(cnd) stop_data_invalid(cnd, "sort", 6)
   )
 }
 

@@ -164,5 +164,5 @@ median_plot_col <- function(
       x = "Sample",
       y = "Share of ignored missing values"
     )
-
 }
+

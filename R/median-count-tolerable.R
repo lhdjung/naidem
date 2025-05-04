@@ -10,7 +10,7 @@
 #'   It is used within [`median_table()`] to determine how many missing values
 #'   need to be ignored.
 #'
-#' @param x A numeric vector or similar.
+#' @param x Vector that can be ordered using [`sort()`].
 #' @param needs_prep Logical. Ignore unless the function is used as a helper.
 #'   See details.
 #'
@@ -42,11 +42,6 @@
 #' median_count_tolerable(c(8, 9, NA))
 
 
-# x <- c(1, 7, 7, 7, 7, NA)
-# x <- c(6, 7, 7, 7, 7, NA)
-# x <- c(8, 8, 9, 9, NA, NA, NA)
-
-
 median_count_tolerable <- function(x, needs_prep = TRUE) {
 
   # When `median_count_tolerable()` is used as a helper, the calling function
@@ -69,10 +64,12 @@ median_count_tolerable <- function(x, needs_prep = TRUE) {
   n_known_is_even <- n_known %% 2L == 0L
 
   if (n_known_is_even) {
+
     # Just using integer division here for integer typing; `n_known / 2L` would
     # be a double value but otherwise equal.
     half_lower <- n_known %/% 2L
     half_upper <- half_lower + 1L
+
     # In case of two unequal central values, even just a single `NA` can shift
     # the median, so none of them are tolerable. This can only occur with an
     # even number of known values. `near_or_equal()` is like `==` except it
@@ -82,6 +79,7 @@ median_count_tolerable <- function(x, needs_prep = TRUE) {
     if (!near_or_equal(x[half_lower], x[half_upper])) {
       return(0L)
     }
+
     # With an odd number of known values, there is only one central index for
     # them. Even so, however, this single value is assigned to two variables
     # here because these are needed in case of an even number. This avoids
@@ -129,31 +127,18 @@ median_count_tolerable <- function(x, needs_prep = TRUE) {
     path = x[(half_upper + 1L):n_known]
   )
 
-  # Calculate the maximal number of `NA`s that can be tolerated -- i.e., that
-  # don't need to be ignored -- when attempting to determine the median:
+  # The shorter of the two paths is the weakest link, so it determines how many
+  # `NA`s can be ignored. TODO: explain the factor of 2 here!
+  two_min <- 2L * min(steps_left, steps_right)
 
-  # NEW CONJECTURE: For even values of `n_known`, the correct solution is
-  # `min(steps_left, steps_right) * 2L + 1L` -- or without `+ 1L` if the
-  # `half_*` indices themselves count as central steps? Or just `min(...) + 1L`?
-  # Or perhaps it is `n_stable - 1L`, where  `n_stable` is the length of the
-  # stable region (i.e., the subarray of contiguous values that include the
-  # central value and are equal to it)?
-
-  # - 1, 1, 1, 2
-  # - 1, 1, 1, 1
-  # - 1, 1, 1, 1, 2, 2
-  # - 1, 2, 2, 3
-  # - 1, 1, 2, 2, 3, 3
-
-  # Note that (1, 2) and (1, 2, 3, 4) do NOT count -- the two central indices
-  # are unequal, so they would have been filtered out earlier!
-
+  # Even-length vectors have a stability bonus: at this point, the two central
+  # values are guaranteed to be equal, so there is at least one value in the
+  # central region that is the same as another one there.
   if (n_known_is_even) {
-    min(steps_left, steps_right) * 2L + 1L
+    two_min + 1L
   } else {
-    min(steps_left, steps_right) * 2L
+    two_min
   }
-
 }
 
 
@@ -198,13 +183,3 @@ count_central_steps <- function(center, path) {
   }
 }
 
-
-# For interactive use -- shows what the algorithm must be able to get behind:
-print_sort_both <- function(x) {
-  n <- length(x)
-  x <- sort(x[!is.na(x)])
-  nna <- n - length(x)
-  na_all <- rep(NA_real_, nna)
-  print(c(na_all, x))
-  print(c(x, na_all))
-}
