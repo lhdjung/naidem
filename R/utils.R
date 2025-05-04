@@ -311,7 +311,7 @@ check_types_consistent <- function(x) {
 stop_data_invalid <- function(
     cnd,
     action = c("sort", "is.na", "subsetting"),
-    frame_bump = NULL
+    n_frames = 5
   ) {
 
   action <- rlang::arg_match(action)
@@ -330,14 +330,6 @@ stop_data_invalid <- function(
     "subsetting" = "Subsetting with `[`"
   )
 
-  # Adjust the name of the function that will be displayed at the top of the
-  # error message such that it's always a function exported from naidem:
-  n_frames <- 5
-
-  if (!is.null(frame_bump)) {
-    n_frames <- n_frames + frame_bump
-  }
-
   cli::cli_abort(
     message = c(
       "{desciption} failed.",
@@ -352,7 +344,7 @@ stop_data_invalid <- function(
 
 
 # These are called mainly is `median2()` but not in `sort_known_values()`
-# because this other helper increases the number of frames (the `1` there).
+# because this other helper increases the number of frames (the `6` there).
 # Conversely, these functions are meant to be called directly by the function
 # whose name will be shown in the error message.
 stop_at_na_check    <- function(cnd) stop_data_invalid(cnd, "is.na")
@@ -367,18 +359,18 @@ stop_at_sort        <- function(cnd) stop_data_invalid(cnd, "sort")
 sort_known_values <- function(x) {
   tryCatch(
     x_is_na <- is.na(x),
-    error = function(cnd) stop_data_invalid(cnd, "is.na", 1)
+    error = function(cnd) stop_data_invalid(cnd, "is.na", 6)
   )
   tryCatch(
     x <- x[!x_is_na],
-    error = function(cnd) stop_data_invalid(cnd, "subsetting", 1)
+    error = function(cnd) stop_data_invalid(cnd, "subsetting", 6)
   )
   if (all(x_is_na)) {
     return(x[0L])
   }
   tryCatch(
     sort(x),
-    error = function(cnd) stop_data_invalid(cnd, "sort", 1)
+    error = function(cnd) stop_data_invalid(cnd, "sort", 6)
   )
 }
 
