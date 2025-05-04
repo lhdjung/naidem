@@ -7,7 +7,7 @@
 median_count_tolerable(x, needs_prep = TRUE)
 }
 \arguments{
-\item{x}{A numeric vector or similar.}
+\item{x}{Vector that can be ordered using \code{\link[=sort]{sort()}}.}
 
 \item{needs_prep}{Logical. Ignore unless the function is used as a helper.
 See details.}

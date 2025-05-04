@@ -10,7 +10,7 @@
 #'   It is used within [`median_table()`] to determine how many missing values
 #'   need to be ignored.
 #'
-#' @param x A numeric vector or similar.
+#' @param x Vector that can be ordered using [`sort()`].
 #' @param needs_prep Logical. Ignore unless the function is used as a helper.
 #'   See details.
 #'

@@ -2,19 +2,18 @@
 #'
 #' @description `median2()` computes the sample median. By default, it works
 #'   like [`median()`] from base R, with these exceptions:
-#'   - If one or more values are missing, `median2()` checks if the median can
-#'   be determined nevertheless. `median()` always returns `NA` in this case,
-#'   but `median2()` only returns `NA` if the median is genuinely unknown.
+#'   - If some values are missing, `median2()` checks if the median can still
+#'   be determined. `median()` always returns `NA` in this case, but `median2()`
+#'   only returns `NA` if the median is genuinely unknown.
 #'   - You can opt to only ignore a certain number of missing values using the
 #'   `na.rm.amount` and `na.rm.from` arguments.
-#'   - Factors and all other data that can be ordered by [`sort()`] are allowed.
-#'   However, non-numeric data, including dates and factors, require one of
-#'   `even = "low"` and `even = "high"`. This avoids "computing the mean" of the
-#'   two central values of sorted vectors with an even length when no such
-#'   operation is possible, e.g., with strings.
+#'   - Strings, factors and all other data that can be ordered by [`sort()`] are
+#'   allowed. However, non-numeric data, including dates and factors, require
+#'   one of `even = "low"` and `even = "high"`. This avoids "computing the mean"
+#'   of the two central values of sorted vectors with an even length when no
+#'   such operation is possible, e.g., with strings.
 #'   - The return type is always double if the input vector is numeric (i.e.,
-#'   double or integer). This is consistent and predictable, regardless of the
-#'   length being even or odd.
+#'   double or integer), for both even and odd lengths.
 #'
 #' @param x Vector that can be ordered using [`sort()`]. It will be searched for
 #'   its median.
@@ -33,10 +32,15 @@
 #' @param ... Optional further arguments for methods. Not used in the default
 #'   method.
 #'
-#' @details `median2()` is a generic function, so new methods can be defined for
-#'   it. As with [`stats::median()`] from base R, the default method described
-#'   here should work for most classes for which a median is a reasonable
-#'   concept (e.g., "[`Date`]").
+#' @details The main point of `median2()` is to handle missing values correctly.
+#'   For the motivation behind the other differences from [`median()`], see
+#'   [*Tidy design
+#'   principles*](https://design.tidyverse.org/out-type-stability.html#challenge-the-median).
+#'
+#'   `median2()` is a generic function, so new methods can be defined for it. As
+#'   with [`stats::median()`] from base R, the default method described here
+#'   should work for most classes for which a median is a reasonable concept
+#'   (e.g., "[`Date`]").
 #'
 #'   If a new method is necessary, please make sure it deals with missing values
 #'   like the default method does. See

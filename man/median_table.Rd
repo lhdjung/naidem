@@ -7,8 +7,8 @@
 median_table(x, even = c("mean", "low", "high"), ...)
 }
 \arguments{
-\item{x}{Vector or list of vectors. Each vector needs to be numeric or
-similar. Note that data frames are lists, so \code{x} can be a data frame.}
+\item{x}{Vector that can be ordered using \code{\link[=sort]{sort()}}, or a list of such
+vectors; e.g., a data frame.}
 
 \item{even}{Passed on to \code{\link[=median2]{median2()}}.}
 

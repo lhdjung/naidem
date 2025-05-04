@@ -7,7 +7,6 @@
 #'   It is used within [`median_table()`] to compute the `lower` and `upper`
 #'   columns.
 #'
-#' @param x Numeric or similar. Vector to search for its possible medians.
 #' @param x Vector that can be ordered using [`sort()`]. It will be searched for
 #'   its possible medians.
 #' @param na.rm.amount,even Passed on to [`median2()`].
