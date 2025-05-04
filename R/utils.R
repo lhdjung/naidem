@@ -33,7 +33,7 @@ remove_some_na <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
         "x" = "But also `na.rm.amount = {na.rm.amount}` which only \
         removes {na.rm.amount} of them."
       ),
-      call = rlang::caller_call()
+      call = rlang::caller_env()
     )
   }
 
@@ -187,7 +187,7 @@ stop_non_numeric_mean <- function(x) {
       `even = \"high\"` for the higher one.",
       "i" = hint_for_logicals
     ),
-    call = rlang::caller_call()
+    call = rlang::caller_env()
   )
 }
 
@@ -284,7 +284,7 @@ check_types_consistent <- function(x) {
         "x" = "Non-numeric type: {non_numeric1_type} (index {non_numeric_1})",
         "i" = msg_type
       ),
-      call = rlang::caller_call()
+      call = rlang::caller_env()
     )
   }
 
@@ -299,7 +299,7 @@ check_types_consistent <- function(x) {
         "x" = "But also type {type_diff1} (index {index_type_diff1}).",
         "i" = msg_type
       ),
-      call = rlang::caller_call()
+      call = rlang::caller_env()
     )
   }
 
@@ -346,7 +346,7 @@ stop_data_invalid <- function(
       "i" = "Original error:",
       "x" = as.character(cnd)
     ),
-    call = rlang::caller_call(n_frames)
+    call = rlang::caller_env(n_frames)
   )
 }
 
