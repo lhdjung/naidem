@@ -17,27 +17,26 @@ is_whole_number <- function(x, tolerance = .Machine$double.eps^0.5) {
 # number of missing values from `x` equal to `na.rm.amount`, then returns `x`.
 # Notes:
 # -- The specification of `na.rm.from` should be checked by the calling
-# function, like `na.rm.from <- match.arg(na.rm.from)`.
+# function, like `na.rm.from <- rlang::arg_match(na.rm.from)`.
 # -- For efficiency, `remove_some_na()` should only be called under very
 # specific conditions, as in in `median2()`.
 remove_some_na <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
 
   # Check for misspecifications of the calling function's arguments:
+  check_na_rm_amount(na.rm.amount, 2)
+
   if (na.rm) {
-    stop(paste(
-      "Conflicting instructions: `na.rm` removes all missing values,",
-      "`na.rm.amount` only removes some number of them."
-    ))
+    cli::cli_abort(
+      message = c(
+        "Conflicting arguments.",
+        "x" = "You chose `na.rm = TRUE` which removes all missing values.",
+        "x" = "But also `na.rm.amount = {na.rm.amount}` which only \
+        removes {na.rm.amount} of them."
+      ),
+      call = rlang::caller_call()
+    )
   }
 
-  amount_is_wrong <-
-    length(na.rm.amount) != 1L ||
-    !is_whole_number(na.rm.amount) ||
-    na.rm.amount < 0
-
-  if (amount_is_wrong) {
-    stop("`na.rm.amount` must be a single whole, non-negative number.")
-  }
 
   # Determine the indices of missing values in `x`:
   na_indices <- which(is.na(x))
@@ -77,6 +76,22 @@ remove_some_na <- function(x, na.rm, na.rm.amount, na.rm.from = "first") {
   } else {
     x[-na_indices_ignored]
   }
+}
+
+
+# Make sure `na.rm.amount` works as a count of missing values.
+check_na_rm_amount <- function(amount, n_frames = 1) {
+  if (
+    length(amount) == 1L &&
+    is_whole_number(amount) &&
+    amount >= 0
+  ) {
+    return(invisible(NULL))
+  }
+  cli::cli_abort(
+    message = "`na.rm.amount` must be a single whole, non-negative number.",
+    call = rlang::caller_env(n_frames)
+  )
 }
 
 

@@ -75,16 +75,23 @@ median_bounds.default <- function(
     even = c("mean", "low", "high"),
     nna = NULL
   ) {
+
   # As in `median2.default()`:
-  even <- match.arg(even)
+  even <- rlang::arg_match(even)
   x_is_numeric <- is.numeric(x)
   n <- length(x)
-  # This is also checked in `median2()`. It is only needed because one early
+
+  # These are also checked in `median2()`. They are only needed because an early
   # return below would otherwise make it possible that a call with wrong
   # arguments would silently pass through without reaching a `median2()` call.
   if (!x_is_numeric && even == "mean") {
     stop_non_numeric_mean(x)
   }
+
+  if (na.rm.amount != 0) {
+    check_na_rm_amount(na.rm.amount)
+  }
+
   # The `nna` argument here follows the same basic idea as `needs_prep` in
   # `median_count_tolerable()`. However, it is integer instead of logical; and
   # if specified, it needs to be added to `n` which, in this case, previously
@@ -96,12 +103,14 @@ median_bounds.default <- function(
   } else {
     n <- n + nna
   }
+
   # As in `median2()`:
   half <- if (n %% 2L == 1L) {
     (n + 1L) %/% 2L
   } else {
     (n + 1L:2L) %/% 2L
   }
+
   # Special rules apply to extremely low or high numbers of missing values:
   # -- If no values are missing, there is only one possible median, and it can
   # be determined by `median2()`.
@@ -117,6 +126,7 @@ median_bounds.default <- function(
     }
     return(rep(x[NA_integer_], 2))
   }
+
   # Compute the bounds by checking what the median would be if all `NA`s were
   # positioned at the start or the end of `x`.
   bound_lower <- median2(
@@ -125,12 +135,13 @@ median_bounds.default <- function(
     na.rm.amount = na.rm.amount,
     even = even
   )
+
   bound_upper <- median2(
     x = c(x, rep(x[[length(x)]], times = nna)),
     na.rm = FALSE,
     na.rm.amount = na.rm.amount,
     even = even
   )
-  # Return the bounds:
+
   c(bound_lower, bound_upper)
 }
