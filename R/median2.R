@@ -211,14 +211,14 @@ median2.default <- function(
     return(x[NA_integer_])
   }
 
-  half <- (n + 1L)%/%2L
+  half <- (n + 1L) %/% 2L
 
   # Sort `x`, then reduce `x` to its values at the two central indices,
-  out <- if (n%%2L == 1L) {
-    sort(x, partial = half)[half]
+  if (n %% 2L == 1L) {
+    out <- sort(x, partial = half)[half]
   } else {
     x <- sort(x, partial = half + 0L:1L)[half + 0L:1L]
-    switch(
+    out <- switch(
       even,
       "mean" = mean(x),
       "low"  = x[1L],
