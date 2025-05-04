@@ -105,12 +105,6 @@ near_or_equal <- function(x, y) {
 }
 
 
-# # Test function below with:
-# geom <- geom_uncertainty_bars
-# field <- "aes_params"
-# aes_name <- "linewidth"
-# aes_value <- 0.35
-
 # Copied from an MIT-licensed repo:
 # https://github.com/lhdjung/moder/blob/06195ed218b875a797b7175287cf3ff4c4b19350/R/utils.R
 aes_add <- function(geom, field, aes_name, aes_value) {
@@ -155,11 +149,10 @@ stop_non_numeric_mean <- function(x) {
 
   # Otherwise, the type is the problem
   if (is.null(data_label)) {
-    data_label <- typeof(x)
-    if (rlang::is_vector(x)) {
-      data_label <- paste(data_label, "vectors")
+    data_label <- if (rlang::is_vector(x)) {
+      paste(typeof(x), "vectors")
     } else {
-      data_label <- paste0(data_label, "s")
+      paste0(typeof(x), "s")
     }
   }
 
@@ -250,12 +243,14 @@ check_types_consistent <- function(x) {
   # corresponding type by that class. With a factor, for example, the misleading
   # "integer" is replaced by "factor".
   for (tc in type_classes) {
+
     for (i in seq_along(x)) {
       if (inherits(x[[i]], tc)) {
         info_type <- c(info_type, tc)
         types[i] <- tc
       }
     }
+
   }
 
   # First type that is different from the very first type
@@ -271,21 +266,27 @@ check_types_consistent <- function(x) {
     paste("Pragmatically counting", info_type, "as", type_types, "here.")
   }
 
+  msg_header <- "Mixing numeric and non-numeric data is not allowed."
+
   # Some numeric, though not all: mixing types not allowed
   if (some_are_numeric) {
+
     numeric1 <- which(x_is_numeric)[1]
     non_numeric_1 <- which(!x_is_numeric)[1]
+
     numeric1_type <- types[numeric1]
     non_numeric1_type <- types[non_numeric_1]
+
     cli::cli_abort(
       message = c(
-        "Mixing numeric and non-numeric data is not allowed.",
+        msg_header,
         "x" = "Numeric type: {numeric1_type} (index {numeric1})",
         "x" = "Non-numeric type: {non_numeric1_type} (index {non_numeric_1})",
         "i" = msg_type
       ),
       call = rlang::caller_env()
     )
+
   }
 
   # No numeric, but different non-numeric types: mixing types not allowed.
@@ -294,7 +295,7 @@ check_types_consistent <- function(x) {
   if (some_are_unequal) {
     cli::cli_abort(
       message = c(
-        "Mixing different types of non-numeric data is not allowed.",
+        msg_header,
         "x" = "Contains type {types[1]} (index 1).",
         "x" = "But also type {type_diff1} (index {index_type_diff1}).",
         "i" = msg_type
@@ -347,9 +348,9 @@ stop_data_invalid <- function(
 # because this other helper increases the number of frames (the `6` there).
 # Conversely, these functions are meant to be called directly by the function
 # whose name will be shown in the error message.
-stop_at_na_check    <- function(cnd) stop_data_invalid(cnd, "is.na")
-stop_at_subsetting  <- function(cnd) stop_data_invalid(cnd, "subsetting")
-stop_at_sort        <- function(cnd) stop_data_invalid(cnd, "sort")
+stop_at_na_check   <- function(cnd) stop_data_invalid(cnd, "is.na")
+stop_at_subsetting <- function(cnd) stop_data_invalid(cnd, "subsetting")
+stop_at_sort       <- function(cnd) stop_data_invalid(cnd, "sort")
 
 
 # Check for `NA`s, subset to remove them, and sort. At each step, carefully

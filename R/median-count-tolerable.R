@@ -64,10 +64,12 @@ median_count_tolerable <- function(x, needs_prep = TRUE) {
   n_known_is_even <- n_known %% 2L == 0L
 
   if (n_known_is_even) {
+
     # Just using integer division here for integer typing; `n_known / 2L` would
     # be a double value but otherwise equal.
     half_lower <- n_known %/% 2L
     half_upper <- half_lower + 1L
+
     # In case of two unequal central values, even just a single `NA` can shift
     # the median, so none of them are tolerable. This can only occur with an
     # even number of known values. `near_or_equal()` is like `==` except it
@@ -77,6 +79,7 @@ median_count_tolerable <- function(x, needs_prep = TRUE) {
     if (!near_or_equal(x[half_lower], x[half_upper])) {
       return(0L)
     }
+
     # With an odd number of known values, there is only one central index for
     # them. Even so, however, this single value is assigned to two variables
     # here because these are needed in case of an even number. This avoids

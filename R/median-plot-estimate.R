@@ -190,7 +190,6 @@ median_plot_pointrange <- function(
     mapping = ggplot2::aes(ymin = .data$lower, ymax = .data$upper),
     shape = ifelse(range_is_inf, 11, 19),
     size  = ifelse(range_is_inf, point_size + 2, point_size),
-    # size  = point_size,
     color = line_color,
     fatten = 0.75
   )
